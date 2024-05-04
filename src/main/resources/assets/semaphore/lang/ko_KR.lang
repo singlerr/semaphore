@@ -1,0 +1,8 @@
+#Gui
+gui.phonescreen.title=전화번호부
+#Key
+key.phone.show=휴대폰 켜기
+key.phone.hide=휴대폰 끄기
+key.semaphore.category=Semaphore
+#Item
+item.semaphore.phoneitem.name=휴대폰

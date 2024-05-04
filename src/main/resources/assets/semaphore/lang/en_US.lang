@@ -1,0 +1,8 @@
+#Gui
+gui.phonescreen.title=Phone
+#Key
+key.phone.show=Turn On
+key.phone.hide=Turn Off
+key.semaphore.category=Semaphore
+#Item
+item.semaphore.phoneitem.name=Phone

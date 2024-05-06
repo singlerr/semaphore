@@ -4,6 +4,7 @@ package io.github.singlerr.semaphore.regisries;
 import io.github.singlerr.semaphore.eventhandler.ItemInteractionHandler;
 import io.github.singlerr.semaphore.eventhandler.PhoneRenderer;
 import io.github.singlerr.semaphore.state.player.PlayerContext;
+import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import net.minecraft.client.Minecraft;
@@ -14,8 +15,6 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.lwjgl.input.Keyboard;
-
-import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.NONE)
 public final class ClientRegistries {
@@ -37,8 +36,9 @@ public final class ClientRegistries {
 
         CommonRegistries.getStatePool().submit(userId, PlayerContext.builder().build());
 
-        for(int i = 0; i < 10; i++){
-            CommonRegistries.getStatePool().submit(UUID.randomUUID(), PlayerContext.builder().build());
+        for (int i = 0; i < 10; i++) {
+            CommonRegistries.getStatePool()
+                    .submit(UUID.randomUUID(), PlayerContext.builder().build());
         }
     }
 

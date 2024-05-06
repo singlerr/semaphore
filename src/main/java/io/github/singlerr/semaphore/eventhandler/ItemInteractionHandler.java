@@ -2,6 +2,7 @@
 package io.github.singlerr.semaphore.eventhandler;
 
 import io.github.singlerr.semaphore.gui.PhoneScreen;
+import io.github.singlerr.semaphore.gui.PhoneScreenLegacy;
 import io.github.singlerr.semaphore.item.ItemPhone;
 import io.github.singlerr.semaphore.regisries.CommonRegistries;
 import io.github.singlerr.semaphore.state.State;

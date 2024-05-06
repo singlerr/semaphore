@@ -2,12 +2,11 @@
 package io.github.singlerr.semaphore.gui.list;
 
 import de.maxhenkel.voicechat.gui.GameProfileUtils;
-import de.maxhenkel.voicechat.gui.VoiceChatScreen;
 import de.maxhenkel.voicechat.gui.widgets.IngameListScreenBase;
 import de.maxhenkel.voicechat.gui.widgets.ListScreenEntryBase;
-import de.maxhenkel.voicechat.voice.client.ClientManager;
-import de.maxhenkel.voicechat.voice.client.ClientVoicechat;
 import io.github.singlerr.semaphore.state.player.PlayerContext;
+import java.awt.*;
+import java.util.UUID;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -15,9 +14,6 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureManager;
-
-import java.awt.*;
-import java.util.UUID;
 
 public class AddressListEntry extends ListScreenEntryBase {
 
@@ -37,7 +33,7 @@ public class AddressListEntry extends ListScreenEntryBase {
 
     private final int start;
 
-    public AddressListEntry(IngameListScreenBase parent,int start, UUID id, PlayerContext state) {
+    public AddressListEntry(IngameListScreenBase parent, int start, UUID id, PlayerContext state) {
         this.parent = parent;
         this.id = id;
         this.state = state;
@@ -45,7 +41,16 @@ public class AddressListEntry extends ListScreenEntryBase {
     }
 
     @Override
-    public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partialTicks) {
+    public void drawEntry(
+            int slotIndex,
+            int x,
+            int y,
+            int listWidth,
+            int slotHeight,
+            int mouseX,
+            int mouseY,
+            boolean isSelected,
+            float partialTicks) {
         super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected, partialTicks);
         GlStateManager.pushMatrix();
 
@@ -69,6 +74,10 @@ public class AddressListEntry extends ListScreenEntryBase {
         GlStateManager.disableBlend();
         GlStateManager.popMatrix();
 
-        fontRenderer.drawString(fontRenderer.trimStringToWidth(id.toString(), listWidth), x + PADDING + outlineSize + PADDING, y + slotHeight / 2 - fontRenderer.FONT_HEIGHT / 2, NAME_COLOR);
+        fontRenderer.drawString(
+                fontRenderer.trimStringToWidth(id.toString(), listWidth),
+                x + PADDING + outlineSize + PADDING,
+                y + slotHeight / 2 - fontRenderer.FONT_HEIGHT / 2,
+                NAME_COLOR);
     }
 }

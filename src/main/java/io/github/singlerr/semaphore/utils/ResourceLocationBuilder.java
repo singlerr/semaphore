@@ -31,6 +31,10 @@ public final class ResourceLocationBuilder {
         return this;
     }
 
+    public String asResourcePath() {
+        return "/assets/" + this.namespace + "/" + this.path;
+    }
+
     public ResourceLocation build() {
         return new ResourceLocation(namespace, path.toString());
     }

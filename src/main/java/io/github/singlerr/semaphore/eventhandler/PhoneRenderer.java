@@ -1,10 +1,13 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.eventhandler;
 
+import io.github.singlerr.semaphore.gui.PhoneScreen;
 import io.github.singlerr.semaphore.regisries.CommonRegistries;
 import io.github.singlerr.semaphore.state.State;
 import io.github.singlerr.semaphore.state.player.PlayerContext;
 import java.util.Optional;
+import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -14,6 +17,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public final class PhoneRenderer {
+
+    @Setter
+    @Getter
+    private static PhoneScreen phoneScreen;
 
     @SubscribeEvent
     public void renderPhone(RenderGameOverlayEvent event) {
@@ -30,6 +37,8 @@ public final class PhoneRenderer {
         PlayerContext state = (PlayerContext) opt.get();
 
         if (!state.isUsingPhone()) return;
+
+        if (phoneScreen == null) return;
 
         //        PhoneScreen screen = new PhoneScreen(CommonRegistries.getStatePool());
         //        screen.drawBackground(event.getPartialTicks());

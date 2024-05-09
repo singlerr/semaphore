@@ -4,6 +4,8 @@ package io.github.singlerr.semaphore.state.player;
 import io.github.singlerr.semaphore.state.State;
 import io.github.singlerr.semaphore.utils.SerializationUtils;
 import io.netty.buffer.ByteBuf;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,6 +27,19 @@ public class PlayerContext implements State<LogicalPlayer> {
     @Builder.Default
     @NonNull
     private UUID opponent = NULL;
+
+    @Getter
+    @NonNull
+    private UUID owner;
+
+    @Getter
+    @NonNull
+    private String name;
+
+    @Getter
+    @Builder.Default
+    @NonNull
+    private Map<UUID, Double> volumes = new HashMap<>();
 
     private boolean usingPhone = false;
 

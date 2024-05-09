@@ -37,4 +37,8 @@ public final class StatePool {
     public Optional<State<?>> get(UUID uuid) {
         return Optional.ofNullable(states.get(uuid));
     }
+
+    public <T extends State<?>> Optional<T> get(UUID uuid, Class<T> clazz) {
+        return Optional.ofNullable(states.get(uuid)).map(clazz::cast);
+    }
 }

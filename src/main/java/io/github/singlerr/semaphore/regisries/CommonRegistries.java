@@ -5,6 +5,7 @@ import io.github.singlerr.semaphore.Semaphore;
 import io.github.singlerr.semaphore.item.ItemPhone;
 import io.github.singlerr.semaphore.network.packets.PlayerStatePacket;
 import io.github.singlerr.semaphore.state.StatePool;
+import io.github.singlerr.semaphore.state.player.PlayerContext;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
+
+import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.MODULE)
 public final class CommonRegistries {
@@ -35,6 +38,14 @@ public final class CommonRegistries {
 
     public static void apply(FMLInitializationEvent event) {
         initializeNetwork();
+
+        for(int i = 0; i < 10; i++){
+            UUID id = UUID.randomUUID();
+            statePool.submit(id, PlayerContext.builder()
+                    .name(id.toString().substring(0, 5))
+                    .owner(id)
+                    .build());
+        }
     }
 
     public static void apply(FMLPostInitializationEvent event) {}

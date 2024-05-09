@@ -2,7 +2,6 @@
 package io.github.singlerr.semaphore.eventhandler;
 
 import io.github.singlerr.semaphore.gui.PhoneScreen;
-import io.github.singlerr.semaphore.gui.PhoneScreenLegacy;
 import io.github.singlerr.semaphore.item.ItemPhone;
 import io.github.singlerr.semaphore.regisries.CommonRegistries;
 import io.github.singlerr.semaphore.state.State;
@@ -22,6 +21,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public final class ItemInteractionHandler {
 
+    private PhoneScreen phoneScreen;
+
     @SubscribeEvent
     public void onItemUse(PlayerInteractEvent.RightClickItem event) {
         ItemStack stack = event.getItemStack();
@@ -31,18 +32,20 @@ public final class ItemInteractionHandler {
 
         if (player == null) return;
 
-        Optional<State<?>> opt = CommonRegistries.getStatePool().get(player.getUniqueID());
+        //        Optional<State<?>> opt = CommonRegistries.getStatePool().get(player.getUniqueID());
+        //
+        //        if (!opt.isPresent()) return;
+        //
+        //        if (!(opt.get() instanceof PlayerContext)) return;
+        //
+        //        PlayerContext context = (PlayerContext) opt.get();
+        //
+        //        if (!context.isUsingPhone()) return;
 
-        if (!opt.isPresent()) return;
+        if (phoneScreen == null) phoneScreen = new PhoneScreen(CommonRegistries.getStatePool());
 
-        if (!(opt.get() instanceof PlayerContext)) return;
-
-        PlayerContext context = (PlayerContext) opt.get();
-
-        if (!context.isUsingPhone()) return;
-
-        // Render Phone
-        Minecraft.getMinecraft().displayGuiScreen(new PhoneScreen());
+        Minecraft.getMinecraft().displayGuiScreen(phoneScreen);
+        phoneScreen.animate();
     }
 
     private void setPhoneUse(EntityPlayer player, boolean flag) {
@@ -57,7 +60,13 @@ public final class ItemInteractionHandler {
         context.setUsingPhone(flag);
     }
 
-    @SubscribeEvent
+    private void openScreen(EntityPlayer player) {
+        setPhoneUse(player, true);
+        if (PhoneRenderer.getPhoneScreen() == null) PhoneRenderer.setPhoneScreen(new PhoneScreen(CommonRegistries.getStatePool()));
+        PhoneRenderer.getPhoneScreen().setRefresh(true);
+    }
+
+    //    @SubscribeEvent
     public void onItemHeld(RenderGameOverlayEvent event) {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
 
@@ -65,17 +74,16 @@ public final class ItemInteractionHandler {
 
         if (!player.getHeldItem(EnumHand.MAIN_HAND).isEmpty()
                 && player.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemPhone) {
-            setPhoneUse(player, true);
+            //            openScreen(player);
             return;
         }
 
         if (!player.getHeldItem(EnumHand.OFF_HAND).isEmpty()
                 && player.getHeldItem(EnumHand.OFF_HAND).getItem() instanceof ItemPhone) {
-            setPhoneUse(player, true);
+            //            openScreen(player);
             return;
         }
 
-        Minecraft.getMinecraft().displayGuiScreen(null);
         setPhoneUse(player, false);
     }
 }

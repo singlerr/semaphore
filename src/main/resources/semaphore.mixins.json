@@ -5,8 +5,11 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "semaphore.refmap.json",
   "mixins": [
+    "core.EntityPlayerMixin"
   ],
   "client": [
+    "compat.UIImageAccessor",
+    "compat.TextureScalingModeAccessor"
   ],
   "server": [
     "compat.VoicechatServerMixin"

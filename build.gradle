@@ -2,6 +2,7 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'net.minecraftforge.gradle' version '[6.0.16,6.2)'
+    id 'org.jetbrains.kotlin.plugin.lombok' version '1.9.24'
     id 'io.freefair.lombok' version '8.6'
     id 'org.spongepowered.mixin' version '0.7+'
     id 'com.diffplug.spotless' version '6.25.0'
@@ -155,12 +156,9 @@ sourceSets.each {
 
 spotless {
     kotlin {
-        target 'src/*/java/**/*.kt','*/src/*/java/**/*.'
-
-
-        endWithNewline()
-        trimTrailingWhitespace()
-        trampoline()
+        target 'src/*/java/**/*.kt','*/src/*/java/**/*.kt'
+        ktfmt().dropboxStyle()
+        licenseHeader '/* (C) $YEAR singlerr */'
     }
     java{
         target 'src/*/java/**/*.java','*/src/*/java/**/*.java'

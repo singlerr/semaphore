@@ -1,6 +1,7 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.regisries;
 
+import com.mojang.authlib.GameProfile;
 import io.github.singlerr.semaphore.eventhandler.ItemInteractionHandler;
 import io.github.singlerr.semaphore.eventhandler.PhoneRenderer;
 import io.github.singlerr.semaphore.state.player.PlayerContext;
@@ -32,14 +33,10 @@ public final class ClientRegistries {
     }
 
     private static void initializeLocalPlayerContext() {
-        UUID userId = Minecraft.getMinecraft().getSession().getProfile().getId();
-
-        CommonRegistries.getStatePool().submit(userId, PlayerContext.builder().build());
-
-        for (int i = 0; i < 10; i++) {
-            CommonRegistries.getStatePool()
-                    .submit(UUID.randomUUID(), PlayerContext.builder().build());
-        }
+        GameProfile profile = Minecraft.getMinecraft().getSession().getProfile();
+        UUID userId = profile.getId();
+        String name = profile.getName();
+        CommonRegistries.getStatePool().submit(userId, PlayerContext.builder().owner(userId).name(name).build());
     }
 
     public static void apply(FMLPostInitializationEvent event) {}

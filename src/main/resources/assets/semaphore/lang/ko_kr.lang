@@ -5,4 +5,6 @@ key.phone.show=휴대폰 켜기
 key.phone.hide=휴대폰 끄기
 key.semaphore.category=Semaphore
 #Item
-item.semaphore.phoneitem.name=휴대폰
+item.semaphore.itemphone.name=휴대폰
+#CreativeTab
+itemGroup.semaphore=Semaphore

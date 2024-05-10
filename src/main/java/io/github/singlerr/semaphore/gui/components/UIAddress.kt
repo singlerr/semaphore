@@ -2,27 +2,23 @@
 package io.github.singlerr.semaphore.gui.components
 
 import de.maxhenkel.voicechat.gui.GameProfileUtils
-import gg.essential.elementa.components.SVGComponent
-import gg.essential.elementa.components.UIBlock
-import gg.essential.elementa.components.UIWrappedText
+import gg.essential.elementa.components.*
 import gg.essential.elementa.constraints.*
 import gg.essential.elementa.dsl.*
+import gg.essential.elementa.state.BasicState
 import io.github.singlerr.semaphore.Semaphore
-import io.github.singlerr.semaphore.utils.CompatibleSVGParser
-import io.github.singlerr.semaphore.utils.ResourceLocationBuilder
-import io.github.singlerr.semaphore.utils.asInputStream
+import io.github.singlerr.semaphore.state.player.PlayerContext
+import io.github.singlerr.semaphore.utils.*
 import java.awt.Color
-import java.awt.image.BufferedImage
 import java.util.*
-import java.util.concurrent.CompletableFuture
-import javax.imageio.ImageIO
-import net.minecraft.client.Minecraft
-import net.minecraft.util.ResourceLocation
 
-class UIAddress(playerId: UUID) : UIBlock() {
+class UIAddress(private var ownerState: PlayerContext, var currentState: PlayerContext) :
+    UIRoundedRectangle(radius = 5f) {
+
+    private val missCallState = BasicState(ownerState.missCalls.getOrDefault(currentState.owner, 0))
 
     init {
-        setColor(Color.WHITE)
+        setColor(primaryBackground())
         constrain {
             x = CenterConstraint()
             y = SiblingConstraint() + 10.pixels()
@@ -30,7 +26,7 @@ class UIAddress(playerId: UUID) : UIBlock() {
             height = AspectConstraint(1 / 5f)
         }
 
-        val skin = GameProfileUtils.getSkin(playerId)
+        val skin = GameProfileUtils.getSkin(currentState.owner)
 
         val headImage =
             UIPlayerSkull(skin).constrain {
@@ -39,43 +35,52 @@ class UIAddress(playerId: UUID) : UIBlock() {
                 width = RelativeConstraint(1 / 5f)
                 height = ImageAspectConstraint()
             } childOf this
+
         val usernameText =
-            UIWrappedText(playerId.toString(), shadow = false, trimText = true).constrain {
+            UIWrappedText(currentState.name, shadow = false, trimText = true).constrain {
                 x = SiblingConstraint(2f) boundTo headImage
                 y = CenterConstraint()
 
                 width = RelativeConstraint(1 / 8f)
                 height = 10.pixels()
+
+                color = Color.black.toConstraint()
             } childOf this
-        usernameText.setColor(Color.black)
+
         val callImage =
-            SVGComponent(CompatibleSVGParser.parse(CALL_ICON.build().asInputStream())).constrain {
+            UIImage(CALL_ICON.build().asImageAsync()).constrain {
                 x = 5.pixels(alignOpposite = true)
                 y = CenterConstraint()
                 width = RelativeConstraint(1 / 7f)
                 height = AspectConstraint()
             } childOf this
-        callImage.setColor(Color.green)
+
+        callImage.onMouseClick {
+            // Call
+        }
 
         val missCallImage =
-            SVGComponent(CompatibleSVGParser.parse(CALL_ICON.build().asInputStream())).constrain {
+            UIImage(CALL_ICON.build().asImageAsync()).constrain {
                 x = SiblingConstraint(2f, alignOpposite = true) boundTo callImage
                 y = CenterConstraint()
                 width = RelativeConstraint(1 / 7f)
                 height = AspectConstraint()
             } childOf this
-        missCallImage.setColor(Color.red)
+
+        val missCallCount =
+            UIText().bindText(missCallState.map(Number::toString)).constrain {
+                x = 1.pixels(true)
+                y = 1.pixels()
+
+                width = RelativeConstraint(1 / 5f)
+                height = 5.pixels()
+            } childOf missCallImage
     }
 
-    private fun getImage(resourceLocation: ResourceLocation): BufferedImage {
-        return ImageIO.read(
-            Minecraft.getMinecraft().resourceManager.getResource(resourceLocation).inputStream)
-    }
-
-    private fun getImageAsync(
-        resourceLocation: ResourceLocation
-    ): CompletableFuture<BufferedImage> {
-        return CompletableFuture.supplyAsync { getImage(resourceLocation) }
+    fun update(ownerState: PlayerContext, currentState: PlayerContext) {
+        this.ownerState = ownerState
+        this.currentState = currentState
+        missCallState.set(ownerState.missCalls.getOrDefault(currentState.owner, 0))
     }
 
     companion object {
@@ -84,6 +89,6 @@ class UIAddress(playerId: UUID) : UIBlock() {
                 .namespace(Semaphore.MOD_ID)
                 .append("textures")
                 .append("gui")
-                .append("phone_call.svg")
+                .append("phone_call.png")
     }
 }

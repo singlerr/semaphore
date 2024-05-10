@@ -5,4 +5,6 @@ key.phone.show=Turn On
 key.phone.hide=Turn Off
 key.semaphore.category=Semaphore
 #Item
-item.semaphore.phoneitem.name=Phone
+item.semaphore.itemphone.name=Phone
+#CreativeTab
+itemGroup.semaphore=Semaphore

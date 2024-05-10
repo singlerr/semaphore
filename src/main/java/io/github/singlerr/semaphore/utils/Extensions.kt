@@ -3,7 +3,12 @@ package io.github.singlerr.semaphore.utils
 
 import gg.essential.elementa.impl.dom4j.Element
 import gg.essential.elementa.svg.data.*
+import java.awt.Color
+import java.awt.image.BufferedImage
 import java.io.InputStream
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.ConcurrentHashMap
+import javax.imageio.ImageIO
 import net.minecraft.client.Minecraft
 import net.minecraft.util.ResourceLocation
 
@@ -47,4 +52,21 @@ fun SVGPolyline.Companion.fromElement(element: Element): SVGPolyline {
 
 fun ResourceLocation.asInputStream(): InputStream {
     return Minecraft.getMinecraft().resourceManager.getResource(this).inputStream
+}
+
+private val imageCache = ConcurrentHashMap<ResourceLocation, BufferedImage>()
+
+fun ResourceLocation.asImageAsync(): CompletableFuture<BufferedImage> {
+    if (imageCache.containsKey(this)) {
+        return CompletableFuture.completedFuture(imageCache[this])
+    }
+    return CompletableFuture.supplyAsync { ImageIO.read(asInputStream()) }
+        .thenApplyAsync { img ->
+            imageCache[this] = img
+            img
+        }
+}
+
+fun primaryBackground(): Color {
+    return Color(238, 238, 238)
 }

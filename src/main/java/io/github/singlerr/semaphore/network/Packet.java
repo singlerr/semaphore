@@ -5,6 +5,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
-@NoArgsConstructor
 @SuperBuilder
+@NoArgsConstructor
 public abstract class Packet implements IMessage {}

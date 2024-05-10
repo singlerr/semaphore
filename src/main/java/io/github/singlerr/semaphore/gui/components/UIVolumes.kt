@@ -3,10 +3,17 @@ package io.github.singlerr.semaphore.gui.components
 
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.ScrollComponent
+import gg.essential.elementa.constraints.CenterConstraint
+import gg.essential.elementa.constraints.FillConstraint
 import gg.essential.elementa.dsl.*
 import io.github.singlerr.semaphore.state.player.PlayerContext
 
-class UIVolumes(parent: UIComponent, states: List<PlayerContext>) {
+class UIVolumes(
+    parent: UIComponent,
+    neighbor: UIComponent,
+    ownerState: PlayerContext,
+    states: List<PlayerContext>
+) {
 
     val component: UIComponent
 
@@ -14,14 +21,21 @@ class UIVolumes(parent: UIComponent, states: List<PlayerContext>) {
         component =
             ScrollComponent(innerPadding = 2f, scrollDirection = ScrollComponent.Direction.Vertical)
                 .constrain {
-                    x = 30.percent() boundTo parent
-                    y = 10.pixels() boundTo parent
+                    x = CenterConstraint()
+                    y = 20.pixels() boundTo neighbor
 
-                    width = 40.percent() boundTo parent
-                    height = 90.percent() boundTo parent
+                    width = FillConstraint(true) - 2.pixels()
+                    height = 80.percent() boundTo parent
                 }
-                .onKeyType { typedChar, keyCode -> } childOf parent
 
-        states.forEach { ctx -> component.addChild(UIVolume(ctx.owner)) }
+        states.forEach { ctx ->
+            if (ctx.owner != ownerState.owner) {
+                component.addChild(UIVolume(ownerState, ctx.owner))
+            }
+        }
+    }
+
+    fun constrain(config: UIComponent.() -> Unit) {
+        config(component)
     }
 }

@@ -7,6 +7,7 @@ import io.netty.buffer.ByteBuf;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
@@ -39,12 +40,14 @@ public class PlayerContext implements State<LogicalPlayer> {
     @Getter
     @Builder.Default
     @NonNull
-    private Map<UUID, Double> volumes = new HashMap<>();
+    private Map<UUID, Float> volumes = new HashMap<>();
+
+    @Getter
+    @Builder.Default
+    @NonNull
+    private Map<UUID, AtomicInteger> missCalls = new HashMap<>();
 
     private boolean usingPhone = false;
-
-    @Override
-    public void apply(LogicalPlayer logicalPlayer) {}
 
     @Override
     public void serialize(ByteBuf buffer) {
@@ -68,6 +71,15 @@ public class PlayerContext implements State<LogicalPlayer> {
         return false;
     }
 
+    public void copy(PlayerContext other) {
+        this.callState = other.getCallState();
+        this.opponent = other.getOpponent();
+        this.owner = other.getOwner();
+        this.name = other.getName();
+        this.volumes = new HashMap<>(other.getVolumes());
+        this.missCalls = new HashMap<>(other.getMissCalls());
+    }
+
     public synchronized void setOpponent(UUID opponent) {
         this.opponent = opponent;
     }
@@ -78,8 +90,16 @@ public class PlayerContext implements State<LogicalPlayer> {
 
     public enum CallState {
         IDLE,
+        // Player is sending call request to another
         CALLING,
+        // Player now in call
         IN_CALL,
         UNAVAILABLE
+    }
+
+    public enum CallFeedback {
+        DENY_IN_CALL,
+        DENY_NOT_AVAILABLE,
+        ACCEPT
     }
 }

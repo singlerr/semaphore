@@ -5,8 +5,6 @@ import io.netty.buffer.ByteBuf;
 
 public interface State<T> {
 
-    void apply(T t);
-
     void serialize(ByteBuf buffer);
 
     void deserialize(ByteBuf buffer);

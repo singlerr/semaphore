@@ -4,9 +4,14 @@ package io.github.singlerr.semaphore.regisries;
 import com.mojang.authlib.GameProfile;
 import io.github.singlerr.semaphore.eventhandler.ItemInteractionHandler;
 import io.github.singlerr.semaphore.eventhandler.PhoneRenderer;
+import io.github.singlerr.semaphore.gui.PhoneScreen;
+import io.github.singlerr.semaphore.network.packets.CallFeedbackPacket;
+import io.github.singlerr.semaphore.network.packets.CallStatePacket;
+import io.github.singlerr.semaphore.network.packets.PlayerStatePacket;
 import io.github.singlerr.semaphore.state.player.PlayerContext;
 import java.util.UUID;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
@@ -23,6 +28,9 @@ public final class ClientRegistries {
     public static final KeyBinding KEY_SHOW_PHONE =
             new KeyBinding("key.phone.show", Keyboard.KEY_G, "key.semaphore.category");
 
+    @Getter
+    private static PhoneScreen phoneScreen;
+
     public static void apply(FMLPreInitializationEvent event) {}
 
     public static void apply(FMLInitializationEvent event) {
@@ -30,13 +38,20 @@ public final class ClientRegistries {
         MinecraftForge.EVENT_BUS.register(new ItemInteractionHandler());
         MinecraftForge.EVENT_BUS.register(new PhoneRenderer());
         initializeLocalPlayerContext();
+        phoneScreen = new PhoneScreen(
+                CommonRegistries.getStatePool(),
+                Minecraft.getMinecraft().getSession().getProfile().getId());
+        CommonRegistries.getEventPool().subscribe(CallStatePacket.class, phoneScreen::updateCallState);
+        CommonRegistries.getEventPool().subscribe(CallFeedbackPacket.class, phoneScreen::updateCallFeedback);
+        CommonRegistries.getEventPool().subscribe(PlayerStatePacket.class, phoneScreen::updatePlayerState);
     }
 
     private static void initializeLocalPlayerContext() {
         GameProfile profile = Minecraft.getMinecraft().getSession().getProfile();
         UUID userId = profile.getId();
         String name = profile.getName();
-        CommonRegistries.getStatePool().submit(userId, PlayerContext.builder().owner(userId).name(name).build());
+        CommonRegistries.getStatePool()
+                .submit(userId, PlayerContext.builder().owner(userId).name(name).build());
     }
 
     public static void apply(FMLPostInitializationEvent event) {}

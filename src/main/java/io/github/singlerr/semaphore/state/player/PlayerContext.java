@@ -12,6 +12,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 @Setter
 @Getter
@@ -30,11 +31,9 @@ public class PlayerContext implements State<LogicalPlayer> {
     private UUID opponent = NULL;
 
     @Getter
-    @NonNull
     private UUID owner;
 
     @Getter
-    @NonNull
     private String name;
 
     @Getter
@@ -53,6 +52,7 @@ public class PlayerContext implements State<LogicalPlayer> {
     public void serialize(ByteBuf buffer) {
         buffer.writeInt(callState.ordinal());
         SerializationUtils.writeUUID(buffer, opponent);
+        ByteBufUtils.writeUTF8String(buffer, name);
     }
 
     @Override
@@ -60,6 +60,7 @@ public class PlayerContext implements State<LogicalPlayer> {
         int ordinal = buffer.readInt();
         callState = CallState.values()[ordinal];
         opponent = SerializationUtils.readUUID(buffer);
+        name = ByteBufUtils.readUTF8String(buffer);
     }
 
     @Override
@@ -94,7 +95,14 @@ public class PlayerContext implements State<LogicalPlayer> {
         CALLING,
         // Player now in call
         IN_CALL,
+        // Player receiving call
+        RECEIVING_CALL,
         UNAVAILABLE
+    }
+
+    public enum CallAction {
+        REQUEST,
+        CLOSE
     }
 
     public enum CallFeedback {

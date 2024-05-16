@@ -1,0 +1,44 @@
+{
+  "call_no": {
+    "category": "block",
+    "sounds": [
+      "semaphore:call_no"
+    ]
+  },
+  "call_off": {
+    "category": "block",
+    "sounds": [
+      "semaphore:call_off"
+    ]
+  },
+  "call_yes": {
+    "category": "block",
+    "sounds": [
+      "semaphore:call_yes"
+    ]
+  },
+  "calling": {
+    "category": "block",
+    "sounds": [
+      "semaphore:calling"
+    ]
+  },
+  "phone_bell": {
+    "category": "block",
+    "sounds": [
+      "semaphore:phone_bell"
+    ]
+  },
+  "phone_touch": {
+    "category": "block",
+    "sounds": [
+      "semaphore:phone_touch"
+    ]
+  },
+  "phone_vibrate": {
+    "category": "block",
+    "sounds": [
+      "semaphore:phone_vibrate"
+    ]
+  }
+}

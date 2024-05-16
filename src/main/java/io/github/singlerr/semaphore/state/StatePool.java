@@ -22,12 +22,8 @@ public final class StatePool {
             return;
         }
 
-        State<?> prev = states.get(uuid);
-        if (!prev.equals(state)) {
-            states.put(uuid, state);
-        } else {
-            log.info("Ignoring duplicate state {}", uuid);
-        }
+        states.put(uuid, state);
+        log.info("Updating state {}", uuid);
     }
 
     public Set<Map.Entry<UUID, State<?>>> getStates() {

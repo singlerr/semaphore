@@ -1,9 +1,12 @@
 #Gui
 gui.phonescreen.title=Phone
+gui.phonescreen.misscall=Opponent missed call
 #Key
 key.phone.show=Turn On
 key.phone.hide=Turn Off
 key.semaphore.category=Semaphore
+key.call.accept=Accept
+key.call.deny=Deny
 #Item
 item.semaphore.itemphone.name=Phone
 #CreativeTab

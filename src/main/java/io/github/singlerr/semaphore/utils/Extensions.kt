@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage
 import java.io.InputStream
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
+import java.util.function.Function
 import javax.imageio.ImageIO
 import net.minecraft.client.Minecraft
 import net.minecraft.util.ResourceLocation
@@ -65,6 +66,46 @@ fun ResourceLocation.asImageAsync(): CompletableFuture<BufferedImage> {
             imageCache[this] = img
             img
         }
+}
+
+fun ResourceLocation.asImageAsyncNullable(): CompletableFuture<BufferedImage>? {
+    if (imageCache.containsKey(this)) {
+        return CompletableFuture.completedFuture(imageCache[this])
+    }
+    val input: InputStream
+    try {
+        input = asInputStream()
+    } catch (_: Exception) {
+        return null
+    }
+    return CompletableFuture.supplyAsync { ImageIO.read(input) }
+        .thenApplyAsync { img ->
+            imageCache[this] = img
+            img
+        }
+}
+
+fun ResourceLocation.asImageAsync(
+    preApply: Function<BufferedImage, BufferedImage>
+): CompletableFuture<BufferedImage> {
+    if (imageCache.containsKey(this)) {
+        return CompletableFuture.completedFuture(imageCache[this])
+    }
+    return CompletableFuture.supplyAsync { ImageIO.read(asInputStream()) }
+        .thenApplyAsync(preApply)
+        .thenApplyAsync { img ->
+            imageCache[this] = img
+            img
+        }
+}
+
+fun ResourceLocation.exists(): Boolean {
+    return try {
+        Minecraft.getMinecraft().resourceManager.getResource(this)
+        true
+    } catch (e: Exception) {
+        false
+    }
 }
 
 fun primaryBackground(): Color {

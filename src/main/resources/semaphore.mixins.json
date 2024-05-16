@@ -8,8 +8,10 @@
     "core.EntityPlayerMixin"
   ],
   "client": [
+    "compat.JavaSpeakerAccessor",
     "compat.UIImageAccessor",
-    "compat.TextureScalingModeAccessor"
+    "compat.TextureScalingModeAccessor",
+    "core.MusicTickerMixin"
   ],
   "server": [
     "compat.VoicechatServerMixin"

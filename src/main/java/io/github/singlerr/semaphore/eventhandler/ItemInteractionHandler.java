@@ -2,7 +2,7 @@
 package io.github.singlerr.semaphore.eventhandler;
 
 import io.github.singlerr.semaphore.item.ItemPhone;
-import io.github.singlerr.semaphore.regisries.ClientRegistries;
+import io.github.singlerr.semaphore.registries.ClientRegistries;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;

@@ -1,5 +1,6 @@
 #Gui
 gui.phonescreen.title=전화번호부
+gui.phonescreen.misscall=상대방이 전화를 받지 않았습니다.
 #Key
 key.phone.show=휴대폰 켜기
 key.phone.hide=휴대폰 끄기

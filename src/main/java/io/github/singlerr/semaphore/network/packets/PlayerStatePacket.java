@@ -1,22 +1,27 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.network.packets;
 
+import io.github.singlerr.semaphore.events.PlayerStateChangeEvent;
 import io.github.singlerr.semaphore.network.Packet;
 import io.github.singlerr.semaphore.network.PacketHandler;
 import io.github.singlerr.semaphore.network.wrapper.PacketWrapper;
-import io.github.singlerr.semaphore.regisries.CommonRegistries;
+import io.github.singlerr.semaphore.registries.ClientRegistries;
+import io.github.singlerr.semaphore.registries.ServerRegistries;
 import io.github.singlerr.semaphore.state.player.PlayerContext;
 import io.github.singlerr.semaphore.utils.SerializationUtils;
 import io.netty.buffer.ByteBuf;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
 
-@SuperBuilder
-@NoArgsConstructor
+@Builder
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public final class PlayerStatePacket extends Packet {
 
     private PlayerContext state;
@@ -41,14 +46,18 @@ public final class PlayerStatePacket extends Packet {
 
         @Override
         protected Packet handleC2S(MessageContext ctx, PlayerStatePacket packet) {
-            CommonRegistries.getEventPool().invoke(packet);
+            PlayerStateChangeEvent event = new PlayerStateChangeEvent(packet.getState());
+            ServerRegistries.getEventPool().invoke(event);
             return null;
         }
 
         @Override
         protected Packet handleS2C(MessageContext ctx, PlayerStatePacket packet) {
-            CommonRegistries.getEventPool().invoke(packet);
-            CommonRegistries.getEventPool().invoke(new PlayerStatePacket.Wrapper(ctx, packet));
+            PlayerStateChangeEvent event = new PlayerStateChangeEvent(packet.getState());
+            event.setSide(Side.SERVER);
+
+            ClientRegistries.getEventPool().invoke(event);
+
             return null;
         }
     }

@@ -9,7 +9,7 @@ import de.maxhenkel.voicechat.voice.server.ClientConnection;
 import de.maxhenkel.voicechat.voice.server.PlayerStateManager;
 import de.maxhenkel.voicechat.voice.server.Server;
 import de.maxhenkel.voicechat.voice.server.ServerWorldUtils;
-import io.github.singlerr.semaphore.regisries.CommonRegistries;
+import io.github.singlerr.semaphore.registries.CommonRegistries;
 import io.github.singlerr.semaphore.state.State;
 import io.github.singlerr.semaphore.state.StatePool;
 import io.github.singlerr.semaphore.state.player.PlayerContext;

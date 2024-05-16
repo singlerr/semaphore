@@ -8,10 +8,10 @@
     "core.EntityPlayerMixin"
   ],
   "client": [
-    "compat.JavaSpeakerAccessor",
-    "compat.UIImageAccessor",
-    "compat.TextureScalingModeAccessor",
-    "core.MusicTickerMixin"
+    "core.MinecraftMixin",
+    "core.MusicTickerMixin",
+    "core.SoundManagerAccessor",
+    "core.SoundHandlerAccessor"
   ],
   "server": [
     "compat.VoicechatServerMixin"

@@ -39,8 +39,8 @@ class UISlider(
         UIRoundedRectangle(radius = 5f).constrain {
           x = 0.pixels()
           y = CenterConstraint()
-          width = 100.percent()
-          height = 10.percent()
+          width = 100.percent() boundTo this@UISlider
+          height = 10.percent() boundTo this@UISlider
           color = barColor.toConstraint()
         } childOf this effect OutlineEffect(color = Color.black, width = 0.5f)
 

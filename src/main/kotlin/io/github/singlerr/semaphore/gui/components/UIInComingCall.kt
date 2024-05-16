@@ -9,25 +9,14 @@ import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.constraints.ImageAspectConstraint
 import gg.essential.elementa.constraints.RelativeConstraint
 import gg.essential.elementa.dsl.*
-import io.github.singlerr.semaphore.Semaphore
-import io.github.singlerr.semaphore.network.packets.CallFeedbackPacket
+import io.github.singlerr.semaphore.events.OutComingCallFeedbackEvent
 import io.github.singlerr.semaphore.registries.ClientRegistries
 import io.github.singlerr.semaphore.state.player.PlayerContext
-import io.github.singlerr.semaphore.utils.ResourceLocationBuilder
+import io.github.singlerr.semaphore.utils.Resources
 import io.github.singlerr.semaphore.utils.asImageAsync
 import java.util.UUID
 
 class UIInComingCall(parent: UIComponent, ownerState: PlayerContext, callerId: UUID) : UIBlock() {
-
-  companion object {
-    private val CALL_ICON =
-        ResourceLocationBuilder.builder()
-            .namespace(Semaphore.MOD_ID)
-            .append("textures")
-            .append("gui")
-            .append("phone_call.png")
-            .build()
-  }
 
   init {
     constrain {
@@ -49,7 +38,7 @@ class UIInComingCall(parent: UIComponent, ownerState: PlayerContext, callerId: U
         } childOf this
 
     val accept =
-        UIImage(CALL_ICON.asImageAsync()).constrain {
+        UIImage(Resources.ICON_CALL_ACCEPT.build().asImageAsync()).constrain {
           x = RelativeConstraint(1 / 3f)
           y = 50.pixels(true)
 
@@ -59,16 +48,25 @@ class UIInComingCall(parent: UIComponent, ownerState: PlayerContext, callerId: U
 
     accept.onMouseClick {
       ClientRegistries.getEventPool()
-          .invoke(CallFeedbackPacket.builder().caller(callerId).callee(ownerState.owner))
+          .invoke(
+              OutComingCallFeedbackEvent(
+                  callerId, ownerState.owner, PlayerContext.CallFeedback.ACCEPT))
     }
 
     val deny =
-        UIImage(CALL_ICON.asImageAsync()).constrain {
+        UIImage(Resources.ICON_CALL_DENY.build().asImageAsync()).constrain {
           x = RelativeConstraint(2 / 3f)
           y = 50.pixels(true)
 
           width = 50.pixels()
           height = ImageAspectConstraint()
         } childOf parent
+
+    deny.onMouseClick {
+      ClientRegistries.getEventPool()
+          .invoke(
+              OutComingCallFeedbackEvent(
+                  callerId, ownerState.owner, PlayerContext.CallFeedback.DENY_NOT_AVAILABLE))
+    }
   }
 }

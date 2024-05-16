@@ -5,9 +5,7 @@ import net.minecraft.util.SoundEvent;
 
 public interface VanillaAudioPlayer {
 
-    SoundWrapper getPlaying();
+    void play(SoundEvent soundEvent, boolean repeat);
 
-    void startPlaying(SoundEvent soundEvent, float volume, float pitch, boolean repeat);
-
-    void stopPlaying();
+    void stop(SoundEvent soundEvent);
 }

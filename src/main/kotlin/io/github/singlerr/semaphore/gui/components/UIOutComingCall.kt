@@ -10,27 +10,17 @@ import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.constraints.ImageAspectConstraint
 import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
-import io.github.singlerr.semaphore.Semaphore
+import io.github.singlerr.semaphore.events.CallClosedEvent
 import io.github.singlerr.semaphore.events.PlayerStateChangeEvent
 import io.github.singlerr.semaphore.registries.ClientRegistries
 import io.github.singlerr.semaphore.state.player.PlayerContext
-import io.github.singlerr.semaphore.utils.ResourceLocationBuilder
+import io.github.singlerr.semaphore.utils.Resources
 import io.github.singlerr.semaphore.utils.asImageAsync
 import java.awt.Color
 import java.util.UUID
 import net.minecraft.client.resources.I18n
 
 class UIOutComingCall(parent: UIComponent, ownerState: PlayerContext, calleeId: UUID) : UIBlock() {
-
-  companion object {
-    private val CALL_ICON =
-        ResourceLocationBuilder.builder()
-            .namespace(Semaphore.MOD_ID)
-            .append("textures")
-            .append("gui")
-            .append("phone_call.png")
-            .build()
-  }
 
   private val messageLabel: UIComponent
 
@@ -54,7 +44,7 @@ class UIOutComingCall(parent: UIComponent, ownerState: PlayerContext, calleeId: 
         } childOf this
 
     val cancel =
-        UIImage(CALL_ICON.asImageAsync()).constrain {
+        UIImage(Resources.ICON_CALL_DENY.build().asImageAsync()).constrain {
           x = CenterConstraint()
           y = 50.pixels(true)
 
@@ -63,9 +53,9 @@ class UIOutComingCall(parent: UIComponent, ownerState: PlayerContext, calleeId: 
         } childOf this
 
     cancel.onMouseClick {
-      ownerState.callState = PlayerContext.CallState.IDLE
       val event = PlayerStateChangeEvent(ownerState)
       ClientRegistries.getEventPool().invoke(event)
+      ClientRegistries.getEventPool().invoke(CallClosedEvent(ownerState.owner, calleeId))
       this@UIOutComingCall.hide(true)
     }
 

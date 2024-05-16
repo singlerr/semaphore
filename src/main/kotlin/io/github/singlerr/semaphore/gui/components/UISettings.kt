@@ -2,14 +2,12 @@
 package io.github.singlerr.semaphore.gui.components
 
 import gg.essential.elementa.UIComponent
-import gg.essential.elementa.components.UIBlock
-import gg.essential.elementa.components.UIContainer
-import gg.essential.elementa.components.UIRoundedRectangle
-import gg.essential.elementa.components.UIWrappedText
+import gg.essential.elementa.components.*
 import gg.essential.elementa.constraints.*
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.state.BasicState
 import gg.essential.elementa.state.toConstraint
+import io.github.singlerr.semaphore.config.ModConfig
 import io.github.singlerr.semaphore.state.player.PlayerContext
 import java.awt.Color
 
@@ -34,17 +32,17 @@ class UISettings(parent: UIComponent, ownerState: PlayerContext, states: List<Pl
           x = SiblingConstraint(padding = 2f)
           y = CenterConstraint()
           width = RelativeConstraint(1 / 2f)
-          height = 30.pixels()
+          height = ChildBasedMaxSizeConstraint()
 
           color = bellRingState.map(this@UISettings::toColor).toConstraint()
         } childOf container
 
     val bellRingText =
-        UIWrappedText("Bell").constrain {
+        UIText("Bell").constrain {
           x = CenterConstraint() boundTo bellRing
           y = CenterConstraint() boundTo bellRing
-          width = RelativeConstraint(1 / 5f)
-          height = AspectConstraint()
+          width = 50.percent() boundTo bellRing
+          height = AspectConstraint() boundTo bellRing
         } childOf bellRing
 
     val vibration =
@@ -52,26 +50,28 @@ class UISettings(parent: UIComponent, ownerState: PlayerContext, states: List<Pl
           x = SiblingConstraint(padding = 2f)
           y = CenterConstraint()
           width = RelativeConstraint(1 / 2f)
-          height = 30.pixels()
+          height = ChildBasedMaxSizeConstraint()
 
           color = vibrationState.map(this@UISettings::toColor).toConstraint()
         } childOf container
     val vibrationText =
-        UIWrappedText("Vibration").constrain {
+        UIText("Vibration").constrain {
           x = CenterConstraint() boundTo vibration
           y = CenterConstraint() boundTo vibration
-          width = RelativeConstraint(1 / 5f)
-          height = AspectConstraint()
+          width = 50.percent() boundTo vibration
+          height = AspectConstraint() boundTo vibration
         } childOf vibration
 
     bellRing.onMouseClick {
       bellRingState.set(true)
       vibrationState.set(false)
+      ModConfig.bellRing = true
     }
 
     vibration.onMouseClick {
       vibrationState.set(true)
       bellRingState.set(false)
+      ModConfig.bellRing = false
     }
     val volumeSettings = UIVolumes(this, container, ownerState, states)
   }

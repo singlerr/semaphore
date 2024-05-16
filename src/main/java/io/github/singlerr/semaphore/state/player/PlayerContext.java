@@ -81,6 +81,18 @@ public class PlayerContext implements State<LogicalPlayer> {
         this.missCalls = new HashMap<>(other.getMissCalls());
     }
 
+    public AtomicInteger getOrCreateMissCall(UUID caller) {
+        AtomicInteger missCount;
+        if (!missCalls.containsKey(caller)) {
+            missCount = new AtomicInteger(0);
+            missCalls.put(caller, missCount);
+        } else {
+            missCount = missCalls.get(caller);
+        }
+
+        return missCount;
+    }
+
     public synchronized void setOpponent(UUID opponent) {
         this.opponent = opponent;
     }

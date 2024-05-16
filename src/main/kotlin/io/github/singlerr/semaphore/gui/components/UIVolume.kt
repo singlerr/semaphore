@@ -47,7 +47,6 @@ class UIVolume(private val ownerState: PlayerContext, private val opponentId: UU
         UIText().bindText(percentage).constrain {
           x = 5.pixels(alignOpposite = true)
           y = CenterConstraint()
-          textScale = 0.5f.pixels()
         } childOf this
     val volume =
         UISlider(

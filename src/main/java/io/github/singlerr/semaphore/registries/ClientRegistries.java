@@ -112,6 +112,7 @@ public final class ClientRegistries {
         phoneScreen = new PhoneScreen(
                 CommonRegistries.getStatePool(),
                 Minecraft.getMinecraft().getSession().getProfile().getId());
+        phoneScreen.register(getEventPool());
         log.info("Registering event handler");
     }
 
@@ -122,6 +123,14 @@ public final class ClientRegistries {
         getEventPool()
                 .invoke(new PlayerStateChangeEvent(
                         PlayerContext.builder().owner(userId).name(name).build()));
+
+        for (int i = 0; i < 5; i++) {
+            getEventPool()
+                    .invoke(new PlayerStateChangeEvent(PlayerContext.builder()
+                            .owner(UUID.randomUUID())
+                            .name(UUID.randomUUID().toString())
+                            .build()));
+        }
     }
 
     public static void apply(FMLPostInitializationEvent event) {

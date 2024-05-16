@@ -4,7 +4,6 @@ package io.github.singlerr.semaphore.gui.components
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.ScrollComponent
 import gg.essential.elementa.constraints.CenterConstraint
-import gg.essential.elementa.constraints.FillConstraint
 import gg.essential.elementa.dsl.*
 import io.github.singlerr.semaphore.state.player.PlayerContext
 
@@ -24,8 +23,8 @@ class UIVolumes(
               x = CenterConstraint()
               y = 20.pixels() boundTo neighbor
 
-              width = FillConstraint(true) - 2.pixels()
-              height = 80.percent() boundTo parent
+              width = 98.percent() boundTo parent
+              height = 60.percent() boundTo parent
             } childOf parent
 
     states.forEach { ctx ->

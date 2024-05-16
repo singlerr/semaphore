@@ -7,7 +7,6 @@ import gg.essential.elementa.components.*
 import gg.essential.elementa.constraints.*
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.state.BasicState
-import io.github.singlerr.semaphore.Semaphore
 import io.github.singlerr.semaphore.events.PlaySoundCommand
 import io.github.singlerr.semaphore.events.SendingCallEvent
 import io.github.singlerr.semaphore.registries.ClientRegistries
@@ -53,7 +52,7 @@ class UIAddress(private var ownerState: PlayerContext, var currentState: PlayerC
         } childOf this
 
     val callImage =
-        UIImage(CALL_ICON.build().asImageAsync()).constrain {
+        UIImage(Resources.ICON_CALL_ACCEPT.build().asImageAsync()).constrain {
           x = 5.pixels(alignOpposite = true)
           y = CenterConstraint()
           width = RelativeConstraint(1 / 7f)
@@ -70,7 +69,7 @@ class UIAddress(private var ownerState: PlayerContext, var currentState: PlayerC
     }
 
     missCallImage =
-        UIImage(CALL_ICON.build().asImageAsync()).constrain {
+        UIImage(Resources.ICON_CALL_MISS.build().asImageAsync()).constrain {
           x = SiblingConstraint(2f, alignOpposite = true) boundTo callImage
           y = CenterConstraint()
           width = RelativeConstraint(1 / 7f)
@@ -103,14 +102,5 @@ class UIAddress(private var ownerState: PlayerContext, var currentState: PlayerC
       missCallCount.hide(true)
       missCallImage.hide(true)
     }
-  }
-
-  companion object {
-    private val CALL_ICON: ResourceLocationBuilder =
-        ResourceLocationBuilder.builder()
-            .namespace(Semaphore.MOD_ID)
-            .append("textures")
-            .append("gui")
-            .append("phone_call.png")
   }
 }

@@ -2,20 +2,19 @@
 package io.github.singlerr.semaphore.mixin.core;
 
 import io.github.singlerr.semaphore.sound.ClientSoundHandler;
-import io.github.singlerr.semaphore.sound.SoundWrapper;
 import io.github.singlerr.semaphore.sound.VanillaAudioPlayer;
-import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.Map;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.MusicTicker;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(MusicTicker.class)
 public abstract class MusicTickerMixin implements VanillaAudioPlayer {
@@ -25,48 +24,41 @@ public abstract class MusicTickerMixin implements VanillaAudioPlayer {
     private Minecraft mc;
 
     @Unique
-    @Nullable
-    private ISound soundPlaying;
-
-    @Unique
-    private SoundEvent soundEventPlaying;
-
-    @Unique
-    private boolean delayed = false;
+    private Map<ResourceLocation, ISound> sounds = new HashMap<>();
 
     @Override
-    public SoundWrapper getPlaying() {
-        return null;
+    public void play(SoundEvent soundEvent, boolean repeat) {
+        ISound sound;
+        ResourceLocation soundName = soundEvent.getSoundName();
+        if (sounds.containsKey(soundName)) {
+            sound = sounds.get(soundName);
+        } else {
+            sound = ClientSoundHandler.getRepeatable(soundEvent, repeat);
+            sounds.put(soundName, sound);
+        }
+
+        if (mc.getSoundHandler().isSoundPlaying(sound)) {
+            stop(soundEvent);
+        }
+
+        mc.getSoundHandler().playSound(sound);
     }
 
     @Override
-    public void startPlaying(SoundEvent soundEvent, float volume, float pitch, boolean repeat) {
-        soundPlaying = ClientSoundHandler.getRepeatable(soundEvent, repeat);
-        soundEventPlaying = soundEvent;
-        mc.getSoundHandler().playSound(soundPlaying);
-    }
-
-    @Override
-    public void stopPlaying() {
-        if (soundPlaying != null) {
-            mc.getSoundHandler().stopSound(soundPlaying);
-            soundPlaying = null;
+    public void stop(SoundEvent soundEvent) {
+        if (sounds.containsKey(soundEvent.getSoundName())) {
+            String key = getKey(sounds.get(soundEvent.getSoundName()));
+            mc.getSoundHandler().stop(key, SoundCategory.MASTER);
         }
     }
 
-    @Inject(method = "update", at = @At("HEAD"), cancellable = true)
-    private void semaphore$playCustomSound(CallbackInfo ci) {
-        if (soundPlaying != null) {
-            if (delayed && mc.getSoundHandler().isSoundPlaying(soundPlaying)) {
-                delayed = false;
-            }
-            if (!mc.getSoundHandler().isSoundPlaying(soundPlaying) && soundPlaying.canRepeat() && !delayed) {
-                soundPlaying = ClientSoundHandler.getRepeatable(soundEventPlaying, soundPlaying.canRepeat());
-                mc.getSoundHandler().playDelayedSound(soundPlaying, soundPlaying.getRepeatDelay());
-                delayed = true;
-            } else {
-                soundPlaying = null;
-            }
-        }
+    @Unique
+    private String getKey(ISound sound) {
+        SoundHandlerAccessor soundHandler = (SoundHandlerAccessor) mc.getSoundHandler();
+        SoundManagerAccessor accessor = (SoundManagerAccessor) soundHandler.getSoundManager();
+
+        Map<ISound, String> map = accessor.getInvPlayingSounds();
+
+        return map.get(sound);
     }
 }

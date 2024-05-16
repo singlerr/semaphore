@@ -5,6 +5,7 @@ import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.WindowScreen
 import gg.essential.elementa.components.*
+import gg.essential.elementa.components.inspector.Inspector
 import gg.essential.elementa.dsl.*
 import io.github.singlerr.semaphore.Semaphore
 import io.github.singlerr.semaphore.events.CallClosedEvent
@@ -14,23 +15,19 @@ import io.github.singlerr.semaphore.events.PlaySoundCommand
 import io.github.singlerr.semaphore.events.PlayerStateChangeEvent
 import io.github.singlerr.semaphore.events.ReceivingCallEvent
 import io.github.singlerr.semaphore.events.SendingCallEvent
-import io.github.singlerr.semaphore.events.StopSoundCommand
 import io.github.singlerr.semaphore.gui.components.*
-import io.github.singlerr.semaphore.network.packets.CallFeedbackPacket
-import io.github.singlerr.semaphore.network.packets.PlayerStatePacket
 import io.github.singlerr.semaphore.registries.ClientRegistries
-import io.github.singlerr.semaphore.registries.CommonRegistries
-import io.github.singlerr.semaphore.sound.AudioPlayer
 import io.github.singlerr.semaphore.state.StatePool
 import io.github.singlerr.semaphore.state.player.PlayerContext
+import io.github.singlerr.semaphore.utils.EventPool
 import io.github.singlerr.semaphore.utils.ResourceLocationBuilder
 import io.github.singlerr.semaphore.utils.asImageAsync
 import io.github.singlerr.semaphore.utils.asImageAsyncNullable
 import java.util.UUID
 import net.minecraft.util.ResourceLocation
 
-class PhoneScreen(statePool: StatePool, private val playerId: UUID) :
-    WindowScreen(ElementaVersion.V5) {
+class PhoneScreen(statePool: StatePool, playerId: UUID) :
+    WindowScreen(ElementaVersion.V5, drawDefaultBackground = false) {
 
   companion object {
     private val SETTINGS_ICON =
@@ -46,7 +43,7 @@ class PhoneScreen(statePool: StatePool, private val playerId: UUID) :
             .namespace(Semaphore.MOD_ID)
             .append("textures")
             .append("gui")
-            .append("phone_frame.png")
+            .append("phone_frame_bar.png")
             .build()
   }
 
@@ -88,22 +85,26 @@ class PhoneScreen(statePool: StatePool, private val playerId: UUID) :
             .build()
             .asImageAsyncNullable()
 
+    val backgroundX = 27.percent() boundTo frame
+    val backgroundY = 17.pixels() boundTo frame
+    val backgroundWidth = 46.percent() boundTo frame
+    val backgroundHeight = 83.percent() boundTo frame
     val container =
         if (backgroundImage != null) {
           UIImage(backgroundImage).constrain {
-            x = 30.percent() boundTo frame
-            y = 10.pixels() boundTo frame
+            x = backgroundX
+            y = backgroundY
 
-            width = 40.percent() boundTo frame
-            height = 80.percent() boundTo frame
+            width = backgroundWidth
+            height = backgroundHeight
           } childOf frame
         } else {
           UIBlock().constrain {
-            x = 30.percent() boundTo frame
-            y = 10.pixels() boundTo frame
+            x = backgroundX
+            y = backgroundY
 
-            width = 40.percent() boundTo frame
-            height = 80.percent() boundTo frame
+            width = backgroundWidth
+            height = backgroundHeight
           } childOf frame
         }
 
@@ -123,7 +124,7 @@ class PhoneScreen(statePool: StatePool, private val playerId: UUID) :
     val settingsBtn =
         UIImage(SETTINGS_ICON.asImageAsync()).constrain {
           x = 10.pixels() boundTo container
-          y = 10.pixels(true) boundTo frame
+          y = 20.pixels(true) boundTo frame
 
           width = 10.pixels()
           height = 10.pixels()
@@ -146,62 +147,52 @@ class PhoneScreen(statePool: StatePool, private val playerId: UUID) :
           .invoke(PlaySoundCommand(ClientRegistries.SOUND_PHONE_TOUCH, false))
     }
 
-    //        Inspector(window).constrain {
-    //            x = 10.pixels(true)
-    //            y = 10.pixels(true)
-    //        } childOf window
+    Inspector(window).constrain {
+      x = 10.pixels(true)
+      y = 10.pixels(true)
+    } childOf window
   }
 
-  fun onReceivingCall(e: ReceivingCallEvent) {
-    if (ownerState.callState != PlayerContext.CallState.IDLE) {
-      CommonRegistries.NETWORK.sendToServer(
-          CallFeedbackPacket.builder()
-              .callFeedback(PlayerContext.CallFeedback.DENY_IN_CALL)
-              .caller(e.caller)
-              .callee(e.callee)
-              .build())
-      ownerState.missCalls[e.caller]?.incrementAndGet()
-    } else {
-      ownerState.opponent = e.caller
-      ownerState.callState = PlayerContext.CallState.RECEIVING_CALL
+  fun register(eventPool: EventPool) {
+    eventPool.subscribe(ReceivingCallEvent::class.java, this::onReceivingCall)
+    eventPool.subscribe(SendingCallEvent::class.java, this::onSendingCall)
+    eventPool.subscribe(InComingCallFeedbackEvent::class.java, this::onInComingCallFeedback)
+    eventPool.subscribe(OutComingCallFeedbackEvent::class.java, this::onOutComingCallFeedback)
+    eventPool.subscribe(CallClosedEvent::class.java, this::onCallClosed)
+  }
+
+  private fun onReceivingCall(e: ReceivingCallEvent) {
+    if (ownerState.callState == PlayerContext.CallState.IDLE) {
       inCallScreen?.unhide()
     }
   }
 
-  fun onSendingCall(e: SendingCallEvent) {
+  private fun onSendingCall(e: SendingCallEvent) {
     outCallScreen = UIOutComingCall(rootComponent, ownerState, e.callee) childOf rootComponent
     outCallScreen?.unhide(true)
-    ownerState.missCalls[e.callee]?.set(0)
-    addressScreen.update(CommonRegistries.statePool)
   }
 
-  fun onInComingCallFeedback(e: InComingCallFeedbackEvent) {
+  private fun onInComingCallFeedback(e: InComingCallFeedbackEvent) {
     Window.enqueueRenderOperation {
       if (e.feedback != PlayerContext.CallFeedback.ACCEPT) {
-        AudioPlayer.play(ClientRegistries.MISS_CALL_SOUND)
         outCallScreen?.callNotAvailable()
       } else {
-        ownerState.opponent = e.callee
-        ownerState.callState = PlayerContext.CallState.IN_CALL
         outCallScreen?.callAccepted()
       }
     }
   }
 
-  fun onOutComingCallFeedback(e: OutComingCallFeedbackEvent) {
-    if (e.feedback == PlayerContext.CallFeedback.ACCEPT) {
-      ownerState.callState = PlayerContext.CallState.IN_CALL
-      ownerState.opponent = e.caller
-      CommonRegistries.NETWORK.sendToServer(
-          PlayerStatePacket.builder().id(ownerState.owner).state(ownerState).build())
-      ClientRegistries.getEventPool().invoke(StopSoundCommand())
-      return
-    }
+  private fun onOutComingCallFeedback(e: OutComingCallFeedbackEvent) {
+    outCallScreen?.hide(true)
+    outCallScreen = null
   }
 
-  fun onPlayerStateChange(e: PlayerStateChangeEvent) {
+  private fun onPlayerStateChange(e: PlayerStateChangeEvent) {
     addressScreen.update(ownerState, e.state)
   }
 
-  fun onCallClosed(e: CallClosedEvent) {}
+  private fun onCallClosed(e: CallClosedEvent) {
+    inCallScreen?.hide(true)
+    outCallScreen?.hide(true)
+  }
 }

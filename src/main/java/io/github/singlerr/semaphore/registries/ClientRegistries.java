@@ -124,13 +124,13 @@ public final class ClientRegistries {
                 .invoke(new PlayerStateChangeEvent(
                         PlayerContext.builder().owner(userId).name(name).build()));
 
-        for (int i = 0; i < 5; i++) {
-            getEventPool()
-                    .invoke(new PlayerStateChangeEvent(PlayerContext.builder()
-                            .owner(UUID.randomUUID())
-                            .name(UUID.randomUUID().toString())
-                            .build()));
-        }
+        //        for (int i = 0; i < 5; i++) {
+        //            getEventPool()
+        //                    .invoke(new PlayerStateChangeEvent(PlayerContext.builder()
+        //                            .owner(UUID.randomUUID())
+        //                            .name(UUID.randomUUID().toString())
+        //                            .build()));
+        //        }
     }
 
     public static void apply(FMLPostInitializationEvent event) {

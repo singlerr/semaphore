@@ -86,7 +86,7 @@ class PhoneScreen(statePool: StatePool, playerId: UUID) :
             .asImageAsyncNullable()
 
     val backgroundX = 27.percent() boundTo frame
-    val backgroundY = 17.pixels() boundTo frame
+    val backgroundY = 8.percent() boundTo frame
     val backgroundWidth = 46.percent() boundTo frame
     val backgroundHeight = 83.percent() boundTo frame
     val container =

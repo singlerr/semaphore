@@ -52,6 +52,7 @@ public class PlayerContext implements State<LogicalPlayer> {
     public void serialize(ByteBuf buffer) {
         buffer.writeInt(callState.ordinal());
         SerializationUtils.writeUUID(buffer, opponent);
+        SerializationUtils.writeUUID(buffer, owner);
         ByteBufUtils.writeUTF8String(buffer, name);
     }
 
@@ -60,6 +61,7 @@ public class PlayerContext implements State<LogicalPlayer> {
         int ordinal = buffer.readInt();
         callState = CallState.values()[ordinal];
         opponent = SerializationUtils.readUUID(buffer);
+        owner = SerializationUtils.readUUID(buffer);
         name = ByteBufUtils.readUTF8String(buffer);
     }
 

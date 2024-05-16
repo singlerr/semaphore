@@ -54,13 +54,13 @@ class UIVolume(private val ownerState: PlayerContext, private val opponentId: UU
                 100.percent(),
                 max = 100f,
                 min = 0f,
-                defaultValue = 100f,
+                defaultValue = ownerState.volumes[opponentId] ?: 100f,
                 barColor = Color.white,
                 valueConsumer = this::setPercentage)
             .constrain {
               x = SiblingConstraint(2f) boundTo volumeIcon
               y = CenterConstraint()
-              width = RelativeConstraint(3f) boundTo percentageText
+              width = RelativeConstraint(2f) boundTo percentageText
               height = 10.pixels()
             } childOf this
   }

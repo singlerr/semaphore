@@ -15,7 +15,7 @@ public final class PlayerContextHandler {
         eventPool.subscribe(ReceivingCallEvent.class, PlayerContextHandler::onReceivingCall);
         eventPool.subscribe(SendingCallEvent.class, PlayerContextHandler::onSendingCall);
         eventPool.subscribe(InComingCallFeedbackEvent.class, PlayerContextHandler::onInComingCallFeedback);
-        eventPool.subscribe(OutComingCallFeedbackEvent.class, PlayerContextHandler::onOutComingCallFeedback);
+        eventPool.subscribe(OutGoingCallFeedbackEvent.class, PlayerContextHandler::onOutComingCallFeedback);
         eventPool.subscribe(CallClosedEvent.class, PlayerContextHandler::onCallClosed);
     }
 
@@ -55,7 +55,7 @@ public final class PlayerContextHandler {
         });
     }
 
-    private void onOutComingCallFeedback(OutComingCallFeedbackEvent event) {
+    private void onOutComingCallFeedback(OutGoingCallFeedbackEvent event) {
         Optional<PlayerContext> ctx = CommonRegistries.getStatePool().get(event.getCallee(), PlayerContext.class);
         ctx.ifPresent(playerContext -> {
             if (event.getFeedback() == PlayerContext.CallFeedback.ACCEPT) {

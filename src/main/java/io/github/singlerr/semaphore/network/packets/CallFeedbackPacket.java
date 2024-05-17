@@ -2,8 +2,7 @@
 package io.github.singlerr.semaphore.network.packets;
 
 import io.github.singlerr.semaphore.events.CallFeedbackEvent;
-import io.github.singlerr.semaphore.events.OpponentCallAcceptedEvent;
-import io.github.singlerr.semaphore.events.OpponentCallDeniedEvent;
+import io.github.singlerr.semaphore.events.InComingCallFeedbackEvent;
 import io.github.singlerr.semaphore.network.Packet;
 import io.github.singlerr.semaphore.network.PacketHandler;
 import io.github.singlerr.semaphore.network.wrapper.PacketWrapper;
@@ -63,10 +62,11 @@ public final class CallFeedbackPacket extends Packet {
 
             if (Objects.requireNonNull(packet.getCallFeedback()) == PlayerContext.CallFeedback.ACCEPT) {
                 ClientRegistries.getEventPool()
-                        .invoke(new OpponentCallAcceptedEvent(packet.getCaller(), packet.getCallee()));
+                        .invoke(new InComingCallFeedbackEvent(
+                                packet.getCaller(), packet.getCallee(), packet.getCallFeedback()));
             } else {
                 ClientRegistries.getEventPool()
-                        .invoke(new OpponentCallDeniedEvent(
+                        .invoke(new InComingCallFeedbackEvent(
                                 packet.getCaller(), packet.getCallee(), packet.getCallFeedback()));
             }
 

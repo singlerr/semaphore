@@ -52,6 +52,7 @@ public final class ClientRegistries {
     public static final SoundEvent SOUND_CALL_YES = new SoundEvent(new ResourceLocation(Semaphore.MOD_ID, "call_yes"));
     public static final SoundEvent SOUND_CALL_OFF = new SoundEvent(new ResourceLocation(Semaphore.MOD_ID, "call_off"));
     public static final SoundEvent SOUND_CALLING = new SoundEvent(new ResourceLocation(Semaphore.MOD_ID, "calling"));
+
     public static final SoundEvent SOUND_PHONE_BELL =
             new SoundEvent(new ResourceLocation(Semaphore.MOD_ID, "phone_bell"));
     public static final SoundEvent SOUND_PHONE_TOUCH =
@@ -124,13 +125,13 @@ public final class ClientRegistries {
                 .invoke(new PlayerStateChangeEvent(
                         PlayerContext.builder().owner(userId).name(name).build()));
 
-        //        for (int i = 0; i < 5; i++) {
-        //            getEventPool()
-        //                    .invoke(new PlayerStateChangeEvent(PlayerContext.builder()
-        //                            .owner(UUID.randomUUID())
-        //                            .name(UUID.randomUUID().toString())
-        //                            .build()));
-        //        }
+        for (int i = 0; i < 5; i++) {
+            getEventPool()
+                    .invoke(new PlayerStateChangeEvent(PlayerContext.builder()
+                            .owner(UUID.randomUUID())
+                            .name(UUID.randomUUID().toString())
+                            .build()));
+        }
     }
 
     public static void apply(FMLPostInitializationEvent event) {
@@ -150,7 +151,7 @@ public final class ClientRegistries {
 
         public void register(EventPool eventPool) {
             eventPool.subscribe(SendingCallEvent.class, ServerSynchronizer::sendToServer);
-            eventPool.subscribe(OutComingCallFeedbackEvent.class, ServerSynchronizer::sendToServer);
+            eventPool.subscribe(OutGoingCallFeedbackEvent.class, ServerSynchronizer::sendToServer);
             eventPool.subscribe(PlayerStateChangeEvent.class, ServerSynchronizer::sendToServer);
         }
 
@@ -162,7 +163,7 @@ public final class ClientRegistries {
                     .build());
         }
 
-        private void sendToServer(OutComingCallFeedbackEvent event) {
+        private void sendToServer(OutGoingCallFeedbackEvent event) {
             CommonRegistries.NETWORK.sendToServer(CallActionPacket.builder()
                     .caller(event.getCaller())
                     .callee(event.getCallee())

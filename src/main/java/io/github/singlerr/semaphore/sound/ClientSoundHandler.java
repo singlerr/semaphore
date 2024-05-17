@@ -36,7 +36,7 @@ public class ClientSoundHandler {
         eventPool.subscribe(SendingCallEvent.class, ClientSoundHandler::handlePhoneCall);
         eventPool.subscribe(CallAcceptedEvent.class, ClientSoundHandler::handleAcceptPhoneCall);
         eventPool.subscribe(InComingCallFeedbackEvent.class, ClientSoundHandler::handleInComingCallFeedback);
-        eventPool.subscribe(OutComingCallFeedbackEvent.class, ClientSoundHandler::handleOutComingCallFeedback);
+        eventPool.subscribe(OutGoingCallFeedbackEvent.class, ClientSoundHandler::handleOutComingCallFeedback);
         eventPool.subscribe(CallClosedEvent.class, ClientSoundHandler::handleCallClosed);
     }
 
@@ -49,6 +49,7 @@ public class ClientSoundHandler {
     }
 
     private void handleInComingCallFeedback(InComingCallFeedbackEvent event) {
+        stopRepeatable(ClientRegistries.SOUND_CALLING);
         if (event.getFeedback() != PlayerContext.CallFeedback.ACCEPT) {
             playNonRepeatable(ClientRegistries.MISS_CALL_SOUND);
         } else {
@@ -56,7 +57,8 @@ public class ClientSoundHandler {
         }
     }
 
-    private void handleOutComingCallFeedback(OutComingCallFeedbackEvent event) {
+    private void handleOutComingCallFeedback(OutGoingCallFeedbackEvent event) {
+        stopRepeatable(ModConfig.bellRing ? ClientRegistries.SOUND_PHONE_BELL : ClientRegistries.SOUND_PHONE_VIBRATE);
         if (event.getFeedback() == PlayerContext.CallFeedback.ACCEPT) {
             playNonRepeatable(ClientRegistries.SOUND_CALL_YES);
             return;

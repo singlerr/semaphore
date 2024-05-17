@@ -60,7 +60,7 @@ class UIVolume(private val ownerState: PlayerContext, private val opponentId: UU
             .constrain {
               x = SiblingConstraint(2f) boundTo volumeIcon
               y = CenterConstraint()
-              width = RelativeConstraint(2f) boundTo percentageText
+              width = 31.pixels()
               height = 10.pixels()
             } childOf this
   }

@@ -10,13 +10,14 @@ import gg.essential.elementa.dsl.*
 import io.github.singlerr.semaphore.Semaphore
 import io.github.singlerr.semaphore.events.CallClosedEvent
 import io.github.singlerr.semaphore.events.InComingCallFeedbackEvent
-import io.github.singlerr.semaphore.events.OutComingCallFeedbackEvent
+import io.github.singlerr.semaphore.events.OutGoingCallFeedbackEvent
 import io.github.singlerr.semaphore.events.PlaySoundCommand
 import io.github.singlerr.semaphore.events.PlayerStateChangeEvent
 import io.github.singlerr.semaphore.events.ReceivingCallEvent
 import io.github.singlerr.semaphore.events.SendingCallEvent
 import io.github.singlerr.semaphore.gui.components.*
 import io.github.singlerr.semaphore.registries.ClientRegistries
+import io.github.singlerr.semaphore.registries.CommonRegistries
 import io.github.singlerr.semaphore.state.StatePool
 import io.github.singlerr.semaphore.state.player.PlayerContext
 import io.github.singlerr.semaphore.utils.EventPool
@@ -157,8 +158,9 @@ class PhoneScreen(statePool: StatePool, playerId: UUID) :
     eventPool.subscribe(ReceivingCallEvent::class.java, this::onReceivingCall)
     eventPool.subscribe(SendingCallEvent::class.java, this::onSendingCall)
     eventPool.subscribe(InComingCallFeedbackEvent::class.java, this::onInComingCallFeedback)
-    eventPool.subscribe(OutComingCallFeedbackEvent::class.java, this::onOutComingCallFeedback)
+    eventPool.subscribe(OutGoingCallFeedbackEvent::class.java, this::onOutComingCallFeedback)
     eventPool.subscribe(CallClosedEvent::class.java, this::onCallClosed)
+    eventPool.subscribe(PlayerStateChangeEvent::class.java, this::onPlayerStateChange)
   }
 
   private fun onReceivingCall(e: ReceivingCallEvent) {
@@ -182,17 +184,19 @@ class PhoneScreen(statePool: StatePool, playerId: UUID) :
     }
   }
 
-  private fun onOutComingCallFeedback(e: OutComingCallFeedbackEvent) {
+  private fun onOutComingCallFeedback(e: OutGoingCallFeedbackEvent) {
     outCallScreen?.hide(true)
     outCallScreen = null
   }
 
   private fun onPlayerStateChange(e: PlayerStateChangeEvent) {
-    addressScreen.update(ownerState, e.state)
+    addressScreen.update(CommonRegistries.statePool)
   }
 
   private fun onCallClosed(e: CallClosedEvent) {
-    inCallScreen?.hide(true)
-    outCallScreen?.hide(true)
+    Window.enqueueRenderOperation {
+      inCallScreen?.hide(true)
+      outCallScreen?.hide(true)
+    }
   }
 }

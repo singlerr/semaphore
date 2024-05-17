@@ -5,6 +5,7 @@ import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.ScrollComponent
 import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.dsl.*
+import io.github.singlerr.semaphore.registries.CommonRegistries
 import io.github.singlerr.semaphore.state.StatePool
 import io.github.singlerr.semaphore.state.player.PlayerContext
 
@@ -39,7 +40,11 @@ class UIAddressList(
   }
 
   fun update(statePool: StatePool) {
-    val states = statePool.states.filterIsInstance<PlayerContext>().toMutableList()
+    val states =
+        CommonRegistries.statePool.states
+            .map { it.value }
+            .filterIsInstance<PlayerContext>()
+            .filter { it.owner != ownerState.owner }
 
     val children = component.children.filterIsInstance<UIAddress>().toMutableList()
 
@@ -55,7 +60,9 @@ class UIAddressList(
 
     states.forEach { state ->
       val target =
-          component.children.find { it is UIAddress && it.currentState.owner == state.owner }
+          component.children[0].children.find {
+            it is UIAddress && it.currentState.owner == state.owner
+          }
       target?.apply {
         return@forEach
       }

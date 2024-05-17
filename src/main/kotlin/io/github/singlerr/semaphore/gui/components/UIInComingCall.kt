@@ -9,7 +9,7 @@ import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.constraints.ImageAspectConstraint
 import gg.essential.elementa.constraints.RelativeConstraint
 import gg.essential.elementa.dsl.*
-import io.github.singlerr.semaphore.events.OutComingCallFeedbackEvent
+import io.github.singlerr.semaphore.events.OutGoingCallFeedbackEvent
 import io.github.singlerr.semaphore.registries.ClientRegistries
 import io.github.singlerr.semaphore.state.player.PlayerContext
 import io.github.singlerr.semaphore.utils.Resources
@@ -49,7 +49,7 @@ class UIInComingCall(parent: UIComponent, ownerState: PlayerContext, callerId: U
     accept.onMouseClick {
       ClientRegistries.getEventPool()
           .invoke(
-              OutComingCallFeedbackEvent(
+              OutGoingCallFeedbackEvent(
                   callerId, ownerState.owner, PlayerContext.CallFeedback.ACCEPT))
     }
 
@@ -65,7 +65,7 @@ class UIInComingCall(parent: UIComponent, ownerState: PlayerContext, callerId: U
     deny.onMouseClick {
       ClientRegistries.getEventPool()
           .invoke(
-              OutComingCallFeedbackEvent(
+              OutGoingCallFeedbackEvent(
                   callerId, ownerState.owner, PlayerContext.CallFeedback.DENY_NOT_AVAILABLE))
     }
   }

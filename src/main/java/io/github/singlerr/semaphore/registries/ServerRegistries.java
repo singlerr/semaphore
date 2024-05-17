@@ -11,6 +11,7 @@ import io.github.singlerr.semaphore.network.packets.CallActionPacket;
 import io.github.singlerr.semaphore.network.packets.CallFeedbackPacket;
 import io.github.singlerr.semaphore.network.packets.PlayerStatePacket;
 import io.github.singlerr.semaphore.state.player.PlayerContext;
+import io.github.singlerr.semaphore.state.player.PlayerContextHandler;
 import io.github.singlerr.semaphore.utils.EventPool;
 import java.util.Optional;
 import java.util.UUID;
@@ -46,6 +47,7 @@ public final class ServerRegistries {
     public static void apply(FMLPreInitializationEvent event) {}
 
     public static void apply(FMLInitializationEvent event) {
+        PlayerContextHandler.register(getEventPool());
         Synchronizer.register(getEventPool());
         MinecraftForge.EVENT_BUS.register(new ServerEventHandler());
     }

@@ -4,34 +4,16 @@ package io.github.singlerr.semaphore.gui
 import de.maxhenkel.voicechat.gui.GameProfileUtils
 import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.components.UIBlock
-import gg.essential.elementa.components.UIImage
-import gg.essential.elementa.components.UIText
 import gg.essential.elementa.components.Window
 import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.constraints.ImageAspectConstraint
-import gg.essential.elementa.constraints.SiblingConstraint
 import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
-import io.github.singlerr.semaphore.Semaphore
 import io.github.singlerr.semaphore.gui.components.UIPlayerSkull
-import io.github.singlerr.semaphore.registries.ClientRegistries
-import io.github.singlerr.semaphore.utils.ResourceLocationBuilder
-import io.github.singlerr.semaphore.utils.asImageAsync
 import java.awt.Color
 import java.util.UUID
-import org.lwjgl.input.Keyboard
 
 class NotificationWindow(playerId: UUID) {
-
-  companion object {
-    private val CALL_ACCEPT_ICON =
-        ResourceLocationBuilder.builder()
-            .namespace(Semaphore.MOD_ID)
-            .append("textures")
-            .append("gui")
-            .append("phone_call.png")
-            .build()
-  }
 
   var hidden: Boolean = true
 
@@ -62,41 +44,43 @@ class NotificationWindow(playerId: UUID) {
           height = ImageAspectConstraint()
         } childOf container
 
-    val acceptIcon =
-        UIImage(CALL_ACCEPT_ICON.asImageAsync()).constrain {
-          x = SiblingConstraint(1f) boundTo playerSkull
-          y = CenterConstraint() boundTo playerSkull
+    //    val acceptIcon =
+    //        UIImage(Resources.ICON_CALL_ACCEPT.build().asImageAsync()).constrain {
+    //          x = SiblingConstraint(1f) boundTo playerSkull
+    //          y = CenterConstraint() boundTo playerSkull
+    //
+    //          width = 10.pixels()
+    //          height = ImageAspectConstraint()
+    //        } childOf container
+    //
+    //    val acceptText =
+    //        UIText(Keyboard.getKeyName(ClientRegistries.KEY_ACCEPT_CALL.keyCode)).constrain {
+    //          x = SiblingConstraint(1f) boundTo acceptIcon
+    //          y = CenterConstraint() boundTo acceptIcon
+    //
+    //          width = 5.pixels()
+    //          height = 5.pixels()
+    //        } childOf container
+    //
+    //    val denyIcon =
+    //        UIImage(Resources.ICON_CALL_ACCEPT.build().asImageAsync()).constrain {
+    //          x = SiblingConstraint(1f) boundTo acceptText
+    //          y = CenterConstraint() boundTo playerSkull
+    //
+    //          width = 10.pixels()
+    //          height = ImageAspectConstraint()
+    //        } childOf container
+    //
+    //    val denyText =
+    //        UIText(Keyboard.getKeyName(ClientRegistries.KEY_DENY_CALL.keyCode)).constrain {
+    //          x = SiblingConstraint(2f) boundTo denyIcon
+    //          y = CenterConstraint() boundTo acceptIcon
+    //
+    //          width = 5.pixels()
+    //          height = 5.pixels()
+    //        } childOf container
 
-          width = 10.pixels()
-          height = ImageAspectConstraint()
-        } childOf container
-
-    val acceptText =
-        UIText(Keyboard.getKeyName(ClientRegistries.KEY_ACCEPT_CALL.keyCode)).constrain {
-          x = SiblingConstraint(1f) boundTo acceptIcon
-          y = CenterConstraint() boundTo acceptIcon
-
-          width = 5.pixels()
-          height = 5.pixels()
-        } childOf container
-
-    val denyIcon =
-        UIImage(CALL_ACCEPT_ICON.asImageAsync()).constrain {
-          x = SiblingConstraint(1f) boundTo acceptText
-          y = CenterConstraint() boundTo playerSkull
-
-          width = 10.pixels()
-          height = ImageAspectConstraint()
-        } childOf container
-
-    val denyText =
-        UIText(Keyboard.getKeyName(ClientRegistries.KEY_DENY_CALL.keyCode)).constrain {
-          x = SiblingConstraint(2f) boundTo denyIcon
-          y = CenterConstraint() boundTo acceptIcon
-
-          width = 5.pixels()
-          height = 5.pixels()
-        } childOf container
+    //    hideWindow()
   }
 
   fun playTranslate() {

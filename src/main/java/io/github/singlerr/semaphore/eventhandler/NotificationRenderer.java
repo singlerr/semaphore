@@ -1,9 +1,9 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.eventhandler;
 
+import io.github.singlerr.semaphore.events.OutGoingCallFeedbackEvent;
 import io.github.singlerr.semaphore.gui.NotificationWindow;
 import io.github.singlerr.semaphore.gui.PhoneScreen;
-import io.github.singlerr.semaphore.network.packets.CallFeedbackPacket;
 import io.github.singlerr.semaphore.registries.ClientRegistries;
 import io.github.singlerr.semaphore.registries.CommonRegistries;
 import io.github.singlerr.semaphore.state.player.PlayerContext;
@@ -31,15 +31,9 @@ public final class NotificationRenderer {
         if (!ctx.isPresent()) return;
 
         PlayerContext context = ctx.get();
-
         if (context.getCallState() == PlayerContext.CallState.RECEIVING_CALL
                 && context.getOpponent() != PlayerContext.NULL) {
             NotificationWindow window = ClientRegistries.getOrCreate(context.getOpponent());
-            if (window.getHidden()) {
-                window.showWindow();
-                window.playTranslate();
-            }
-
             window.draw();
         }
     }
@@ -59,24 +53,16 @@ public final class NotificationRenderer {
             NotificationWindow window = ClientRegistries.getOrCreate(context.getOpponent());
             if (ClientRegistries.KEY_ACCEPT_CALL.isPressed()) {
                 ClientRegistries.getEventPool()
-                        .invoke(CallFeedbackPacket.builder()
-                                .callFeedback(PlayerContext.CallFeedback.ACCEPT)
-                                .caller(context.getOpponent())
-                                .callee(playerId)
-                                .build());
-                window.hideWindow();
-
+                        .invoke(new OutGoingCallFeedbackEvent(
+                                context.getOpponent(), context.getOwner(), PlayerContext.CallFeedback.ACCEPT));
                 return;
             }
             if (ClientRegistries.KEY_DENY_CALL.isPressed()) {
                 ClientRegistries.getEventPool()
-                        .invoke(CallFeedbackPacket.builder()
-                                .callFeedback(PlayerContext.CallFeedback.DENY_NOT_AVAILABLE)
-                                .caller(context.getOpponent())
-                                .callee(playerId)
-                                .build());
-                window.hideWindow();
-
+                        .invoke(new OutGoingCallFeedbackEvent(
+                                context.getOpponent(),
+                                context.getOwner(),
+                                PlayerContext.CallFeedback.DENY_NOT_AVAILABLE));
                 return;
             }
         }

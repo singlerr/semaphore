@@ -25,6 +25,7 @@ import io.github.singlerr.semaphore.utils.ResourceLocationBuilder
 import io.github.singlerr.semaphore.utils.asImageAsync
 import io.github.singlerr.semaphore.utils.asImageAsyncNullable
 import java.util.UUID
+import net.minecraft.client.Minecraft
 import net.minecraft.util.ResourceLocation
 
 class PhoneScreen(statePool: StatePool, playerId: UUID) :
@@ -187,6 +188,8 @@ class PhoneScreen(statePool: StatePool, playerId: UUID) :
   private fun onOutComingCallFeedback(e: OutGoingCallFeedbackEvent) {
     outCallScreen?.hide(true)
     outCallScreen = null
+    inCallScreen?.hide(true)
+    inCallScreen = null
   }
 
   private fun onPlayerStateChange(e: PlayerStateChangeEvent) {

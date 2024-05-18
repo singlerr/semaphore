@@ -32,7 +32,7 @@ class UISettings(parent: UIComponent, ownerState: PlayerContext, states: List<Pl
           x = SiblingConstraint(padding = 2f)
           y = CenterConstraint()
           width = RelativeConstraint(1 / 2f)
-          height = ChildBasedMaxSizeConstraint()
+          height = 20.pixels()
 
           color = bellRingState.map(this@UISettings::toColor).toConstraint()
         } childOf container
@@ -41,8 +41,7 @@ class UISettings(parent: UIComponent, ownerState: PlayerContext, states: List<Pl
         UIText("Bell").constrain {
           x = CenterConstraint() boundTo bellRing
           y = CenterConstraint() boundTo bellRing
-          width = 50.percent() boundTo bellRing
-          height = AspectConstraint() boundTo bellRing
+          textScale = 0.5f.pixels()
         } childOf bellRing
 
     val vibration =
@@ -50,7 +49,7 @@ class UISettings(parent: UIComponent, ownerState: PlayerContext, states: List<Pl
           x = SiblingConstraint(padding = 2f)
           y = CenterConstraint()
           width = RelativeConstraint(1 / 2f)
-          height = ChildBasedMaxSizeConstraint()
+          height = 20.pixels()
 
           color = vibrationState.map(this@UISettings::toColor).toConstraint()
         } childOf container
@@ -58,8 +57,7 @@ class UISettings(parent: UIComponent, ownerState: PlayerContext, states: List<Pl
         UIText("Vibration").constrain {
           x = CenterConstraint() boundTo vibration
           y = CenterConstraint() boundTo vibration
-          width = 50.percent() boundTo vibration
-          height = AspectConstraint() boundTo vibration
+          textScale = 0.5f.pixels()
         } childOf vibration
 
     bellRing.onMouseClick {

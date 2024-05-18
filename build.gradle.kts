@@ -9,6 +9,7 @@ plugins {
   id("dev.architectury.architectury-pack200") version "0.1.3"
   id("com.github.johnrengelman.shadow") version "8.1.1"
   id("com.diffplug.spotless") version "6.11.0"
+  id("systems.manifold.manifold-gradle-plugin") version "0.0.2-alpha"
   kotlin("jvm") version "1.9.0"
 }
 
@@ -40,6 +41,8 @@ java { toolchain.languageVersion.set(JavaLanguageVersion.of(8)) }
 
 kotlin { jvmToolchain(8) }
 
+manifold { manifoldVersion.set("2024.1.15") }
+
 // Minecraft configuration:
 loom {
   launchConfigs {
@@ -48,7 +51,7 @@ loom {
       property("asmhelper.verbose", "true")
       arg("--tweakClass", "org.spongepowered.asm.launch.MixinTweaker")
       arg("--mixin", "${mod_id}.mixins.json")
-      arg("--username", "Dev")
+      //      arg("--username", "Dev")
     }
 
     "server" {
@@ -86,6 +89,7 @@ repositories {
     content { includeGroup("maven.modrinth") }
   }
   maven("https://repo.spongepowered.org/maven/")
+  maven("https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1")
 }
 
 dependencies {
@@ -98,6 +102,11 @@ dependencies {
       "maven.modrinth:simple-voice-chat:forge-${minecraft_version}-${voicechat_version}")
   modRuntimeOnly("maven.modrinth:simple-voice-chat:forge-${minecraft_version}-${voicechat_version}")
   shadowImpl("gg.essential:elementa-${minecraft_version}-forge:642")
+  implementation("com.github.psambit9791:jdsp:3.0.0")
+
+  modRuntimeOnly("me.djtheredstoner:DevAuth-forge-legacy:1.1.0")
+
+  annotationProcessor("systems.manifold:manifold-preprocessor:${manifold.manifoldVersion.get()}")
   annotationProcessor("org.spongepowered:mixin:0.8.5-SNAPSHOT")
 }
 

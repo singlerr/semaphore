@@ -80,6 +80,7 @@ public abstract class VoicechatServerMixin {
             float distance,
             SoundPacket soundPacket,
             String source) {
+
         if (soundPacket == null) return;
 
         UUID senderUUID = sender.getUniqueID();
@@ -87,7 +88,6 @@ public abstract class VoicechatServerMixin {
         StatePool pool = CommonRegistries.getStatePool();
 
         Optional<State<?>> opt = pool.get(senderUUID);
-
         if (!opt.isPresent()) return;
 
         if (!(opt.get() instanceof PlayerContext)) return;
@@ -97,7 +97,6 @@ public abstract class VoicechatServerMixin {
         if (ctx.getCallState() != PlayerContext.CallState.IN_CALL) return;
 
         UUID opponentUUID = ctx.getOpponent();
-
         if (opponentUUID.equals(PlayerContext.NULL)) return;
 
         Optional<EntityPlayer> opponent = sender.getServerWorld().playerEntities.stream()

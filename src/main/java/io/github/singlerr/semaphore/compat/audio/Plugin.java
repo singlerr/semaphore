@@ -4,6 +4,7 @@ package io.github.singlerr.semaphore.compat.audio;
 import de.maxhenkel.voicechat.api.ForgeVoicechatPlugin;
 import de.maxhenkel.voicechat.api.VoicechatApi;
 import de.maxhenkel.voicechat.api.VoicechatPlugin;
+import de.maxhenkel.voicechat.api.events.ClientReceiveSoundEvent;
 import de.maxhenkel.voicechat.api.events.EventRegistration;
 import io.github.singlerr.semaphore.Semaphore;
 import lombok.Getter;
@@ -26,6 +27,6 @@ public final class Plugin implements VoicechatPlugin {
 
     @Override
     public void registerEvents(EventRegistration registration) {
-        VoicechatPlugin.super.registerEvents(registration);
+        registration.registerEvent(ClientReceiveSoundEvent.class, VoicechatEventListener::onReceiveStaticSound);
     }
 }

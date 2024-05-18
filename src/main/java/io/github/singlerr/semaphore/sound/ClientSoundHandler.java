@@ -41,14 +41,19 @@ public class ClientSoundHandler {
     }
 
     private void handleRing(ReceivingCallEvent event) {
-        playRepeatable(ModConfig.bellRing ? ClientRegistries.SOUND_PHONE_BELL : ClientRegistries.SOUND_PHONE_VIBRATE);
+        SoundEvent sound =
+                ModConfig.bellRing ? ClientRegistries.SOUND_PHONE_BELL : ClientRegistries.SOUND_PHONE_VIBRATE;
+        stopAll();
+        playRepeatable(sound);
     }
 
     private void handlePhoneCall(SendingCallEvent event) {
+        stopAll();
         playRepeatable(ClientRegistries.SOUND_CALLING);
     }
 
     private void handleInComingCallFeedback(InComingCallFeedbackEvent event) {
+        stopAll();
         stopRepeatable(ClientRegistries.SOUND_CALLING);
         if (event.getFeedback() != PlayerContext.CallFeedback.ACCEPT) {
             playNonRepeatable(ClientRegistries.MISS_CALL_SOUND);
@@ -58,17 +63,19 @@ public class ClientSoundHandler {
     }
 
     private void handleOutComingCallFeedback(OutGoingCallFeedbackEvent event) {
-        stopRepeatable(ModConfig.bellRing ? ClientRegistries.SOUND_PHONE_BELL : ClientRegistries.SOUND_PHONE_VIBRATE);
+        stopAll();
         if (event.getFeedback() == PlayerContext.CallFeedback.ACCEPT) {
             playNonRepeatable(ClientRegistries.SOUND_CALL_YES);
+
             return;
         }
-
         playNonRepeatable(ClientRegistries.SOUND_CALL_NO);
     }
 
     private void handleCallClosed(CallClosedEvent event) {
+        stopAll();
         stopRepeatable(ClientRegistries.SOUND_CALLING);
+        stopRepeatable(ClientRegistries.SOUND_PHONE_BELL);
         playNonRepeatable(ClientRegistries.SOUND_CALL_OFF);
     }
 
@@ -114,6 +121,13 @@ public class ClientSoundHandler {
         }
     }
 
+    private void stopAll() {
+        for (ISound value : sounds.values()) {
+            Minecraft.getMinecraft().getSoundHandler().stopSound(value);
+        }
+        removeAll();
+    }
+
     private void playSound(PlaySoundCommand command) {
         playNonRepeatable(command.getSound());
     }
@@ -137,6 +151,16 @@ public class ClientSoundHandler {
 
         String key = map.remove(sound);
         accessor.getPlayingSounds().remove(key);
+    }
+
+    private void removeAll() {
+        SoundHandlerAccessor soundHandler =
+                (SoundHandlerAccessor) Minecraft.getMinecraft().getSoundHandler();
+        SoundManagerAccessor accessor = (SoundManagerAccessor) soundHandler.getSoundManager();
+
+        Map<ISound, String> map = accessor.getInvPlayingSounds();
+        map.clear();
+        accessor.getPlayingSounds().clear();
     }
 
     public PositionedSoundRecord getRepeatable(SoundEvent soundEvent, boolean repeat) {

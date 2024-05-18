@@ -124,4 +124,9 @@ public class PlayerContext implements State<LogicalPlayer> {
         DENY_NOT_AVAILABLE,
         ACCEPT
     }
+
+    public enum PlayerStateAction {
+        CREATE_OR_UPDATE,
+        DELETE
+    }
 }

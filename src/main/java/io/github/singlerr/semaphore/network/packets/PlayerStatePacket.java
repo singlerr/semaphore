@@ -2,6 +2,7 @@
 package io.github.singlerr.semaphore.network.packets;
 
 import io.github.singlerr.semaphore.events.PlayerStateChangeEvent;
+import io.github.singlerr.semaphore.events.RemovePlayerStateEvent;
 import io.github.singlerr.semaphore.network.Packet;
 import io.github.singlerr.semaphore.network.PacketHandler;
 import io.github.singlerr.semaphore.network.wrapper.PacketWrapper;
@@ -28,9 +29,12 @@ public final class PlayerStatePacket extends Packet {
 
     private UUID id;
 
+    private PlayerContext.PlayerStateAction action = PlayerContext.PlayerStateAction.CREATE_OR_UPDATE;
+
     @Override
     public void fromBytes(ByteBuf buf) {
         id = SerializationUtils.readUUID(buf);
+        action = PlayerContext.PlayerStateAction.values()[buf.readInt()];
         state = PlayerContext.builder().build();
         state.deserialize(buf);
     }
@@ -38,6 +42,8 @@ public final class PlayerStatePacket extends Packet {
     @Override
     public void toBytes(ByteBuf buf) {
         SerializationUtils.writeUUID(buf, id);
+        if (action == null) action = PlayerContext.PlayerStateAction.CREATE_OR_UPDATE;
+        buf.writeInt(action.ordinal());
         state.serialize(buf);
     }
 
@@ -53,6 +59,12 @@ public final class PlayerStatePacket extends Packet {
 
         @Override
         protected Packet handleS2C(MessageContext ctx, PlayerStatePacket packet) {
+            if (packet.getAction() == PlayerContext.PlayerStateAction.DELETE) {
+                RemovePlayerStateEvent event = new RemovePlayerStateEvent(packet.getId());
+                ClientRegistries.getEventPool().invoke(event);
+                return null;
+            }
+
             PlayerStateChangeEvent event = new PlayerStateChangeEvent(packet.getState());
             event.setSide(Side.SERVER);
 

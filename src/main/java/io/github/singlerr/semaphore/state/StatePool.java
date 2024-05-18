@@ -26,6 +26,10 @@ public final class StatePool {
         log.info("Updating state {}", uuid);
     }
 
+    public void remove(UUID id) {
+        states.remove(id);
+    }
+
     public Set<Map.Entry<UUID, State<?>>> getStates() {
         return states.entrySet();
     }

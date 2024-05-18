@@ -45,7 +45,7 @@ class UIAddress(private var ownerState: PlayerContext, var currentState: PlayerC
           x = SiblingConstraint(2f) boundTo headImage
           y = CenterConstraint()
 
-          width = RelativeConstraint(1 / 8f)
+          width = RelativeConstraint(2 / 8f)
           height = 10.pixels()
 
           color = Color.black.toConstraint()

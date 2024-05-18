@@ -24,7 +24,7 @@ class UIVolumes(
               y = 20.pixels() boundTo neighbor
 
               width = 98.percent() boundTo parent
-              height = 60.percent() boundTo parent
+              height = 70.percent() boundTo parent
             } childOf parent
 
     states.forEach { ctx ->

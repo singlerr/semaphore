@@ -21,7 +21,7 @@ import net.minecraft.util.ResourceLocation;
 @UtilityClass
 public class AudioPlayer {
 
-    private final int SAMPLE_RATE = 48000;
+    public final int SAMPLE_RATE = 48000;
     private final int FRAME_SIZE = (SAMPLE_RATE / 1000) * 20;
 
     private final ExecutorService EXECUTOR =

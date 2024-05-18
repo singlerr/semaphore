@@ -6,6 +6,7 @@ import io.github.singlerr.semaphore.eventhandler.ServerEventHandler;
 import io.github.singlerr.semaphore.events.CallEvent;
 import io.github.singlerr.semaphore.events.CallFeedbackEvent;
 import io.github.singlerr.semaphore.events.PlayerStateChangeEvent;
+import io.github.singlerr.semaphore.events.RemovePlayerStateEvent;
 import io.github.singlerr.semaphore.network.Packet;
 import io.github.singlerr.semaphore.network.packets.CallActionPacket;
 import io.github.singlerr.semaphore.network.packets.CallFeedbackPacket;
@@ -21,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.experimental.UtilityClass;
+import lombok.extern.log4j.Log4j2;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.management.PlayerList;
 import net.minecraftforge.common.MinecraftForge;
@@ -29,6 +31,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.server.FMLServerHandler;
 
+@Log4j2
 @NoArgsConstructor(access = AccessLevel.NONE)
 public final class ServerRegistries {
 
@@ -61,6 +64,7 @@ public final class ServerRegistries {
             eventPool.subscribe(PlayerStateChangeEvent.class, Synchronizer::handlePlayerStateChange);
             eventPool.subscribe(CallFeedbackEvent.class, Synchronizer::handleCallFeedback);
             eventPool.subscribe(CallEvent.class, Synchronizer::handleCallEvent);
+            eventPool.subscribe(RemovePlayerStateEvent.class, Synchronizer::handlePlayerStateRemove);
         }
 
         private void handlePlayerStateChange(PlayerStateChangeEvent event) {
@@ -75,6 +79,19 @@ public final class ServerRegistries {
 
                 CommonRegistries.NETWORK.sendTo(packet, player);
             }
+        }
+
+        private void handlePlayerStateRemove(RemovePlayerStateEvent event) {
+            PlayerStatePacket packet = PlayerStatePacket.builder()
+                    .id(event.getId())
+                    .state(PlayerContext.builder()
+                            .owner(UUID.randomUUID())
+                            .name("")
+                            .build())
+                    .action(PlayerContext.PlayerStateAction.DELETE)
+                    .build();
+
+            CommonRegistries.NETWORK.sendToAll(packet);
         }
 
         private void handleCallFeedback(CallFeedbackEvent event) {
@@ -98,7 +115,6 @@ public final class ServerRegistries {
                     .build();
 
             CommonRegistries.NETWORK.sendTo(packet, callerPlayer);
-            CommonRegistries.NETWORK.sendTo(packet, calleePlayer);
         }
 
         private boolean handlePairPlayerNotAvailable(UUID caller, UUID callee, Packet nullPacket) {
@@ -109,7 +125,10 @@ public final class ServerRegistries {
             EntityPlayerMP calleePlayer = playerList.getPlayerByUUID(callee);
 
             if (calleePlayer == null || callerPlayer == null) {
-
+                log.info(
+                        "CallClosedEvent was fired but canceled by callerPlayer: {}, calleePlayer: {}",
+                        callerPlayer,
+                        calleePlayer);
                 if (callerPlayer != null) CommonRegistries.NETWORK.sendTo(nullPacket, callerPlayer);
                 if (calleePlayer != null) CommonRegistries.NETWORK.sendTo(nullPacket, calleePlayer);
                 return false;

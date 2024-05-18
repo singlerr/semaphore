@@ -9,6 +9,7 @@ import io.github.singlerr.semaphore.events.*;
 import io.github.singlerr.semaphore.gui.NotificationWindow;
 import io.github.singlerr.semaphore.gui.PhoneScreen;
 import io.github.singlerr.semaphore.network.packets.CallActionPacket;
+import io.github.singlerr.semaphore.network.packets.CallFeedbackPacket;
 import io.github.singlerr.semaphore.network.packets.PlayerStatePacket;
 import io.github.singlerr.semaphore.sound.AudioPlayer;
 import io.github.singlerr.semaphore.sound.ClientSoundHandler;
@@ -124,14 +125,15 @@ public final class ClientRegistries {
         getEventPool()
                 .invoke(new PlayerStateChangeEvent(
                         PlayerContext.builder().owner(userId).name(name).build()));
-
-        for (int i = 0; i < 5; i++) {
-            getEventPool()
-                    .invoke(new PlayerStateChangeEvent(PlayerContext.builder()
-                            .owner(UUID.randomUUID())
-                            .name(UUID.randomUUID().toString())
-                            .build()));
-        }
+        //                #if DEV_MODE
+        //                for (int i = 0; i < 5; i++) {
+        //                    getEventPool()
+        //                            .invoke(new PlayerStateChangeEvent(PlayerContext.builder()
+        //                                    .owner(UUID.randomUUID())
+        //                                    .name(UUID.randomUUID().toString())
+        //                                    .build()));
+        //                }
+        //                #endif
     }
 
     public static void apply(FMLPostInitializationEvent event) {
@@ -164,10 +166,10 @@ public final class ClientRegistries {
         }
 
         private void sendToServer(OutGoingCallFeedbackEvent event) {
-            CommonRegistries.NETWORK.sendToServer(CallActionPacket.builder()
-                    .caller(event.getCaller())
+            CommonRegistries.NETWORK.sendToServer(CallFeedbackPacket.builder()
+                    .callFeedback(event.getFeedback())
                     .callee(event.getCallee())
-                    .action(PlayerContext.CallAction.REQUEST)
+                    .caller(event.getCaller())
                     .build());
         }
 

@@ -9,9 +9,9 @@
   ],
   "client": [
     "core.MinecraftMixin",
-    "core.MusicTickerMixin",
     "core.SoundManagerAccessor",
-    "core.SoundHandlerAccessor"
+    "core.SoundHandlerAccessor",
+    "compat.AudioChannelMixin"
   ],
   "server": [
     "compat.VoicechatServerMixin"

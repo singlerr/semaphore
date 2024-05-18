@@ -166,13 +166,17 @@ class PhoneScreen(statePool: StatePool, playerId: UUID) :
 
   private fun onReceivingCall(e: ReceivingCallEvent) {
     if (ownerState.callState == PlayerContext.CallState.IDLE) {
-      inCallScreen?.unhide()
+        Window.enqueueRenderOperation {
+            inCallScreen?.unhide()
+        }
     }
   }
 
   private fun onSendingCall(e: SendingCallEvent) {
-    outCallScreen = UIOutComingCall(rootComponent, ownerState, e.callee) childOf rootComponent
-    outCallScreen?.unhide(true)
+    Window.enqueueRenderOperation {
+        outCallScreen = UIOutComingCall(rootComponent, ownerState, e.callee) childOf rootComponent
+        outCallScreen?.unhide(true)
+    }
   }
 
   private fun onInComingCallFeedback(e: InComingCallFeedbackEvent) {
@@ -186,14 +190,18 @@ class PhoneScreen(statePool: StatePool, playerId: UUID) :
   }
 
   private fun onOutComingCallFeedback(e: OutGoingCallFeedbackEvent) {
-    outCallScreen?.hide(true)
-    outCallScreen = null
-    inCallScreen?.hide(true)
-    inCallScreen = null
+    Window.enqueueRenderOperation {
+        outCallScreen?.hide(true)
+        outCallScreen = null
+        inCallScreen?.hide(true)
+        inCallScreen = null
+    }
   }
 
   private fun onPlayerStateChange(e: PlayerStateChangeEvent) {
-    addressScreen.update(CommonRegistries.statePool)
+    Window.enqueueRenderOperation {
+        addressScreen.update(CommonRegistries.statePool)
+    }
   }
 
   private fun onCallClosed(e: CallClosedEvent) {

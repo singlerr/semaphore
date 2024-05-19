@@ -147,7 +147,6 @@ class PhoneScreen(statePool: StatePool, playerId: UUID) :
       ClientRegistries.getEventPool()
           .invoke(PlaySoundCommand(ClientRegistries.SOUND_PHONE_TOUCH, false))
     }
-    UIInComingCall(rootComponent, ownerState, UUID.randomUUID()) childOf rootComponent
     Inspector(window).constrain {
       x = 10.pixels(true)
       y = 10.pixels(true)

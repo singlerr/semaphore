@@ -42,9 +42,9 @@ class UIInComingCall(parent: UIComponent, ownerState: PlayerContext, callerId: U
           x = RelativeConstraint(1 / 3f)
           y = 50.pixels(true)
 
-          width = 50.pixels()
+          width = 20.pixels()
           height = ImageAspectConstraint()
-        } childOf parent
+        } childOf this
 
     accept.onMouseClick {
       ClientRegistries.getEventPool()
@@ -58,9 +58,9 @@ class UIInComingCall(parent: UIComponent, ownerState: PlayerContext, callerId: U
           x = RelativeConstraint(2 / 3f)
           y = 50.pixels(true)
 
-          width = 50.pixels()
+          width = 20.pixels()
           height = ImageAspectConstraint()
-        } childOf parent
+        } childOf this
 
     deny.onMouseClick {
       ClientRegistries.getEventPool()

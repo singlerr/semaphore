@@ -4,6 +4,7 @@ package io.github.singlerr.semaphore.eventhandler;
 import io.github.singlerr.semaphore.item.ItemPhone;
 import io.github.singlerr.semaphore.registries.ClientRegistries;
 import net.minecraft.client.Minecraft;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -18,4 +19,7 @@ public final class ItemInteractionHandler {
 
         Minecraft.getMinecraft().displayGuiScreen(ClientRegistries.getPhoneScreen());
     }
+
+    @SubscribeEvent
+    public void onJoin(EntityJoinWorldEvent event) {}
 }

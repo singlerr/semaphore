@@ -66,7 +66,6 @@ public class ClientSoundHandler {
         stopAll();
         if (event.getFeedback() == PlayerContext.CallFeedback.ACCEPT) {
             playNonRepeatable(ClientRegistries.SOUND_CALL_YES);
-
             return;
         }
         playNonRepeatable(ClientRegistries.SOUND_CALL_NO);
@@ -88,6 +87,7 @@ public class ClientSoundHandler {
     }
 
     private void handleAcceptPhoneCall(CallAcceptedEvent event) {
+        stopAll();
         stopRepeatable(ClientRegistries.SOUND_CALLING);
     }
 

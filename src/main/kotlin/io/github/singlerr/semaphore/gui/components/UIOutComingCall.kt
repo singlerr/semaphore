@@ -48,7 +48,7 @@ class UIOutComingCall(parent: UIComponent, ownerState: PlayerContext, calleeId: 
           x = CenterConstraint()
           y = 50.pixels(true)
 
-          width = 10.pixels()
+          width = 20.pixels()
           height = ImageAspectConstraint()
         } childOf this
 

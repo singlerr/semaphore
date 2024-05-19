@@ -25,7 +25,6 @@ import io.github.singlerr.semaphore.utils.ResourceLocationBuilder
 import io.github.singlerr.semaphore.utils.asImageAsync
 import io.github.singlerr.semaphore.utils.asImageAsyncNullable
 import java.util.UUID
-import net.minecraft.client.Minecraft
 import net.minecraft.util.ResourceLocation
 
 class PhoneScreen(statePool: StatePool, playerId: UUID) :
@@ -148,7 +147,7 @@ class PhoneScreen(statePool: StatePool, playerId: UUID) :
       ClientRegistries.getEventPool()
           .invoke(PlaySoundCommand(ClientRegistries.SOUND_PHONE_TOUCH, false))
     }
-
+    UIInComingCall(rootComponent, ownerState, UUID.randomUUID()) childOf rootComponent
     Inspector(window).constrain {
       x = 10.pixels(true)
       y = 10.pixels(true)
@@ -166,16 +165,19 @@ class PhoneScreen(statePool: StatePool, playerId: UUID) :
 
   private fun onReceivingCall(e: ReceivingCallEvent) {
     if (ownerState.callState == PlayerContext.CallState.IDLE) {
-        Window.enqueueRenderOperation {
-            inCallScreen?.unhide()
-        }
+      Window.enqueueRenderOperation {
+        inCallScreen?.apply { rootComponent.removeChild(this) }
+        inCallScreen = UIInComingCall(rootComponent, ownerState, e.caller)
+        rootComponent.addChild(inCallScreen!!)
+      }
     }
   }
 
   private fun onSendingCall(e: SendingCallEvent) {
     Window.enqueueRenderOperation {
-        outCallScreen = UIOutComingCall(rootComponent, ownerState, e.callee) childOf rootComponent
-        outCallScreen?.unhide(true)
+      outCallScreen?.apply { rootComponent.removeChild(this) }
+      outCallScreen = UIOutComingCall(rootComponent, ownerState, e.callee)
+      rootComponent.addChild(outCallScreen!!)
     }
   }
 
@@ -191,17 +193,15 @@ class PhoneScreen(statePool: StatePool, playerId: UUID) :
 
   private fun onOutComingCallFeedback(e: OutGoingCallFeedbackEvent) {
     Window.enqueueRenderOperation {
-        outCallScreen?.hide(true)
-        outCallScreen = null
-        inCallScreen?.hide(true)
-        inCallScreen = null
+      outCallScreen?.hide(true)
+      outCallScreen = null
+      inCallScreen?.hide(true)
+      inCallScreen = null
     }
   }
 
   private fun onPlayerStateChange(e: PlayerStateChangeEvent) {
-    Window.enqueueRenderOperation {
-        addressScreen.update(CommonRegistries.statePool)
-    }
+    Window.enqueueRenderOperation { addressScreen.update(CommonRegistries.statePool) }
   }
 
   private fun onCallClosed(e: CallClosedEvent) {

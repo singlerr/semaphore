@@ -13,7 +13,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -36,7 +35,6 @@ public class ServerEventHandler {
                                     .name(event.player.getName())
                                     .callState(PlayerContext.CallState.IDLE)
                                     .build()));
-
                     for (Map.Entry<UUID, State<?>> entry :
                             CommonRegistries.getStatePool().getStates()) {
                         State<?> state = entry.getValue();

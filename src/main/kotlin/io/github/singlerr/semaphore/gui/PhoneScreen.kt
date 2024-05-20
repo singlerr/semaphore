@@ -6,7 +6,6 @@ import gg.essential.elementa.UIComponent
 import gg.essential.elementa.WindowScreen
 import gg.essential.elementa.components.*
 import gg.essential.elementa.components.inspector.Inspector
-import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
 import io.github.singlerr.semaphore.Semaphore
 import io.github.singlerr.semaphore.gui.components.*
@@ -17,7 +16,6 @@ import io.github.singlerr.semaphore.utils.ResourceLocationBuilder
 import io.github.singlerr.semaphore.utils.Resources
 import io.github.singlerr.semaphore.utils.asImageAsync
 import io.github.singlerr.semaphore.utils.asImageAsyncNullable
-import net.minecraft.server.MinecraftServer
 
 class PhoneScreen(private val playerState: PlayerContext) :
     WindowScreen(ElementaVersion.V5, drawDefaultBackground = false) {

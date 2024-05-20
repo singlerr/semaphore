@@ -10,6 +10,9 @@ import io.github.singlerr.semaphore.gui.PhoneScreen;
 import io.github.singlerr.semaphore.state.player.PlayerContext;
 import io.github.singlerr.semaphore.utils.EventPool;
 import io.github.singlerr.semaphore.utils.ResourceLocationBuilder;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -87,7 +90,9 @@ public final class ClientRegistries {
         return window;
     }
 
-    public static void apply(FMLPreInitializationEvent event) {}
+    public static void apply(FMLPreInitializationEvent event) {
+
+    }
 
     public static void apply(FMLInitializationEvent event) {
         log.info("Registering key binds");

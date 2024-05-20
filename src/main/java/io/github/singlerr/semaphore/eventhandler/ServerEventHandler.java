@@ -12,12 +12,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-
-import net.minecraft.command.server.CommandBroadcast;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
@@ -35,7 +32,12 @@ public class ServerEventHandler {
     public void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
         SERVICE.schedule(
                 () -> {
-                    FMLServerHandler.instance().getServer().getPlayerList().sendMessage(new TextComponentString("Synchronizing all player states to " + event.player.getName()).setStyle(new Style().setColor(TextFormatting.AQUA)));
+                    FMLServerHandler.instance()
+                            .getServer()
+                            .getPlayerList()
+                            .sendMessage(new TextComponentString(
+                                            "Synchronizing all player states to " + event.player.getName())
+                                    .setStyle(new Style().setColor(TextFormatting.AQUA)));
                     PlayerContext newCtx = PlayerContext.builder()
                             .owner(event.player.getUniqueID())
                             .name(event.player.getName())
@@ -61,7 +63,11 @@ public class ServerEventHandler {
                                     .playerState(newCtx)
                                     .build());
 
-                    FMLServerHandler.instance().getServer().getPlayerList().sendMessage(new TextComponentString("Synchronization ended without errors").setStyle(new Style().setColor(TextFormatting.AQUA)));
+                    FMLServerHandler.instance()
+                            .getServer()
+                            .getPlayerList()
+                            .sendMessage(new TextComponentString("Synchronization ended without errors")
+                                    .setStyle(new Style().setColor(TextFormatting.AQUA)));
                 },
                 1000,
                 TimeUnit.MILLISECONDS);

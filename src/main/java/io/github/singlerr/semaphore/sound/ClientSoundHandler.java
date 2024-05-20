@@ -44,11 +44,11 @@ public class ClientSoundHandler {
         playNonRepeatable(ClientRegistries.SOUND_PHONE_TOUCH);
     }
 
-    public static void playOkSound(){
+    public static void playOkSound() {
         playNonRepeatable(ClientRegistries.SOUND_CALL_YES);
     }
 
-    public static void playNoSound(){
+    public static void playNoSound() {
         playNonRepeatable(ClientRegistries.SOUND_CALL_NO);
     }
 

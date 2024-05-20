@@ -62,22 +62,19 @@ class UIAddress(private var ownerState: PlayerContext, var currentState: PlayerC
                 height = AspectConstraint()
             } childOf this
 
-        callImage.onMouseClick {
-            // Call
-            ownerState.callState = PlayerContext.CallState.CALLING
-            ClientSoundHandler.playCallingSound()
-            CommonRegistries.NETWORK.sendToServer(
-                CallRequestPacket.builder().caller(ownerState).callee(currentState).build()
-            )
-        }.onMouseEnter {
-            animate {
-                setWidthAnimation(Animations.OUT_EXP, 0.3f, buttonSize * 1.1)
+        callImage
+            .onMouseClick {
+                // Call
+                ownerState.callState = PlayerContext.CallState.CALLING
+                ClientSoundHandler.playCallingSound()
+                CommonRegistries.NETWORK.sendToServer(
+                    CallRequestPacket.builder().caller(ownerState).callee(currentState).build()
+                )
             }
-        }.onMouseLeave {
-            animate {
-                setWidthAnimation(Animations.OUT_EXP, 0.3f, buttonSize)
+            .onMouseEnter {
+                animate { setWidthAnimation(Animations.OUT_EXP, 0.3f, buttonSize * 1.1) }
             }
-        }
+            .onMouseLeave { animate { setWidthAnimation(Animations.OUT_EXP, 0.3f, buttonSize) } }
 
         missCallImage =
             UIImage(Resources.ICON_CALL_MISS.build().asImageAsync()).constrain {
@@ -102,14 +99,15 @@ class UIAddress(private var ownerState: PlayerContext, var currentState: PlayerC
         }
 
         onMouseEnter {
-            animate {
-                setColorAnimation(Animations.OUT_EXP, 0.1f, darkerBackground.toConstraint())
+                animate {
+                    setColorAnimation(Animations.OUT_EXP, 0.1f, darkerBackground.toConstraint())
+                }
             }
-        }.onMouseLeave {
-            animate {
-                setColorAnimation(Animations.OUT_EXP, 0.1f, primaryBackground().toConstraint())
+            .onMouseLeave {
+                animate {
+                    setColorAnimation(Animations.OUT_EXP, 0.1f, primaryBackground().toConstraint())
+                }
             }
-        }
     }
 
     fun update(ownerState: PlayerContext, currentState: PlayerContext) {

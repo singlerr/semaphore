@@ -4,6 +4,7 @@ package io.github.singlerr.semaphore.gui.components
 import de.maxhenkel.voicechat.gui.GameProfileUtils
 import gg.essential.elementa.components.*
 import gg.essential.elementa.constraints.*
+import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.state.BasicState
 import io.github.singlerr.semaphore.Semaphore
@@ -18,6 +19,8 @@ class UIVolume(private val ownerState: PlayerContext, val opponentId: UUID) :
     private var percentage = BasicState("0%")
 
     init {
+        setColor(primaryBackground())
+        val darkerBackground = primaryBackground().darker().toConstraint()
         constrain {
             x = CenterConstraint()
             y = SiblingConstraint() + 10.pixels()
@@ -64,6 +67,13 @@ class UIVolume(private val ownerState: PlayerContext, val opponentId: UUID) :
                     width = 31.pixels()
                     height = 10.pixels()
                 } childOf this
+
+        onMouseEnter { animate { setColorAnimation(Animations.OUT_EXP, 0.1f, darkerBackground) } }
+            .onMouseLeave {
+                animate {
+                    setColorAnimation(Animations.OUT_EXP, 0.1f, primaryBackground().toConstraint())
+                }
+            }
     }
 
     private fun setPercentage(percentage: Float, value: Float) {

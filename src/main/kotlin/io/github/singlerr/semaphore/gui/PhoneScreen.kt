@@ -6,6 +6,7 @@ import gg.essential.elementa.UIComponent
 import gg.essential.elementa.WindowScreen
 import gg.essential.elementa.components.*
 import gg.essential.elementa.components.inspector.Inspector
+import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
 import io.github.singlerr.semaphore.Semaphore
 import io.github.singlerr.semaphore.gui.components.*
@@ -32,12 +33,14 @@ class PhoneScreen(private val playerState: PlayerContext) :
 
     private var inSettings = false
 
+    private var isPlaying = false
+
     init {
 
         frame =
             UIImage(Resources.PHONE_FRAME.asImageAsync()).constrain {
                 x = 0.pixels()
-                y = 5.percent()
+                y = 100.percent()
                 width = 40.percent()
                 height = 80.percent()
             } childOf window
@@ -166,6 +169,20 @@ class PhoneScreen(private val playerState: PlayerContext) :
             }
             outCallScreen = null
         }
+    }
+
+    override fun initScreen(width: Int, height: Int) {
+        super.initScreen(width, height)
+        frame.animate {
+            setYAnimation(Animations.OUT_EXP, 0.3f, 5.percent())
+
+            onComplete { isPlaying = false }
+        }
+    }
+
+    override fun onScreenClose() {
+        super.onScreenClose()
+        frame.setY(100.percent())
     }
 
     fun callEstablished() {

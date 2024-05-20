@@ -17,6 +17,7 @@ import io.github.singlerr.semaphore.state.player.PlayerContext
 import io.github.singlerr.semaphore.utils.Resources
 import io.github.singlerr.semaphore.utils.asImageAsync
 import java.awt.Color
+import java.net.URL
 import java.util.UUID
 import net.minecraft.client.resources.I18n
 
@@ -35,7 +36,7 @@ class UIOutComingCall(parent: UIComponent, ownerState: PlayerContext, calleeId: 
 
         val skullImageLocation = GameProfileUtils.getSkin(calleeId)
         val playerSkull =
-            UIPlayerSkull(skullImageLocation).constrain {
+            UIImage.ofURL(URL("https://mc-heads.net/head/$calleeId")).constrain {
                 x = CenterConstraint()
                 y = 10.pixels() boundTo parent
 
@@ -43,12 +44,13 @@ class UIOutComingCall(parent: UIComponent, ownerState: PlayerContext, calleeId: 
                 height = ImageAspectConstraint()
             } childOf this
 
+        val btnSize = 20.pixels()
         val cancel =
             UIImage(Resources.ICON_CALL_DENY.build().asImageAsync()).constrain {
                 x = CenterConstraint()
                 y = 50.pixels(true)
 
-                width = 20.pixels()
+                width = btnSize
                 height = ImageAspectConstraint()
             } childOf this
 
@@ -72,7 +74,9 @@ class UIOutComingCall(parent: UIComponent, ownerState: PlayerContext, calleeId: 
 
                 width = 100.percent() boundTo parent
             } childOf this
-
+        cancel
+            .onMouseEnter { animate { setWidthAnimation(Animations.OUT_EXP, 0.3f, btnSize * 1.1) } }
+            .onMouseLeave { animate { setWidthAnimation(Animations.OUT_EXP, 0.3f, btnSize) } }
         messageLabel.hide(true)
     }
 

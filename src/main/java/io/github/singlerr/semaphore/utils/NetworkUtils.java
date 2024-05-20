@@ -4,7 +4,6 @@ package io.github.singlerr.semaphore.utils;
 import io.github.singlerr.semaphore.network.Packet;
 import java.util.function.Predicate;
 import lombok.experimental.UtilityClass;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
@@ -21,7 +20,6 @@ public class NetworkUtils {
                 network.sendTo(packet, player);
             }
         }
-
     }
 
     public void sendToIgnoreSender(SimpleNetworkWrapper network, EntityPlayerMP sender, Packet packet) {

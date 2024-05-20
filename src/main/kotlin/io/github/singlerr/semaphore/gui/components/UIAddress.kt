@@ -1,7 +1,6 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.gui.components
 
-import de.maxhenkel.voicechat.gui.GameProfileUtils
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.*
 import gg.essential.elementa.constraints.*
@@ -14,6 +13,7 @@ import io.github.singlerr.semaphore.sound.ClientSoundHandler
 import io.github.singlerr.semaphore.state.player.PlayerContext
 import io.github.singlerr.semaphore.utils.*
 import java.awt.Color
+import java.net.URL
 
 class UIAddress(private var ownerState: PlayerContext, var currentState: PlayerContext) :
     UIRoundedRectangle(radius = 5f) {
@@ -33,10 +33,8 @@ class UIAddress(private var ownerState: PlayerContext, var currentState: PlayerC
             height = AspectConstraint(1 / 5f)
         }
 
-        val skin = GameProfileUtils.getSkin(currentState.owner)
-
         val headImage =
-            UIPlayerSkull(skin).constrain {
+            UIImage.ofURL(URL("https://mc-heads.net/head/${currentState.owner}")).constrain {
                 x = 5.pixels()
                 y = CenterConstraint()
                 width = RelativeConstraint(1 / 5f)

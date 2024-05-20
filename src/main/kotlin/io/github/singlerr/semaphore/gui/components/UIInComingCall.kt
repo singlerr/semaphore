@@ -8,6 +8,7 @@ import gg.essential.elementa.components.UIImage
 import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.constraints.ImageAspectConstraint
 import gg.essential.elementa.constraints.RelativeConstraint
+import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
 import io.github.singlerr.semaphore.network.packets.CallAcceptPacket
 import io.github.singlerr.semaphore.network.packets.CallRejectPacket
@@ -39,12 +40,13 @@ class UIInComingCall(parent: UIComponent, ownerState: PlayerContext, callerId: U
                 height = ImageAspectConstraint()
             } childOf this
 
+        val btnSize = 20.pixels()
         val accept =
             UIImage(Resources.ICON_CALL_ACCEPT.build().asImageAsync()).constrain {
                 x = RelativeConstraint(1 / 3f)
                 y = 50.pixels(true)
 
-                width = 20.pixels()
+                width = btnSize
                 height = ImageAspectConstraint()
             } childOf this
 
@@ -66,7 +68,7 @@ class UIInComingCall(parent: UIComponent, ownerState: PlayerContext, callerId: U
                 x = RelativeConstraint(2 / 3f)
                 y = 50.pixels(true)
 
-                width = 20.pixels()
+                width = btnSize
                 height = ImageAspectConstraint()
             } childOf this
 
@@ -89,5 +91,9 @@ class UIInComingCall(parent: UIComponent, ownerState: PlayerContext, callerId: U
             hide(true)
             parent.removeChild(this@UIInComingCall)
         }
+
+        accept
+            .onMouseEnter { animate { setWidthAnimation(Animations.OUT_EXP, 0.3f, btnSize * 1.1) } }
+            .onMouseLeave { animate { setWidthAnimation(Animations.OUT_EXP, 0.3f, btnSize) } }
     }
 }

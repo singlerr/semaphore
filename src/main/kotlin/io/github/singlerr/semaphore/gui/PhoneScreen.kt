@@ -6,207 +6,184 @@ import gg.essential.elementa.UIComponent
 import gg.essential.elementa.WindowScreen
 import gg.essential.elementa.components.*
 import gg.essential.elementa.components.inspector.Inspector
+import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
 import io.github.singlerr.semaphore.Semaphore
-import io.github.singlerr.semaphore.events.CallClosedEvent
-import io.github.singlerr.semaphore.events.InComingCallFeedbackEvent
-import io.github.singlerr.semaphore.events.OutGoingCallFeedbackEvent
-import io.github.singlerr.semaphore.events.PlaySoundCommand
-import io.github.singlerr.semaphore.events.PlayerStateChangeEvent
-import io.github.singlerr.semaphore.events.ReceivingCallEvent
-import io.github.singlerr.semaphore.events.SendingCallEvent
 import io.github.singlerr.semaphore.gui.components.*
 import io.github.singlerr.semaphore.registries.ClientRegistries
-import io.github.singlerr.semaphore.registries.CommonRegistries
-import io.github.singlerr.semaphore.state.StatePool
+import io.github.singlerr.semaphore.sound.ClientSoundHandler
 import io.github.singlerr.semaphore.state.player.PlayerContext
-import io.github.singlerr.semaphore.utils.EventPool
 import io.github.singlerr.semaphore.utils.ResourceLocationBuilder
+import io.github.singlerr.semaphore.utils.Resources
 import io.github.singlerr.semaphore.utils.asImageAsync
 import io.github.singlerr.semaphore.utils.asImageAsyncNullable
-import java.util.UUID
-import net.minecraft.util.ResourceLocation
+import net.minecraft.server.MinecraftServer
 
-class PhoneScreen(statePool: StatePool, playerId: UUID) :
+class PhoneScreen(private val playerState: PlayerContext) :
     WindowScreen(ElementaVersion.V5, drawDefaultBackground = false) {
 
-  companion object {
-    private val SETTINGS_ICON =
-        ResourceLocationBuilder.builder()
-            .namespace(Semaphore.MOD_ID)
-            .append("textures")
-            .append("gui")
-            .append("settings.png")
-            .build()
+    private val frame: UIComponent
 
-    private val PHONE_FRAME: ResourceLocation =
-        ResourceLocationBuilder.builder()
-            .namespace(Semaphore.MOD_ID)
-            .append("textures")
-            .append("gui")
-            .append("phone_frame_bar.png")
-            .build()
-  }
+    private val rootComponent: UIComponent
 
-  private val frame: UIComponent
+    private val settingsScreen: UISettings
+    private val addressScreen: UIAddressList
 
-  private val rootComponent: UIComponent
+    private var inCallScreen: UIInComingCall? = null
+    private var outCallScreen: UIOutComingCall? = null
 
-  private val settingsScreen: UISettings
-  private val addressScreen: UIAddressList
+    private var inSettings = false
 
-  private var inCallScreen: UIInComingCall? = null
-  private var outCallScreen: UIOutComingCall? = null
+    init {
 
-  private var inSettings = false
+        frame =
+            UIImage(Resources.PHONE_FRAME.asImageAsync()).constrain {
+                x = 0.pixels()
+                y = 5.percent()
+                width = 40.percent()
+                height = 80.percent()
+            } childOf window
 
-  private val ownerState: PlayerContext
+        val backgroundImage =
+            ResourceLocationBuilder.builder()
+                .namespace(Semaphore.MOD_ID)
+                .append("textures")
+                .append("gui")
+                .append("backgrounds")
+                .append("${playerState.owner}.png")
+                .build()
+                .asImageAsyncNullable()
 
-  init {
+        val backgroundX = 27.percent() boundTo frame
+        val backgroundY = 8.percent() boundTo frame
+        val backgroundWidth = 46.percent() boundTo frame
+        val backgroundHeight = 84.percent() boundTo frame
+        val container =
+            if (backgroundImage != null) {
+                UIImage(backgroundImage).constrain {
+                    x = backgroundX
+                    y = backgroundY
 
-    frame =
-        UIImage(PHONE_FRAME.asImageAsync()).constrain {
-          x = 0.pixels()
-          y = 5.percent()
-          width = 40.percent()
-          height = 80.percent()
-        } childOf window
+                    width = backgroundWidth
+                    height = backgroundHeight
+                } childOf frame
+            } else {
+                UIBlock().constrain {
+                    x = backgroundX
+                    y = backgroundY
 
-    val states = statePool.states.map { t -> t.value }.filterIsInstance<PlayerContext>()
+                    width = backgroundWidth
+                    height = backgroundHeight
+                } childOf frame
+            }
 
-    ownerState = statePool.get(playerId, PlayerContext::class.java).get()
+        rootComponent = container
+        addressScreen = UIAddressList(container, playerState, mutableListOf())
+        settingsScreen =
+            UISettings(container, playerState, mutableListOf()).constrain {
+                x = 0.pixels() boundTo container
+                y = 0.pixels() boundTo container
 
-    val backgroundImage =
-        ResourceLocationBuilder.builder()
-            .namespace(Semaphore.MOD_ID)
-            .append("textures")
-            .append("gui")
-            .append("backgrounds")
-            .append("${playerId}.png")
-            .build()
-            .asImageAsyncNullable()
+                width = 100.percent() boundTo container
+                height = 100.percent() boundTo container
+            } childOf container
 
-    val backgroundX = 27.percent() boundTo frame
-    val backgroundY = 8.percent() boundTo frame
-    val backgroundWidth = 46.percent() boundTo frame
-    val backgroundHeight = 83.percent() boundTo frame
-    val container =
-        if (backgroundImage != null) {
-          UIImage(backgroundImage).constrain {
-            x = backgroundX
-            y = backgroundY
+        settingsScreen.hide(true)
 
-            width = backgroundWidth
-            height = backgroundHeight
-          } childOf frame
-        } else {
-          UIBlock().constrain {
-            x = backgroundX
-            y = backgroundY
+        val settingsBtn =
+            UIImage(Resources.SETTINGS_ICON.asImageAsync()).constrain {
+                x = 10.pixels() boundTo container
+                y = 20.pixels(true) boundTo frame
 
-            width = backgroundWidth
-            height = backgroundHeight
-          } childOf frame
+                width = 10.pixels()
+                height = 10.pixels()
+            } childOf frame
+
+        settingsBtn.onMouseClick {
+            if (inSettings) {
+                addressScreen.component.unhide()
+                settingsScreen.hide(true)
+            } else {
+                addressScreen.component.hide(true)
+                settingsScreen.unhide()
+            }
+
+            inSettings = !inSettings
         }
 
-    rootComponent = container
-    addressScreen = UIAddressList(container, ownerState, states)
-    settingsScreen =
-        UISettings(container, ownerState, states).constrain {
-          x = 0.pixels() boundTo container
-          y = 0.pixels() boundTo container
-
-          width = 100.percent() boundTo container
-          height = 100.percent() boundTo container
-        } childOf container
-
-    settingsScreen.hide(true)
-
-    val settingsBtn =
-        UIImage(SETTINGS_ICON.asImageAsync()).constrain {
-          x = 10.pixels() boundTo container
-          y = 20.pixels(true) boundTo frame
-
-          width = 10.pixels()
-          height = 10.pixels()
-        } childOf frame
-
-    settingsBtn.onMouseClick {
-      if (inSettings) {
-        addressScreen.component.unhide()
-        settingsScreen.hide(true)
-      } else {
-        addressScreen.component.hide(true)
-        settingsScreen.unhide()
-      }
-
-      inSettings = !inSettings
+        frame.onMouseClick { ClientSoundHandler.playTouchSound() }
+        Inspector(window).constrain {
+            x = 10.pixels(true)
+            y = 10.pixels(true)
+        } childOf window
     }
 
-    frame.onMouseClick {
-      ClientRegistries.getEventPool()
-          .invoke(PlaySoundCommand(ClientRegistries.SOUND_PHONE_TOUCH, false))
+    fun addOrUpdatePlayerState(state: PlayerContext) {
+        Window.enqueueRenderOperation {
+            addressScreen.addOrUpdatePlayerState(state)
+            settingsScreen.addPlayerState(state)
+        }
     }
-    Inspector(window).constrain {
-      x = 10.pixels(true)
-      y = 10.pixels(true)
-    } childOf window
-  }
 
-  fun register(eventPool: EventPool) {
-    eventPool.subscribe(ReceivingCallEvent::class.java, this::onReceivingCall)
-    eventPool.subscribe(SendingCallEvent::class.java, this::onSendingCall)
-    eventPool.subscribe(InComingCallFeedbackEvent::class.java, this::onInComingCallFeedback)
-    eventPool.subscribe(OutGoingCallFeedbackEvent::class.java, this::onOutComingCallFeedback)
-    eventPool.subscribe(CallClosedEvent::class.java, this::onCallClosed)
-    eventPool.subscribe(PlayerStateChangeEvent::class.java, this::onPlayerStateChange)
-  }
-
-  private fun onReceivingCall(e: ReceivingCallEvent) {
-    if (ownerState.callState == PlayerContext.CallState.IDLE) {
-      Window.enqueueRenderOperation {
-        inCallScreen?.apply { rootComponent.removeChild(this) }
-        inCallScreen = UIInComingCall(rootComponent, ownerState, e.caller)
-        rootComponent.addChild(inCallScreen!!)
-      }
+    fun removePlayerState(state: PlayerContext) {
+        Window.enqueueRenderOperation {
+            addressScreen.addOrUpdatePlayerState(state)
+            settingsScreen.addPlayerState(state)
+        }
     }
-  }
 
-  private fun onSendingCall(e: SendingCallEvent) {
-    Window.enqueueRenderOperation {
-      outCallScreen?.apply { rootComponent.removeChild(this) }
-      outCallScreen = UIOutComingCall(rootComponent, ownerState, e.callee)
-      rootComponent.addChild(outCallScreen!!)
+    fun clearPlayerStates(states: Iterable<PlayerContext>) {
+        Window.enqueueRenderOperation {
+            addressScreen.component.clearChildren()
+            settingsScreen.volumeSettings.component.clearChildren()
+
+            states.forEach { s ->
+                addressScreen.addOrUpdatePlayerState(s)
+                settingsScreen.addPlayerState(s)
+            }
+        }
     }
-  }
 
-  private fun onInComingCallFeedback(e: InComingCallFeedbackEvent) {
-    Window.enqueueRenderOperation {
-      if (e.feedback != PlayerContext.CallFeedback.ACCEPT) {
-        outCallScreen?.callNotAvailable()
-      } else {
-        outCallScreen?.callAccepted()
-      }
+    private fun removeCallingScreen() {
+        Window.enqueueRenderOperation {
+            outCallScreen?.let {
+                it.hide(true)
+                rootComponent.removeChild(it)
+            }
+            outCallScreen = null
+        }
     }
-  }
 
-  private fun onOutComingCallFeedback(e: OutGoingCallFeedbackEvent) {
-    Window.enqueueRenderOperation {
-      outCallScreen?.hide(true)
-      outCallScreen = null
-      inCallScreen?.hide(true)
-      inCallScreen = null
+    private fun removeInCallScreen() {
+        Window.enqueueRenderOperation {
+            inCallScreen?.let {
+                it.hide(true)
+                rootComponent.removeChild(it)
+            }
+            inCallScreen = null
+
+            outCallScreen?.let {
+                it.hide(true)
+                rootComponent.removeChild(it)
+            }
+            outCallScreen = null
+        }
     }
-  }
 
-  private fun onPlayerStateChange(e: PlayerStateChangeEvent) {
-    Window.enqueueRenderOperation { addressScreen.update(CommonRegistries.statePool) }
-  }
-
-  private fun onCallClosed(e: CallClosedEvent) {
-    Window.enqueueRenderOperation {
-      inCallScreen?.hide(true)
-      outCallScreen?.hide(true)
+    fun callEstablished() {
+        removeCallingScreen()
     }
-  }
+
+    fun callClosed() {
+        removeInCallScreen()
+    }
+
+    fun receivingCall(state: PlayerContext) {
+        Window.enqueueRenderOperation {
+            val window = ClientRegistries.getOrCreateNotificationWindow(state.owner)
+            window.playTranslate()
+            inCallScreen = UIInComingCall(rootComponent, playerState, state.owner)
+            rootComponent.addChild(inCallScreen!!)
+        }
+    }
 }

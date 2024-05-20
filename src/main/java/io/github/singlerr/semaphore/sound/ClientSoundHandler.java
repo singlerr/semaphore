@@ -2,12 +2,10 @@
 package io.github.singlerr.semaphore.sound;
 
 import io.github.singlerr.semaphore.config.ModConfig;
-import io.github.singlerr.semaphore.events.*;
 import io.github.singlerr.semaphore.mixin.core.SoundHandlerAccessor;
 import io.github.singlerr.semaphore.mixin.core.SoundManagerAccessor;
 import io.github.singlerr.semaphore.registries.ClientRegistries;
 import io.github.singlerr.semaphore.state.player.PlayerContext;
-import io.github.singlerr.semaphore.utils.EventPool;
 import io.github.singlerr.semaphore.utils.ResourceLocationBuilder;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,53 +27,49 @@ public class ClientSoundHandler {
 
     private final Map<ResourceLocation, ISound> sounds = new HashMap<>();
 
-    public void register(EventPool eventPool) {
-        eventPool.subscribe(ReceivingCallEvent.class, ClientSoundHandler::handleRing);
-        eventPool.subscribe(StopSoundCommand.class, ClientSoundHandler::stopSound);
-        eventPool.subscribe(PlaySoundCommand.class, ClientSoundHandler::playSound);
-        eventPool.subscribe(SendingCallEvent.class, ClientSoundHandler::handlePhoneCall);
-        eventPool.subscribe(CallAcceptedEvent.class, ClientSoundHandler::handleAcceptPhoneCall);
-        eventPool.subscribe(InComingCallFeedbackEvent.class, ClientSoundHandler::handleInComingCallFeedback);
-        eventPool.subscribe(OutGoingCallFeedbackEvent.class, ClientSoundHandler::handleOutComingCallFeedback);
-        eventPool.subscribe(CallClosedEvent.class, ClientSoundHandler::handleCallClosed);
+    public static void playCallEstablishedSound() {
+        playNonRepeatable(ClientRegistries.SOUND_CALL_YES);
     }
 
-    private void handleRing(ReceivingCallEvent event) {
-        SoundEvent sound =
-                ModConfig.bellRing ? ClientRegistries.SOUND_PHONE_BELL : ClientRegistries.SOUND_PHONE_VIBRATE;
-        stopAll();
-        playRepeatable(sound);
-    }
-
-    private void handlePhoneCall(SendingCallEvent event) {
-        stopAll();
-        playRepeatable(ClientRegistries.SOUND_CALLING);
-    }
-
-    private void handleInComingCallFeedback(InComingCallFeedbackEvent event) {
-        stopAll();
-        stopRepeatable(ClientRegistries.SOUND_CALLING);
-        if (event.getFeedback() != PlayerContext.CallFeedback.ACCEPT) {
-            playNonRepeatable(ClientRegistries.MISS_CALL_SOUND);
+    public static void playRejectedBy(PlayerContext.CallRejectReason reason) {
+        if (reason == PlayerContext.CallRejectReason.PLAYER_IN_CALL) {
+            playNonRepeatable(ClientRegistries.IN_CALL_SOUND);
         } else {
-            playNonRepeatable(ClientRegistries.SOUND_CALL_YES);
-        }
-    }
-
-    private void handleOutComingCallFeedback(OutGoingCallFeedbackEvent event) {
-        stopAll();
-        if (event.getFeedback() == PlayerContext.CallFeedback.ACCEPT) {
-            playNonRepeatable(ClientRegistries.SOUND_CALL_YES);
-            return;
+            playNonRepeatable(ClientRegistries.MISS_CALL_SOUND);
         }
         playNonRepeatable(ClientRegistries.SOUND_CALL_NO);
     }
 
-    private void handleCallClosed(CallClosedEvent event) {
-        stopAll();
-        stopRepeatable(ClientRegistries.SOUND_CALLING);
-        stopRepeatable(ClientRegistries.SOUND_PHONE_BELL);
+    public static void playTouchSound() {
+        playNonRepeatable(ClientRegistries.SOUND_PHONE_TOUCH);
+    }
+
+    public static void playOkSound(){
+        playNonRepeatable(ClientRegistries.SOUND_CALL_YES);
+    }
+
+    public static void playNoSound(){
+        playNonRepeatable(ClientRegistries.SOUND_CALL_NO);
+    }
+
+    public static void playCallClosedSound() {
         playNonRepeatable(ClientRegistries.SOUND_CALL_OFF);
+    }
+
+    public static void stopCallingSound() {
+        stopRepeatable(ClientRegistries.SOUND_CALLING);
+    }
+
+    public static void stopReceivingCallSound() {
+        stopRepeatable(ModConfig.bellRing ? ClientRegistries.SOUND_PHONE_BELL : ClientRegistries.SOUND_PHONE_VIBRATE);
+    }
+
+    public static void playCallingSound() {
+        playRepeatable(ClientRegistries.SOUND_CALLING);
+    }
+
+    public static void playReceivingCallSound() {
+        playRepeatable(ModConfig.bellRing ? ClientRegistries.SOUND_PHONE_BELL : ClientRegistries.SOUND_PHONE_VIBRATE);
     }
 
     private void playNonRepeatable(ResourceLocationBuilder resourceLocationBuilder) {
@@ -84,16 +78,6 @@ public class ClientSoundHandler {
         } catch (Exception ex) {
             log.error(ex);
         }
-    }
-
-    private void handleAcceptPhoneCall(CallAcceptedEvent event) {
-        stopAll();
-        stopRepeatable(ClientRegistries.SOUND_CALLING);
-    }
-
-    private void stopSound(StopSoundCommand command) {
-        stopRepeatable(ClientRegistries.SOUND_CALLING);
-        stopRepeatable(ClientRegistries.SOUND_PHONE_BELL);
     }
 
     private void playNonRepeatable(SoundEvent soundEvent) {
@@ -126,10 +110,6 @@ public class ClientSoundHandler {
             Minecraft.getMinecraft().getSoundHandler().stopSound(value);
         }
         removeAll();
-    }
-
-    private void playSound(PlaySoundCommand command) {
-        playNonRepeatable(command.getSound());
     }
 
     private String getSoundKey(ISound sound) {

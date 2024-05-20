@@ -9,7 +9,7 @@ import de.maxhenkel.voicechat.voice.server.ClientConnection;
 import de.maxhenkel.voicechat.voice.server.PlayerStateManager;
 import de.maxhenkel.voicechat.voice.server.Server;
 import de.maxhenkel.voicechat.voice.server.ServerWorldUtils;
-import io.github.singlerr.semaphore.registries.CommonRegistries;
+import io.github.singlerr.semaphore.registries.ServerRegistries;
 import io.github.singlerr.semaphore.state.State;
 import io.github.singlerr.semaphore.state.StatePool;
 import io.github.singlerr.semaphore.state.player.PlayerContext;
@@ -85,9 +85,9 @@ public abstract class VoicechatServerMixin {
 
         UUID senderUUID = sender.getUniqueID();
 
-        StatePool pool = CommonRegistries.getStatePool();
+        StatePool pool = ServerRegistries.getStatePool();
 
-        Optional<State<?>> opt = pool.get(senderUUID);
+        Optional<State> opt = pool.get(senderUUID);
         if (!opt.isPresent()) return;
 
         if (!(opt.get() instanceof PlayerContext)) return;
@@ -97,7 +97,6 @@ public abstract class VoicechatServerMixin {
         if (ctx.getCallState() != PlayerContext.CallState.IN_CALL) return;
 
         UUID opponentUUID = ctx.getOpponent();
-        if (opponentUUID.equals(PlayerContext.NULL)) return;
 
         Optional<EntityPlayer> opponent = sender.getServerWorld().playerEntities.stream()
                 .filter(p -> p.getUniqueID().equals(opponentUUID))

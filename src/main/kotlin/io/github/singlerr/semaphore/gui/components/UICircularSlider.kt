@@ -7,7 +7,7 @@ import gg.essential.elementa.dsl.childOf
 
 class UICircularSlider(private val r: Float) : UIContainer() {
 
-  init {
-    (UIShape() childOf this).apply {}
-  }
+    init {
+        (UIShape() childOf this).apply {}
+    }
 }

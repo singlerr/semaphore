@@ -1,14 +1,14 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.eventhandler;
 
-import io.github.singlerr.semaphore.events.OutGoingCallFeedbackEvent;
 import io.github.singlerr.semaphore.gui.NotificationWindow;
 import io.github.singlerr.semaphore.gui.PhoneScreen;
+import io.github.singlerr.semaphore.network.packets.CallAcceptPacket;
+import io.github.singlerr.semaphore.network.packets.CallRejectPacket;
 import io.github.singlerr.semaphore.registries.ClientRegistries;
 import io.github.singlerr.semaphore.registries.CommonRegistries;
+import io.github.singlerr.semaphore.sound.ClientSoundHandler;
 import io.github.singlerr.semaphore.state.player.PlayerContext;
-import java.util.Optional;
-import java.util.UUID;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -24,17 +24,13 @@ public final class NotificationRenderer {
         if (Minecraft.getMinecraft().currentScreen instanceof PhoneScreen) {
             return;
         }
+        PlayerContext context = ClientRegistries.getPlayerState();
 
-        UUID playerId = Minecraft.getMinecraft().getSession().getProfile().getId();
-        Optional<PlayerContext> ctx = CommonRegistries.getStatePool().get(playerId, PlayerContext.class);
-
-        if (!ctx.isPresent()) return;
-
-        PlayerContext context = ctx.get();
         if (context.getCallState() == PlayerContext.CallState.RECEIVING_CALL
                 && context.getOpponent() != PlayerContext.NULL) {
-            NotificationWindow window = ClientRegistries.getOrCreate(context.getOpponent());
+            NotificationWindow window = ClientRegistries.getOrCreateNotificationWindow(context.getOpponent());
             window.draw();
+            window.getHandle().animationFrame();
         }
     }
 
@@ -43,27 +39,27 @@ public final class NotificationRenderer {
         if (Minecraft.getMinecraft().currentScreen instanceof PhoneScreen) {
             return;
         }
-        UUID playerId = Minecraft.getMinecraft().getSession().getProfile().getId();
-        Optional<PlayerContext> ctx = CommonRegistries.getStatePool().get(playerId, PlayerContext.class);
+        PlayerContext context = ClientRegistries.getPlayerState();
 
-        if (!ctx.isPresent()) return;
-        PlayerContext context = ctx.get();
-        if (context.getCallState() == PlayerContext.CallState.RECEIVING_CALL
-                && context.getOpponent() != PlayerContext.NULL) {
-            NotificationWindow window = ClientRegistries.getOrCreate(context.getOpponent());
+        if (context.getCallState() == PlayerContext.CallState.RECEIVING_CALL) {
+            NotificationWindow window = ClientRegistries.getOrCreateNotificationWindow(context.getOpponent());
             if (ClientRegistries.KEY_ACCEPT_CALL.isPressed()) {
-                ClientRegistries.getEventPool()
-                        .invoke(new OutGoingCallFeedbackEvent(
-                                context.getOpponent(), context.getOwner(), PlayerContext.CallFeedback.ACCEPT));
+                CommonRegistries.NETWORK.sendToServer(CallAcceptPacket.builder()
+                        .caller(PlayerContext.from(context.getOpponent()))
+                        .callee(context)
+                        .build());
+                context.setCallState(PlayerContext.CallState.IDLE);
+                ClientSoundHandler.stopReceivingCallSound();
                 return;
             }
             if (ClientRegistries.KEY_DENY_CALL.isPressed()) {
-                ClientRegistries.getEventPool()
-                        .invoke(new OutGoingCallFeedbackEvent(
-                                context.getOpponent(),
-                                context.getOwner(),
-                                PlayerContext.CallFeedback.DENY_NOT_AVAILABLE));
-                return;
+                CommonRegistries.NETWORK.sendToServer(CallRejectPacket.builder()
+                        .caller(PlayerContext.from(context.getOpponent()))
+                        .reason(PlayerContext.CallRejectReason.PLAYER_REJECTED)
+                        .callee(context)
+                        .build());
+                context.setCallState(PlayerContext.CallState.IDLE);
+                ClientSoundHandler.stopReceivingCallSound();
             }
         }
     }

@@ -16,6 +16,6 @@ public final class ClientProxy extends CommonProxy {
     @Override
     public void postInit(FMLPostInitializationEvent event) {
         super.postInit(event);
-        ClientRegistries.apply(event);
+        //        ClientRegistries.apply(event);
     }
 }

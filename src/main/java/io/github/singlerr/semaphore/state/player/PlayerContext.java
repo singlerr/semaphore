@@ -2,7 +2,6 @@
 package io.github.singlerr.semaphore.state.player;
 
 import io.github.singlerr.semaphore.state.State;
-import io.github.singlerr.semaphore.utils.SerializationUtils;
 import io.netty.buffer.ByteBuf;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,22 +11,19 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraft.network.PacketBuffer;
 
 @Setter
 @Getter
 @Builder
-public class PlayerContext implements State<LogicalPlayer> {
+public class PlayerContext implements State {
 
-    public static final UUID NULL = UUID.randomUUID();
-
-    private LogicalPlayer player;
+    public static final UUID NULL = UUID.fromString("00000000-0000-0000-0000-000000000000");
 
     @Builder.Default
     private CallState callState = CallState.IDLE;
 
     @Builder.Default
-    @NonNull
     private UUID opponent = NULL;
 
     @Getter
@@ -50,31 +46,23 @@ public class PlayerContext implements State<LogicalPlayer> {
 
     @Override
     public void serialize(ByteBuf buffer) {
-        buffer.writeInt(callState.ordinal());
-        SerializationUtils.writeUUID(buffer, opponent);
-        SerializationUtils.writeUUID(buffer, owner);
-        ByteBufUtils.writeUTF8String(buffer, name);
+        PacketBuffer wrapper = new PacketBuffer(buffer);
+        wrapper.writeEnumValue(callState);
+        wrapper.writeUniqueId(opponent);
+        wrapper.writeUniqueId(owner);
+        wrapper.writeString(name);
     }
 
     @Override
     public void deserialize(ByteBuf buffer) {
-        int ordinal = buffer.readInt();
-        callState = CallState.values()[ordinal];
-        opponent = SerializationUtils.readUUID(buffer);
-        owner = SerializationUtils.readUUID(buffer);
-        name = ByteBufUtils.readUTF8String(buffer);
+        PacketBuffer wrapper = new PacketBuffer(buffer);
+        callState = wrapper.readEnumValue(CallState.class);
+        opponent = wrapper.readUniqueId();
+        owner = wrapper.readUniqueId();
+        name = wrapper.readString(50);
     }
 
-    @Override
-    public boolean equals(State<LogicalPlayer> other) {
-        if (other instanceof PlayerContext) {
-            return callState == ((PlayerContext) other).callState && opponent == ((PlayerContext) other).opponent;
-        }
-
-        return false;
-    }
-
-    public void copy(PlayerContext other) {
+    public void update(PlayerContext other) {
         this.callState = other.getCallState();
         this.opponent = other.getOpponent();
         this.owner = other.getOwner();
@@ -83,24 +71,39 @@ public class PlayerContext implements State<LogicalPlayer> {
         this.missCalls = new HashMap<>(other.getMissCalls());
     }
 
-    public AtomicInteger getOrCreateMissCall(UUID caller) {
-        AtomicInteger missCount;
-        if (!missCalls.containsKey(caller)) {
-            missCount = new AtomicInteger(0);
-            missCalls.put(caller, missCount);
+    public AtomicInteger getMissCount(UUID id) {
+
+        AtomicInteger count;
+        if (!missCalls.containsKey(id)) {
+            count = new AtomicInteger(0);
+            missCalls.put(id, count);
         } else {
-            missCount = missCalls.get(caller);
+            count = missCalls.get(id);
         }
 
-        return missCount;
-    }
-
-    public synchronized void setOpponent(UUID opponent) {
-        this.opponent = opponent;
+        return count;
     }
 
     public synchronized UUID getOpponent() {
         return opponent;
+    }
+
+    public static PlayerContext from(ByteBuf buffer) {
+        PacketBuffer wrapper = new PacketBuffer(buffer);
+        CallState callState = wrapper.readEnumValue(CallState.class);
+        UUID opponent = wrapper.readUniqueId();
+        UUID owner = wrapper.readUniqueId();
+        String name = wrapper.readString(50);
+        return PlayerContext.builder()
+                .callState(callState)
+                .opponent(opponent)
+                .owner(owner)
+                .name(name)
+                .build();
+    }
+
+    public static PlayerContext from(UUID id) {
+        return PlayerContext.builder().owner(id).name(id.toString()).build();
     }
 
     public enum CallState {
@@ -114,19 +117,16 @@ public class PlayerContext implements State<LogicalPlayer> {
         UNAVAILABLE
     }
 
-    public enum CallAction {
-        REQUEST,
-        CLOSE
+    public enum CallRejectReason {
+        PLAYER_NOT_ONLINE,
+        PLAYER_REJECTED,
+        PLAYER_IN_CALL,
+        OTHER
     }
 
     public enum CallFeedback {
         DENY_IN_CALL,
         DENY_NOT_AVAILABLE,
         ACCEPT
-    }
-
-    public enum PlayerStateAction {
-        CREATE_OR_UPDATE,
-        DELETE
     }
 }

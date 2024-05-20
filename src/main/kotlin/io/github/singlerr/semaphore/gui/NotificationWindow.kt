@@ -22,89 +22,87 @@ import org.lwjgl.input.Keyboard
 
 class NotificationWindow(playerId: UUID) {
 
-  var hidden: Boolean = true
+    var hidden: Boolean = true
 
-  val handle: Window
+    val handle: Window
 
-  init {
+    init {
 
-    handle = Window(ElementaVersion.V5)
+        handle = Window(ElementaVersion.V5)
 
-    val backgroundColor = Color(43, 45, 48)
+        val backgroundColor = Color(43, 45, 48)
+        val container =
+            UIBlock(backgroundColor).constrain {
+                x = 0.pixels(true)
+                y = 10.pixels()
 
-    val container =
-        UIBlock(backgroundColor).constrain {
-          x = 0.pixels(true)
-          y = 10.pixels()
+                width = 150.pixels()
+                height = 40.pixels()
+            } childOf handle
+        val skin = GameProfileUtils.getSkin(playerId)
+        val playerSkull =
+            UIPlayerSkull(skin).constrain {
+                x = 5.pixels()
+                y = CenterConstraint()
 
-          width = 150.pixels()
-          height = 40.pixels()
-        } childOf handle
+                width = 15.pixels()
+                height = ImageAspectConstraint()
+            } childOf container
 
-    val skin = GameProfileUtils.getSkin(playerId)
-    val playerSkull =
-        UIPlayerSkull(skin).constrain {
-          x = 5.pixels()
-          y = CenterConstraint()
+        val acceptIcon =
+            UIImage(Resources.ICON_CALL_ACCEPT.build().asImageAsync()).constrain {
+                x = SiblingConstraint(1f) boundTo playerSkull
+                y = CenterConstraint() boundTo playerSkull
 
-          width = 15.pixels()
-          height = ImageAspectConstraint()
-        } childOf container
+                width = 10.pixels()
+                height = ImageAspectConstraint()
+            } childOf container
 
-    val acceptIcon =
-        UIImage(Resources.ICON_CALL_ACCEPT.build().asImageAsync()).constrain {
-          x = SiblingConstraint(1f) boundTo playerSkull
-          y = CenterConstraint() boundTo playerSkull
+        val acceptText =
+            UIText(Keyboard.getKeyName(ClientRegistries.KEY_ACCEPT_CALL.keyCode)).constrain {
+                x = SiblingConstraint(1f) boundTo acceptIcon
+                y = CenterConstraint() boundTo acceptIcon
 
-          width = 10.pixels()
-          height = ImageAspectConstraint()
-        } childOf container
+                width = 5.pixels()
+                height = 5.pixels()
+            } childOf container
 
-    val acceptText =
-        UIText(Keyboard.getKeyName(ClientRegistries.KEY_ACCEPT_CALL.keyCode)).constrain {
-          x = SiblingConstraint(1f) boundTo acceptIcon
-          y = CenterConstraint() boundTo acceptIcon
+        val denyIcon =
+            UIImage(Resources.ICON_CALL_ACCEPT.build().asImageAsync()).constrain {
+                x = SiblingConstraint(1f) boundTo acceptText
+                y = CenterConstraint() boundTo playerSkull
 
-          width = 5.pixels()
-          height = 5.pixels()
-        } childOf container
+                width = 10.pixels()
+                height = ImageAspectConstraint()
+            } childOf container
 
-    val denyIcon =
-        UIImage(Resources.ICON_CALL_ACCEPT.build().asImageAsync()).constrain {
-          x = SiblingConstraint(1f) boundTo acceptText
-          y = CenterConstraint() boundTo playerSkull
+        val denyText =
+            UIText(Keyboard.getKeyName(ClientRegistries.KEY_DENY_CALL.keyCode)).constrain {
+                x = SiblingConstraint(2f) boundTo denyIcon
+                y = CenterConstraint() boundTo acceptIcon
 
-          width = 10.pixels()
-          height = ImageAspectConstraint()
-        } childOf container
+                width = 5.pixels()
+                height = 5.pixels()
+            } childOf container
 
-    val denyText =
-        UIText(Keyboard.getKeyName(ClientRegistries.KEY_DENY_CALL.keyCode)).constrain {
-          x = SiblingConstraint(2f) boundTo denyIcon
-          y = CenterConstraint() boundTo acceptIcon
+        //    hideWindow()
+    }
 
-          width = 5.pixels()
-          height = 5.pixels()
-        } childOf container
+    fun playTranslate() {
+        handle.animate { setWidthAnimation(Animations.OUT_EXP, 10f, 50.pixels()) }
+    }
 
-    //    hideWindow()
-  }
+    fun hideWindow() {
+        handle.hide(true)
+        hidden = true
+    }
 
-  fun playTranslate() {
-    handle.animate { setXAnimation(Animations.IN_EXP, 2f, 0.pixels(true)) }
-  }
+    fun showWindow() {
+        hidden = false
+        handle.unhide()
+    }
 
-  fun hideWindow() {
-    handle.hide(true)
-    hidden = true
-  }
-
-  fun showWindow() {
-    hidden = false
-    handle.unhide()
-  }
-
-  fun draw() {
-    handle.draw()
-  }
+    fun draw() {
+        handle.draw()
+    }
 }

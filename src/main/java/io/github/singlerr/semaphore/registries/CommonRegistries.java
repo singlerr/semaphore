@@ -3,12 +3,8 @@ package io.github.singlerr.semaphore.registries;
 
 import io.github.singlerr.semaphore.Semaphore;
 import io.github.singlerr.semaphore.item.ItemPhone;
-import io.github.singlerr.semaphore.network.packets.CallActionPacket;
-import io.github.singlerr.semaphore.network.packets.CallFeedbackPacket;
-import io.github.singlerr.semaphore.network.packets.PlayerStatePacket;
-import io.github.singlerr.semaphore.state.StatePool;
+import io.github.singlerr.semaphore.network.packets.*;
 import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
@@ -40,10 +36,6 @@ public final class CommonRegistries {
         }
     };
 
-    // I don't like exposing fields but kotlin does not accept lombok :(
-    @Getter
-    public static final StatePool statePool = new StatePool();
-
     public static void apply(FMLPreInitializationEvent event) {
         MinecraftForge.EVENT_BUS.register(new EventBasedRegistry());
     }
@@ -56,18 +48,42 @@ public final class CommonRegistries {
 
     private static void initializeNetwork() {
         int index = 0;
-        NETWORK.registerMessage(PlayerStatePacket.Handler.class, PlayerStatePacket.class, index++, Side.CLIENT);
-        NETWORK.registerMessage(PlayerStatePacket.Handler.class, PlayerStatePacket.class, index++, Side.SERVER);
 
-        NETWORK.registerMessage(CallActionPacket.Handler.class, CallActionPacket.class, index++, Side.CLIENT);
-        NETWORK.registerMessage(CallActionPacket.Handler.class, CallActionPacket.class, index++, Side.SERVER);
+        NETWORK.registerMessage(AddPlayerStatePacket.Handler.class, AddPlayerStatePacket.class, index++, Side.CLIENT);
+        NETWORK.registerMessage(AddPlayerStatePacket.Handler.class, AddPlayerStatePacket.class, index++, Side.SERVER);
 
-        NETWORK.registerMessage(CallFeedbackPacket.Handler.class, CallFeedbackPacket.class, index++, Side.CLIENT);
-        NETWORK.registerMessage(CallFeedbackPacket.Handler.class, CallFeedbackPacket.class, index++, Side.SERVER);
-    }
+        NETWORK.registerMessage(CallAcceptPacket.Handler.class, CallAcceptPacket.class, index++, Side.CLIENT);
+        NETWORK.registerMessage(CallAcceptPacket.Handler.class, CallAcceptPacket.class, index++, Side.SERVER);
 
-    public static void updatePlayerState(PlayerStatePacket packet) {
-        statePool.submit(packet.getId(), packet.getState());
+        NETWORK.registerMessage(CallEstablishedPacket.Handler.class, CallEstablishedPacket.class, index++, Side.CLIENT);
+        NETWORK.registerMessage(CallEstablishedPacket.Handler.class, CallEstablishedPacket.class, index++, Side.SERVER);
+
+        NETWORK.registerMessage(CallRejectPacket.Handler.class, CallRejectPacket.class, index++, Side.CLIENT);
+        NETWORK.registerMessage(CallRejectPacket.Handler.class, CallRejectPacket.class, index++, Side.SERVER);
+
+        NETWORK.registerMessage(CallClosePacket.Handler.class, CallClosePacket.class, index++, Side.CLIENT);
+        NETWORK.registerMessage(CallClosePacket.Handler.class, CallClosePacket.class, index++, Side.SERVER);
+
+        NETWORK.registerMessage(
+                InitializePlayerStatePacket.Handler.class, InitializePlayerStatePacket.class, index++, Side.CLIENT);
+        NETWORK.registerMessage(
+                InitializePlayerStatePacket.Handler.class, InitializePlayerStatePacket.class, index++, Side.SERVER);
+
+        NETWORK.registerMessage(
+                RemovePlayerStatePacket.Handler.class, RemovePlayerStatePacket.class, index++, Side.CLIENT);
+        NETWORK.registerMessage(
+                RemovePlayerStatePacket.Handler.class, RemovePlayerStatePacket.class, index++, Side.SERVER);
+
+        NETWORK.registerMessage(CallRequestPacket.Handler.class, CallRequestPacket.class, index++, Side.CLIENT);
+        NETWORK.registerMessage(CallRequestPacket.Handler.class, CallRequestPacket.class, index++, Side.SERVER);
+
+        NETWORK.registerMessage(
+                UpdatePlayerStatePacket.Handler.class, UpdatePlayerStatePacket.class, index++, Side.CLIENT);
+        NETWORK.registerMessage(
+                UpdatePlayerStatePacket.Handler.class, UpdatePlayerStatePacket.class, index++, Side.SERVER);
+
+        NETWORK.registerMessage(CallMissedPacket.Handler.class, CallMissedPacket.class, index++, Side.CLIENT);
+        NETWORK.registerMessage(CallMissedPacket.Handler.class, CallMissedPacket.class, index++, Side.SERVER);
     }
 
     private static class EventBasedRegistry {

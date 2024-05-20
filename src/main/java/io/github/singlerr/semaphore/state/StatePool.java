@@ -12,9 +12,9 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public final class StatePool {
 
-    private final ConcurrentMap<UUID, State<?>> states = new ConcurrentHashMap<>();
+    private final ConcurrentMap<UUID, State> states = new ConcurrentHashMap<>();
 
-    public void submit(UUID uuid, State<?> state) {
+    public void submit(UUID uuid, State state) {
         log.info("Submitting state {} to state pool", uuid);
 
         if (!states.containsKey(uuid)) {
@@ -30,15 +30,15 @@ public final class StatePool {
         states.remove(id);
     }
 
-    public Set<Map.Entry<UUID, State<?>>> getStates() {
+    public Set<Map.Entry<UUID, State>> getStates() {
         return states.entrySet();
     }
 
-    public Optional<State<?>> get(UUID uuid) {
+    public Optional<State> get(UUID uuid) {
         return Optional.ofNullable(states.get(uuid));
     }
 
-    public <T extends State<?>> Optional<T> get(UUID uuid, Class<T> clazz) {
+    public <T extends State> Optional<T> get(UUID uuid, Class<T> clazz) {
         return Optional.ofNullable(states.get(uuid)).map(clazz::cast);
     }
 }

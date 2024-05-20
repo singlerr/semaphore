@@ -14,27 +14,27 @@ class UIVolumes(
     states: List<PlayerContext>
 ) {
 
-  val component: UIComponent
+    val component: UIComponent
 
-  init {
-    component =
-        ScrollComponent(innerPadding = 2f, scrollDirection = ScrollComponent.Direction.Vertical)
-            .constrain {
-              x = CenterConstraint()
-              y = 20.pixels() boundTo neighbor
+    init {
+        component =
+            ScrollComponent(innerPadding = 2f, scrollDirection = ScrollComponent.Direction.Vertical)
+                .constrain {
+                    x = CenterConstraint()
+                    y = 20.pixels() boundTo neighbor
 
-              width = 98.percent() boundTo parent
-              height = 70.percent() boundTo parent
-            } childOf parent
+                    width = 98.percent() boundTo parent
+                    height = 70.percent() boundTo parent
+                } childOf parent
 
-    states.forEach { ctx ->
-      if (ctx.owner != ownerState.owner) {
-        component.addChild(UIVolume(ownerState, ctx.owner))
-      }
+        states.forEach { ctx ->
+            if (ctx.owner != ownerState.owner) {
+                component.addChild(UIVolume(ownerState, ctx.owner))
+            }
+        }
     }
-  }
 
-  fun constrain(config: UIComponent.() -> Unit) {
-    config(component)
-  }
+    fun constrain(config: UIComponent.() -> Unit) {
+        config(component)
+    }
 }

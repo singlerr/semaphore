@@ -22,7 +22,6 @@ public final class StatePool {
             return;
         }
 
-
         log.info("Updating state from: {} to: {}", states.get(uuid), state);
         states.put(uuid, state);
     }

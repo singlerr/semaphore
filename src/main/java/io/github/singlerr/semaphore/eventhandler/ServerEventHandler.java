@@ -33,8 +33,7 @@ public class ServerEventHandler {
         FMLServerHandler.instance()
                 .getServer()
                 .getPlayerList()
-                .sendMessage(new TextComponentString(
-                        "Synchronizing all player states to " + event.player.getName())
+                .sendMessage(new TextComponentString("Synchronizing all player states to " + event.player.getName())
                         .setStyle(new Style().setColor(TextFormatting.AQUA)));
         SERVICE.schedule(
                 () -> {

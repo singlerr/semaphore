@@ -147,15 +147,15 @@ public class CallRequestPacket extends Packet {
 
             if (!packet.getCallee().getOwner().equals(playerId)) return null;
 
-
             ClientRegistries.getPlayerState().setOpponent(packet.getCaller().getOwner());
-            NotificationWindow window = ClientRegistries.getOrCreateNotificationWindow(ClientRegistries.getPlayerState().getOpponent());
+            NotificationWindow window = ClientRegistries.getOrCreateNotificationWindow(
+                    ClientRegistries.getPlayerState().getOpponent());
             ClientRegistries.getPlayerState().setCallState(PlayerContext.CallState.RECEIVING_CALL);
             ClientSoundHandler.playReceivingCallSound();
             ClientRegistries.getPhoneScreen().receivingCall(packet.getCaller());
 
-            if(! (Minecraft.getMinecraft().currentScreen instanceof PhoneScreen)){
-                synchronized (window){
+            if (!(Minecraft.getMinecraft().currentScreen instanceof PhoneScreen)) {
+                synchronized (window) {
                     window.onShow();
                 }
             }

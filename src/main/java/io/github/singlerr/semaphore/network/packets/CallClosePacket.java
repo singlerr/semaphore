@@ -110,6 +110,7 @@ public class CallClosePacket extends Packet {
 
             if (!caller.getOwner().equals(playerId) && !callee.getOwner().equals(playerId)) return null;
 
+            ClientRegistries.getPlayerState().setCallState(PlayerContext.CallState.IDLE);
             ClientRegistries.getPhoneScreen().callClosed();
             ClientSoundHandler.playCallClosedSound();
             return null;

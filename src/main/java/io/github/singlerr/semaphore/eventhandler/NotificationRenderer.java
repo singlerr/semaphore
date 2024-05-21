@@ -1,6 +1,7 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.eventhandler;
 
+import gg.essential.universal.UMatrixStack;
 import io.github.singlerr.semaphore.gui.NotificationWindow;
 import io.github.singlerr.semaphore.gui.PhoneScreen;
 import io.github.singlerr.semaphore.network.packets.CallAcceptPacket;
@@ -29,8 +30,7 @@ public final class NotificationRenderer {
         if (context.getCallState() == PlayerContext.CallState.RECEIVING_CALL
                 && context.getOpponent() != PlayerContext.NULL) {
             NotificationWindow window = ClientRegistries.getOrCreateNotificationWindow(context.getOpponent());
-            window.draw();
-            window.getHandle().animationFrame();
+            window.getHandle().draw(new UMatrixStack());
         }
     }
 
@@ -48,8 +48,11 @@ public final class NotificationRenderer {
                         .caller(PlayerContext.from(context.getOpponent()))
                         .callee(context)
                         .build());
-                context.setCallState(PlayerContext.CallState.IDLE);
                 ClientSoundHandler.stopReceivingCallSound();
+                window.onHide(() -> {
+                    context.setCallState(PlayerContext.CallState.IDLE);
+                });
+                ClientRegistries.getPhoneScreen().callClosed();
                 return;
             }
             if (ClientRegistries.KEY_DENY_CALL.isPressed()) {
@@ -58,8 +61,11 @@ public final class NotificationRenderer {
                         .reason(PlayerContext.CallRejectReason.PLAYER_REJECTED)
                         .callee(context)
                         .build());
-                context.setCallState(PlayerContext.CallState.IDLE);
                 ClientSoundHandler.stopReceivingCallSound();
+                window.onHide(() -> {
+                    context.setCallState(PlayerContext.CallState.IDLE);
+                });
+                ClientRegistries.getPhoneScreen().callClosed();
             }
         }
     }

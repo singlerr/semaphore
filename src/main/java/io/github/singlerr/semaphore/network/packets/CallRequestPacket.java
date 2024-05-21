@@ -1,7 +1,8 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.network.packets;
 
-import io.github.singlerr.semaphore.config.ModConfig;
+import io.github.singlerr.semaphore.gui.NotificationWindow;
+import io.github.singlerr.semaphore.gui.PhoneScreen;
 import io.github.singlerr.semaphore.network.Packet;
 import io.github.singlerr.semaphore.network.PacketHandler;
 import io.github.singlerr.semaphore.registries.ClientRegistries;
@@ -13,9 +14,9 @@ import io.github.singlerr.semaphore.utils.ClientUtils;
 import io.netty.buffer.ByteBuf;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 import lombok.*;
 import lombok.extern.log4j.Log4j2;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.server.FMLServerHandler;
@@ -57,7 +58,12 @@ public class CallRequestPacket extends Packet {
 
             if (!serverCallerState.isPresent() || !serverCalleeState.isPresent()) {
                 log.warn("Server state not found for caller: {} or callee: {}", caller.getOwner(), callee.getOwner());
-                return null;
+                CallRejectPacket respPacket = CallRejectPacket.builder()
+                        .caller(caller)
+                        .callee(callee)
+                        .reason(PlayerContext.CallRejectReason.PLAYER_NOT_ONLINE)
+                        .build();
+                return respPacket;
             }
 
             PlayerContext serverCaller = serverCallerState.get();
@@ -125,13 +131,13 @@ public class CallRequestPacket extends Packet {
 
             CommonRegistries.NETWORK.sendTo(packet, calleePlayer);
 
-            ServerRegistries.getTaskScheduler()
-                    .schedule(
-                            () -> {
-                                checkMissCall(serverCaller.getOwner(), serverCallee.getOwner());
-                            },
-                            (long) (ModConfig.callTimeout * 1000),
-                            TimeUnit.MILLISECONDS);
+            //            ServerRegistries.getTaskScheduler()
+            //                    .schedule(
+            //                            () -> {
+            //                                checkMissCall(serverCaller.getOwner(), serverCallee.getOwner());
+            //                            },
+            //                            (long) (ModConfig.callTimeout * 1000),
+            //                            TimeUnit.MILLISECONDS);
             return null;
         }
 
@@ -141,11 +147,18 @@ public class CallRequestPacket extends Packet {
 
             if (!packet.getCallee().getOwner().equals(playerId)) return null;
 
-            ClientRegistries.getPlayerState().setCallState(PlayerContext.CallState.RECEIVING_CALL);
-            ClientRegistries.getPlayerState().setOpponent(packet.getCaller().getOwner());
 
+            ClientRegistries.getPlayerState().setOpponent(packet.getCaller().getOwner());
+            NotificationWindow window = ClientRegistries.getOrCreateNotificationWindow(ClientRegistries.getPlayerState().getOpponent());
+            ClientRegistries.getPlayerState().setCallState(PlayerContext.CallState.RECEIVING_CALL);
             ClientSoundHandler.playReceivingCallSound();
             ClientRegistries.getPhoneScreen().receivingCall(packet.getCaller());
+
+            if(! (Minecraft.getMinecraft().currentScreen instanceof PhoneScreen)){
+                synchronized (window){
+                    window.onShow();
+                }
+            }
             return null;
         }
 

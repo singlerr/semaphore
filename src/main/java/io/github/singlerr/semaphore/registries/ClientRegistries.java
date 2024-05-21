@@ -57,7 +57,7 @@ public final class ClientRegistries {
     private static final Map<UUID, NotificationWindow> windowCaches = new ConcurrentHashMap<>();
 
     @Getter
-    private static PhoneScreen phoneScreen;
+    public static PhoneScreen phoneScreen;
 
     public static final ResourceLocationBuilder MISS_CALL_SOUND = ResourceLocationBuilder.builder()
             .namespace(Semaphore.MOD_ID)

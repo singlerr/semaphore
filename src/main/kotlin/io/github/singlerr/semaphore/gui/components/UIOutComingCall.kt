@@ -11,6 +11,7 @@ import gg.essential.elementa.constraints.ImageAspectConstraint
 import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
 import io.github.singlerr.semaphore.network.packets.CallClosePacket
+import io.github.singlerr.semaphore.registries.ClientRegistries
 import io.github.singlerr.semaphore.registries.CommonRegistries
 import io.github.singlerr.semaphore.sound.ClientSoundHandler
 import io.github.singlerr.semaphore.state.player.PlayerContext
@@ -18,7 +19,7 @@ import io.github.singlerr.semaphore.utils.Resources
 import io.github.singlerr.semaphore.utils.asImageAsync
 import java.awt.Color
 import java.net.URL
-import java.util.UUID
+import java.util.*
 import net.minecraft.client.resources.I18n
 
 class UIOutComingCall(parent: UIComponent, ownerState: PlayerContext, calleeId: UUID) : UIBlock() {
@@ -62,6 +63,8 @@ class UIOutComingCall(parent: UIComponent, ownerState: PlayerContext, calleeId: 
                     .callee(PlayerContext.from(calleeId))
                     .build()
             )
+            ClientRegistries.playerState.callState = PlayerContext.CallState.IDLE
+            ClientSoundHandler.stopCallingSound()
             ClientSoundHandler.playNoSound()
             this@UIOutComingCall.hide(true)
             parent.removeChild(this@UIOutComingCall)

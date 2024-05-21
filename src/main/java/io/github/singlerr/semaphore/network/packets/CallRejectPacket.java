@@ -30,7 +30,7 @@ public class CallRejectPacket extends Packet {
 
     private PlayerContext callee;
 
-    private PlayerContext.CallRejectReason reason;
+    private PlayerContext.CallRejectReason reason = PlayerContext.CallRejectReason.OTHER;
 
     @Override
     public void fromBytes(ByteBuf byteBuf) {
@@ -144,6 +144,7 @@ public class CallRejectPacket extends Packet {
 
             if (!callee.getOwner().equals(playerId) && !caller.getOwner().equals(playerId)) return null;
 
+            ClientSoundHandler.stopCallingSound();
             ClientSoundHandler.playRejectedBy(packet.getReason());
             ClientRegistries.getPhoneScreen().callClosed();
             return null;

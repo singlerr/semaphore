@@ -49,6 +49,9 @@ public class CallEstablishedPacket extends Packet {
 
             if (!calleeCtx.getOwner().equals(playerId) && !callerCtx.getOwner().equals(playerId)) return null;
 
+            ClientRegistries.getPlayerState().setCallState(PlayerContext.CallState.IN_CALL);
+            ClientSoundHandler.stopCallingSound();
+            ClientSoundHandler.stopReceivingCallSound();
             ClientRegistries.getPhoneScreen().callEstablished();
             ClientSoundHandler.playCallEstablishedSound();
             return null;

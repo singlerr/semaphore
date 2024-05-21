@@ -93,7 +93,7 @@ public class ClientSoundHandler {
             sound = getRepeatable(soundEvent, true);
             sounds.put(soundEvent.getSoundName(), sound);
         }
-
+        stopRepeatable(soundEvent);
         Minecraft.getMinecraft().getSoundHandler().playSound(sound);
     }
 

@@ -33,6 +33,15 @@ public class CommandManagement extends CommandBase {
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+        if (args.length < 1) {
+            info(sender, "/vcm list - Lists players that can use phone");
+            info(sender, "/vcm add (<uuid>|<playername>) - Set player of playername or uuid to be usable of phone");
+            info(
+                    sender,
+                    "/vcm remove (<uuid>|<playername>) - Remove player of playername or uuid from list of phone users");
+            info(sender, "/vcm set (<uuid>|<playername>) <state> - Set player state to <state>");
+            return;
+        }
         if (args[0].equalsIgnoreCase("list")) {
             for (Map.Entry<UUID, State> entry : ServerRegistries.getStatePool().getStates()) {
                 if (!(entry.getValue() instanceof PlayerContext)) continue;
@@ -58,23 +67,17 @@ public class CommandManagement extends CommandBase {
                 EntityPlayerMP target = server.getPlayerList().getPlayerByUsername(playerName);
                 if (target == null) {
                     error(sender, "Expected " + playerName + " to be online but not found");
-                    return;
-                }
-
-                id = target.getUniqueID();
-            }
-
-            if (args.length == 3) {
-                id = parseUUID(args[2]);
-                if (id == null) {
-                    error(sender, "Invalid UUID");
-                    return;
+                } else {
+                    id = target.getUniqueID();
                 }
             }
 
             if (id == null) {
-                error(sender, "Invalid UUID");
-                return;
+                id = parseUUID(args[1]);
+                if (id == null) {
+                    error(sender, "Expected <playername> or <uuuid> but neither not are available");
+                    return;
+                }
             }
 
             PlayerContext context =

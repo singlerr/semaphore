@@ -30,14 +30,14 @@ public class ServerEventHandler {
 
     @SubscribeEvent
     public void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
+        FMLServerHandler.instance()
+                .getServer()
+                .getPlayerList()
+                .sendMessage(new TextComponentString(
+                        "Synchronizing all player states to " + event.player.getName())
+                        .setStyle(new Style().setColor(TextFormatting.AQUA)));
         SERVICE.schedule(
                 () -> {
-                    FMLServerHandler.instance()
-                            .getServer()
-                            .getPlayerList()
-                            .sendMessage(new TextComponentString(
-                                            "Synchronizing all player states to " + event.player.getName())
-                                    .setStyle(new Style().setColor(TextFormatting.AQUA)));
                     PlayerContext newCtx = PlayerContext.builder()
                             .owner(event.player.getUniqueID())
                             .name(event.player.getName())
@@ -69,7 +69,7 @@ public class ServerEventHandler {
                             .sendMessage(new TextComponentString("Synchronization ended without errors")
                                     .setStyle(new Style().setColor(TextFormatting.AQUA)));
                 },
-                1000,
+                700,
                 TimeUnit.MILLISECONDS);
     }
 }

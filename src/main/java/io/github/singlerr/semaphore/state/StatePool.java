@@ -15,15 +15,16 @@ public final class StatePool {
     private final ConcurrentMap<UUID, State> states = new ConcurrentHashMap<>();
 
     public void submit(UUID uuid, State state) {
-        log.info("Submitting state {} to state pool", uuid);
+        log.info("Submitting state {} to state pool", state);
 
         if (!states.containsKey(uuid)) {
             states.put(uuid, state);
             return;
         }
 
+
+        log.info("Updating state from: {} to: {}", states.get(uuid), state);
         states.put(uuid, state);
-        log.info("Updating state {}", uuid);
     }
 
     public void remove(UUID id) {

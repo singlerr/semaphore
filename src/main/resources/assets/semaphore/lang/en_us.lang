@@ -1,6 +1,8 @@
 #Gui
 gui.phonescreen.title=Phone
 gui.phonescreen.misscall=Opponent missed call
+gui.notification.accept=Press %1$s
+gui.notification.deny=Press %1$s
 #Key
 key.phone.show=Turn On
 key.phone.hide=Turn Off

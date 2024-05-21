@@ -112,7 +112,7 @@ dependencies {
         "maven.modrinth:simple-voice-chat:forge-${minecraft_version}-${voicechat_version}"
     )
     shadowImpl("gg.essential:elementa-${minecraft_version}-forge:642")
-    implementation("com.github.psambit9791:jdsp:3.0.0")
+    shadowImpl("com.github.psambit9791:jdsp:2.0.0")
 
     modRuntimeOnly("me.djtheredstoner:DevAuth-forge-legacy:1.1.0")
 

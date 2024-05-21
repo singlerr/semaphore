@@ -1,11 +1,17 @@
 #Gui
 gui.phonescreen.title=전화번호부
 gui.phonescreen.misscall=상대방이 전화를 받지 않았습니다.
+gui.notification.accept=%1$s키
+gui.notification.deny=%1$s키
 #Key
 key.phone.show=휴대폰 켜기
 key.phone.hide=휴대폰 끄기
 key.semaphore.category=Semaphore
+key.call.accept=전화 수락
+key.call.deny=전화 거절
+
 #Item
 item.semaphore.itemphone.name=휴대폰
 #CreativeTab
+
 itemGroup.semaphore=Semaphore

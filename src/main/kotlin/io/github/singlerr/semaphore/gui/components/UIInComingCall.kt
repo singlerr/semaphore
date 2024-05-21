@@ -73,17 +73,11 @@ class UIInComingCall(parent: UIComponent, ownerState: PlayerContext, callerId: U
             } childOf this
 
         deny.onMouseClick {
-            CommonRegistries.NETWORK.sendToServer(
-                CallAcceptPacket.builder()
-                    .callee(PlayerContext.from(callerId))
-                    .caller(ownerState)
-                    .build()
-            )
-
             ownerState.callState = PlayerContext.CallState.IDLE
             CommonRegistries.NETWORK.sendToServer(
                 CallRejectPacket.builder()
                     .caller(PlayerContext.from(callerId))
+                    .reason(PlayerContext.CallRejectReason.PLAYER_REJECTED)
                     .callee(ownerState)
                     .build()
             )

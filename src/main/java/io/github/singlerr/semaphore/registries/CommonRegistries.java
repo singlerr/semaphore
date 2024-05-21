@@ -90,6 +90,7 @@ public final class CommonRegistries {
 
         @SubscribeEvent
         public void onItemRegister(RegistryEvent.Register<Item> registry) {
+
             ITEM_PHONE.setCreativeTab(ITEM_PHONE_TAB);
             registry.getRegistry().register(ITEM_PHONE);
         }

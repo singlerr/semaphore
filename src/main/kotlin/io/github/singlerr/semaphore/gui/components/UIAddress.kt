@@ -8,6 +8,7 @@ import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.state.BasicState
 import io.github.singlerr.semaphore.network.packets.CallRequestPacket
+import io.github.singlerr.semaphore.registries.ClientRegistries
 import io.github.singlerr.semaphore.registries.CommonRegistries
 import io.github.singlerr.semaphore.sound.ClientSoundHandler
 import io.github.singlerr.semaphore.state.player.PlayerContext
@@ -27,7 +28,7 @@ class UIAddress(private var ownerState: PlayerContext, var currentState: PlayerC
 
         val darkerBackground = primaryBackground().darker()
         constrain {
-            x = CenterConstraint()
+            x = CenterConstraint() - 2.pixels()
             y = SiblingConstraint() + 10.pixels()
             width = RelativeConstraint(1f)
             height = AspectConstraint(1 / 5f)
@@ -64,6 +65,7 @@ class UIAddress(private var ownerState: PlayerContext, var currentState: PlayerC
             .onMouseClick {
                 // Call
                 ownerState.callState = PlayerContext.CallState.CALLING
+                ClientRegistries.phoneScreen.sendingCall(currentState)
                 ClientSoundHandler.playCallingSound()
                 CommonRegistries.NETWORK.sendToServer(
                     CallRequestPacket.builder().caller(ownerState).callee(currentState).build()

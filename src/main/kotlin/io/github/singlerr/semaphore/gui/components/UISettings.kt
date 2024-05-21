@@ -4,6 +4,7 @@ package io.github.singlerr.semaphore.gui.components
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.*
 import gg.essential.elementa.constraints.*
+import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.state.BasicState
 import gg.essential.elementa.state.toConstraint
@@ -41,6 +42,26 @@ class UISettings(
                 color = bellRingState.map(this@UISettings::toColor).toConstraint()
             } childOf container
 
+        bellRing
+            .onMouseEnter {
+                animate {
+                    setColorAnimation(
+                        Animations.OUT_EXP,
+                        0.1f,
+                        bellRingState.map(this@UISettings::toDarkerColor).toConstraint()
+                    )
+                }
+            }
+            .onMouseLeave {
+                animate {
+                    setColorAnimation(
+                        Animations.OUT_EXP,
+                        0.1f,
+                        bellRingState.map(this@UISettings::toColor).toConstraint()
+                    )
+                }
+            }
+
         val bellRingText =
             UIText("Bell").constrain {
                 x = CenterConstraint() boundTo bellRing
@@ -63,6 +84,26 @@ class UISettings(
                 y = CenterConstraint() boundTo vibration
                 textScale = 0.5f.pixels()
             } childOf vibration
+
+        vibration
+            .onMouseEnter {
+                animate {
+                    setColorAnimation(
+                        Animations.OUT_EXP,
+                        0.1f,
+                        vibrationState.map(this@UISettings::toDarkerColor).toConstraint()
+                    )
+                }
+            }
+            .onMouseLeave {
+                animate {
+                    setColorAnimation(
+                        Animations.OUT_EXP,
+                        0.1f,
+                        vibrationState.map(this@UISettings::toColor).toConstraint()
+                    )
+                }
+            }
 
         bellRing.onMouseClick {
             bellRingState.set(true)
@@ -98,5 +139,9 @@ class UISettings(
 
     private fun toColor(flag: Boolean): Color {
         return if (flag) Color.green else Color.gray
+    }
+
+    private fun toDarkerColor(flag: Boolean): Color {
+        return (if (flag) Color.green else Color.gray).darker()
     }
 }

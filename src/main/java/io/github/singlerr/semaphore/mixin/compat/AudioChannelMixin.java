@@ -4,6 +4,7 @@ package io.github.singlerr.semaphore.mixin.compat;
 import de.maxhenkel.voicechat.voice.client.AudioChannel;
 import io.github.singlerr.semaphore.registries.ClientRegistries;
 import io.github.singlerr.semaphore.state.player.PlayerContext;
+import io.github.singlerr.semaphore.utils.RadioFilter;
 import java.util.UUID;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -30,5 +31,23 @@ public abstract class AudioChannelMixin {
 
         UUID opponent = context.getOpponent();
         return context.getVolumes().getOrDefault(opponent, volume);
+    }
+
+    @ModifyArg(
+            method = "writeToSpeaker",
+            at =
+                    @At(
+                            value = "INVOKE",
+                            target =
+                                    "Lde/maxhenkel/voicechat/voice/client/speaker/Speaker;play([SFLjava/lang/String;)V",
+                            ordinal = 0),
+            index = 0,
+            remap = false)
+    private short[] semaphore$applyBandpassFilter(short[] data) {
+        PlayerContext context = ClientRegistries.getPlayerState();
+
+        if (context.getCallState() != PlayerContext.CallState.IN_CALL) return data;
+
+        return RadioFilter.getInstance().apply(data);
     }
 }

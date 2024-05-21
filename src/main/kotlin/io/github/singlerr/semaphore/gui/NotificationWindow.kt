@@ -3,45 +3,46 @@ package io.github.singlerr.semaphore.gui
 
 import de.maxhenkel.voicechat.gui.GameProfileUtils
 import gg.essential.elementa.ElementaVersion
-import gg.essential.elementa.components.UIBlock
-import gg.essential.elementa.components.UIImage
-import gg.essential.elementa.components.UIText
-import gg.essential.elementa.components.Window
-import gg.essential.elementa.constraints.CenterConstraint
-import gg.essential.elementa.constraints.ImageAspectConstraint
-import gg.essential.elementa.constraints.SiblingConstraint
+import gg.essential.elementa.UIComponent
+import gg.essential.elementa.components.*
+import gg.essential.elementa.constraints.*
 import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
 import io.github.singlerr.semaphore.gui.components.UIPlayerSkull
 import io.github.singlerr.semaphore.registries.ClientRegistries
 import io.github.singlerr.semaphore.utils.Resources
 import io.github.singlerr.semaphore.utils.asImageAsync
+import io.github.singlerr.semaphore.utils.primaryBackground
+import net.minecraft.client.resources.I18n
 import java.awt.Color
 import java.util.UUID
 import org.lwjgl.input.Keyboard
+import java.net.URL
 
 class NotificationWindow(playerId: UUID) {
 
-    var hidden: Boolean = true
+    private var hidden: Boolean = true
 
     val handle: Window
 
+    val container: UIComponent
+
+    private val xPos = -150
     init {
 
         handle = Window(ElementaVersion.V5)
 
-        val backgroundColor = Color(43, 45, 48)
-        val container =
+        val backgroundColor = primaryBackground()
+        container =
             UIBlock(backgroundColor).constrain {
-                x = 0.pixels(true)
+                x = xPos.pixels(true)
                 y = 10.pixels()
 
-                width = 150.pixels()
-                height = 40.pixels()
+                width = ChildBasedSizeConstraint(padding = 2f)
+                height = ChildBasedMaxSizeConstraint() + 5.pixels()
             } childOf handle
-        val skin = GameProfileUtils.getSkin(playerId)
         val playerSkull =
-            UIPlayerSkull(skin).constrain {
+            UIImage.ofURL(URL("https://mc-heads.net/head/$playerId")).constrain {
                 x = 5.pixels()
                 y = CenterConstraint()
 
@@ -51,7 +52,7 @@ class NotificationWindow(playerId: UUID) {
 
         val acceptIcon =
             UIImage(Resources.ICON_CALL_ACCEPT.build().asImageAsync()).constrain {
-                x = SiblingConstraint(1f) boundTo playerSkull
+                x = SiblingConstraint(3f) boundTo playerSkull
                 y = CenterConstraint() boundTo playerSkull
 
                 width = 10.pixels()
@@ -59,17 +60,17 @@ class NotificationWindow(playerId: UUID) {
             } childOf container
 
         val acceptText =
-            UIText(Keyboard.getKeyName(ClientRegistries.KEY_ACCEPT_CALL.keyCode)).constrain {
-                x = SiblingConstraint(1f) boundTo acceptIcon
-                y = CenterConstraint() boundTo acceptIcon
+            UIWrappedText(I18n.format("gui.notification.accept", Keyboard.getKeyName(ClientRegistries.KEY_ACCEPT_CALL.keyCode))).constrain {
+                x = SiblingConstraint(2f) boundTo acceptIcon
+                y = ((CenterConstraint()) boundTo acceptIcon) - 2.pixels()
 
-                width = 5.pixels()
+//                width = 5.pixels()
                 height = 5.pixels()
             } childOf container
 
         val denyIcon =
-            UIImage(Resources.ICON_CALL_ACCEPT.build().asImageAsync()).constrain {
-                x = SiblingConstraint(1f) boundTo acceptText
+            UIImage(Resources.ICON_CALL_DENY.build().asImageAsync()).constrain {
+                x = SiblingConstraint(3f) boundTo acceptText
                 y = CenterConstraint() boundTo playerSkull
 
                 width = 10.pixels()
@@ -77,32 +78,25 @@ class NotificationWindow(playerId: UUID) {
             } childOf container
 
         val denyText =
-            UIText(Keyboard.getKeyName(ClientRegistries.KEY_DENY_CALL.keyCode)).constrain {
+            UIWrappedText(I18n.format("gui.notification.deny", Keyboard.getKeyName(ClientRegistries.KEY_DENY_CALL.keyCode))).constrain {
                 x = SiblingConstraint(2f) boundTo denyIcon
-                y = CenterConstraint() boundTo acceptIcon
+                y = ((CenterConstraint()) boundTo denyIcon) - 2.pixels()
 
-                width = 5.pixels()
+//                width = 5.pixels()
                 height = 5.pixels()
             } childOf container
 
-        //    hideWindow()
     }
 
-    fun playTranslate() {
-        handle.animate { setWidthAnimation(Animations.OUT_EXP, 10f, 50.pixels()) }
+    fun onShow() {
+        container.animate { setXAnimation(Animations.OUT_EXP, 0.5f, 0.pixels(true)) }
     }
 
-    fun hideWindow() {
-        handle.hide(true)
-        hidden = true
+    fun onHide(onComplete: Runnable){
+        container.animate { setXAnimation(Animations.OUT_EXP, 0.5f, (-150).pixels(true))
+        onComplete {
+            onComplete.run()
+        }}
     }
 
-    fun showWindow() {
-        hidden = false
-        handle.unhide()
-    }
-
-    fun draw() {
-        handle.draw()
-    }
 }

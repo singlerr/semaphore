@@ -5,12 +5,10 @@ import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.WindowScreen
 import gg.essential.elementa.components.*
-import gg.essential.elementa.components.inspector.Inspector
 import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
 import io.github.singlerr.semaphore.Semaphore
 import io.github.singlerr.semaphore.gui.components.*
-import io.github.singlerr.semaphore.registries.ClientRegistries
 import io.github.singlerr.semaphore.sound.ClientSoundHandler
 import io.github.singlerr.semaphore.state.player.PlayerContext
 import io.github.singlerr.semaphore.utils.ResourceLocationBuilder
@@ -32,8 +30,6 @@ class PhoneScreen(private val playerState: PlayerContext) :
     private var outCallScreen: UIOutComingCall? = null
 
     private var inSettings = false
-
-    private var isPlaying = false
 
     init {
 
@@ -113,10 +109,10 @@ class PhoneScreen(private val playerState: PlayerContext) :
         }
 
         frame.onMouseClick { ClientSoundHandler.playTouchSound() }
-        Inspector(window).constrain {
-            x = 10.pixels(true)
-            y = 10.pixels(true)
-        } childOf window
+        //        Inspector(window).constrain {
+        //            x = 10.pixels(true)
+        //            y = 10.pixels(true)
+        //        } childOf window
     }
 
     fun addOrUpdatePlayerState(state: PlayerContext) {
@@ -173,11 +169,7 @@ class PhoneScreen(private val playerState: PlayerContext) :
 
     override fun initScreen(width: Int, height: Int) {
         super.initScreen(width, height)
-        frame.animate {
-            setYAnimation(Animations.OUT_EXP, 0.3f, 5.percent())
-
-            onComplete { isPlaying = false }
-        }
+        frame.animate { setYAnimation(Animations.OUT_EXP, 0.3f, 5.percent()) }
     }
 
     override fun onScreenClose() {
@@ -186,17 +178,31 @@ class PhoneScreen(private val playerState: PlayerContext) :
     }
 
     fun callEstablished() {
-        removeCallingScreen()
+        Window.enqueueRenderOperation {
+            outCallScreen?.apply {
+                callAccepted()
+                return@enqueueRenderOperation
+            }
+
+            outCallScreen = UIOutComingCall(rootComponent, playerState, playerState.opponent)
+            rootComponent.addChild(outCallScreen!!)
+        }
     }
 
     fun callClosed() {
+        removeCallingScreen()
         removeInCallScreen()
+    }
+
+    fun sendingCall(state: PlayerContext) {
+        Window.enqueueRenderOperation {
+            outCallScreen = UIOutComingCall(rootComponent, playerState, state.owner)
+            rootComponent.addChild(outCallScreen!!)
+        }
     }
 
     fun receivingCall(state: PlayerContext) {
         Window.enqueueRenderOperation {
-            val window = ClientRegistries.getOrCreateNotificationWindow(state.owner)
-            window.playTranslate()
             inCallScreen = UIInComingCall(rootComponent, playerState, state.owner)
             rootComponent.addChild(inCallScreen!!)
         }

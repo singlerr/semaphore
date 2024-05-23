@@ -107,6 +107,7 @@ public final class ClientRegistries {
 
         log.info("Initializing player state");
         GameProfile profile = Minecraft.getMinecraft().getSession().getProfile();
+
         playerState = PlayerContext.builder()
                 .owner(profile.getId())
                 .name(profile.getName())

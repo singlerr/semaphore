@@ -13,6 +13,7 @@
     "core.sound.SoundHandlerAccessor",
     "core.sound.SoundManagerMixin",
     "core.gui.GuiScreenOptionsSoundsMixin",
+    "compat.ClientVoicechatMixin",
     "compat.AudioChannelMixin"
   ],
   "server": [

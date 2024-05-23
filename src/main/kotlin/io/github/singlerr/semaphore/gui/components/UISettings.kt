@@ -8,8 +8,11 @@ import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.state.BasicState
 import gg.essential.elementa.state.toConstraint
+import io.github.singlerr.semaphore.Semaphore
 import io.github.singlerr.semaphore.config.ModConfig
 import io.github.singlerr.semaphore.state.player.PlayerContext
+import io.github.singlerr.semaphore.utils.ResourceLocationBuilder
+import io.github.singlerr.semaphore.utils.asImageAsyncNullable
 import java.awt.Color
 
 class UISettings(
@@ -23,15 +26,40 @@ class UISettings(
         val bellRingState = BasicState(true)
         val vibrationState = BasicState(false)
 
+
+        val backgroundX = CenterConstraint()
+        val backgroundY = 10.pixels()
+        val backgroundWidth = 80.percent() boundTo this@UISettings
+        val backgroundHeight = 10.pixels() boundTo this@UISettings
+
+        val backgroundImage =
+            ResourceLocationBuilder.builder()
+                .namespace(Semaphore.MOD_ID)
+                .append("textures")
+                .append("gui")
+                .append("backgrounds")
+                .append("${ownerState.owner}.png")
+                .build()
+                .asImageAsyncNullable()
+
         val container =
-            UIContainer().constrain {
-                x = CenterConstraint()
-                y = 10.pixels()
+            if (backgroundImage != null) {
+                UIImage(backgroundImage).constrain {
+                    x = backgroundX
+                    y = backgroundY
 
-                width = 80.percent() boundTo this@UISettings
-                height = 10.pixels() boundTo this@UISettings
-            } childOf this
+                    width = backgroundWidth
+                    height = backgroundHeight
+                } childOf this
+            } else {
+                UIBlock().constrain {
+                    x = backgroundX
+                    y = backgroundY
 
+                    width = backgroundWidth
+                    height = backgroundHeight
+                } childOf this
+            }
         val bellRing =
             UIRoundedRectangle(radius = 10f).constrain {
                 x = SiblingConstraint(padding = 2f)

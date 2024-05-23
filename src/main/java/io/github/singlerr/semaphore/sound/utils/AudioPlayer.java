@@ -13,6 +13,8 @@ import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
+import lombok.Synchronized;
 import lombok.experimental.UtilityClass;
 import lombok.extern.log4j.Log4j2;
 import net.minecraft.util.ResourceLocation;
@@ -29,9 +31,10 @@ public class AudioPlayer {
 
     private final Map<ResourceLocation, short[]> caches = Collections.synchronizedMap(new WeakHashMap<>());
 
-    @Getter
+    @Getter(onMethod_ = {@Synchronized})
     private final AudioWrapper currentAudio = new AudioWrapper();
 
+    @Setter(onMethod_ = {@Synchronized})
     private Speaker speaker;
 
     public void init() throws Exception {

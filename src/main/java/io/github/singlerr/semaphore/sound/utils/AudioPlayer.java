@@ -11,6 +11,8 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Supplier;
+import lombok.Data;
+import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import lombok.extern.log4j.Log4j2;
 import net.minecraft.util.ResourceLocation;
@@ -27,6 +29,9 @@ public class AudioPlayer {
 
     private final Map<ResourceLocation, short[]> caches = Collections.synchronizedMap(new WeakHashMap<>());
 
+    @Getter
+    private final AudioWrapper currentAudio = new AudioWrapper();
+
     private Speaker speaker;
 
     public void init() throws Exception {
@@ -42,7 +47,18 @@ public class AudioPlayer {
         caches.put(resourceLocation, cache);
     }
 
+    public static void stop() {
+        synchronized (currentAudio) {
+            currentAudio.setRunning(false);
+            EXECUTOR.shutdownNow();
+        }
+    }
+
     public static void play(ResourceLocationBuilder builder, Supplier<Double> volumeSupplier) throws Exception {
+        synchronized (currentAudio) {
+            currentAudio.setRunning(true);
+            currentAudio.setId(builder.build());
+        }
         EXECUTOR.submit(() -> {
             try {
                 ResourceLocation loc = builder.build();
@@ -63,6 +79,10 @@ public class AudioPlayer {
                 }
             } catch (Exception e) {
                 log.error(e);
+            }
+
+            synchronized (currentAudio) {
+                currentAudio.setRunning(false);
             }
         });
     }
@@ -90,5 +110,12 @@ public class AudioPlayer {
             framePosition += frame.length;
             return frame;
         }
+    }
+
+    @Data
+    public static class AudioWrapper {
+        private boolean isRunning;
+
+        private ResourceLocation id;
     }
 }

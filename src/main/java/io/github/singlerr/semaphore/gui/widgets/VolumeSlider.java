@@ -5,10 +5,12 @@ import de.maxhenkel.voicechat.gui.widgets.DebouncedSlider;
 import java.awt.*;
 import java.util.function.Consumer;
 import lombok.Builder;
+import lombok.extern.log4j.Log4j2;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 
+@Log4j2
 public class VolumeSlider extends DebouncedSlider {
 
     private final Consumer<Double> valueListener;
@@ -16,6 +18,8 @@ public class VolumeSlider extends DebouncedSlider {
     private final String message;
 
     private final GuiScreen parent;
+
+    private final Runnable clickListener;
 
     public VolumeSlider(
             GuiScreen parent,
@@ -26,17 +30,25 @@ public class VolumeSlider extends DebouncedSlider {
             int height,
             double value,
             String message,
-            Consumer<Double> valueListener) {
+            Consumer<Double> valueListener,
+            Runnable clickListener) {
         super(buttonId, x, y, width, height, value);
         this.parent = parent;
         this.message = message;
         this.valueListener = valueListener;
+        this.clickListener = clickListener;
         displayString = I18n.format(message, String.format("%d%%", ((int) (value * 100))));
+    }
+
+    @Override
+    public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
+        return super.mousePressed(mc, mouseX, mouseY);
     }
 
     @Override
     public void applyDebounced() {
         valueListener.accept(value);
+        clickListener.run();
     }
 
     @Override
@@ -48,7 +60,7 @@ public class VolumeSlider extends DebouncedSlider {
         return new Builder();
     }
 
-    public void onHover( int mouseX, int mouseY) {
+    public void onHover(int mouseX, int mouseY) {
         parent.drawHoveringText(I18n.format(message + ".hover"), mouseX, mouseY);
     }
 
@@ -62,11 +74,12 @@ public class VolumeSlider extends DebouncedSlider {
         private double value;
 
         private Consumer<Double> valueListener;
+        private Runnable clickListener;
         private String message;
 
         Builder() {}
 
-        public Builder setParent(GuiScreen parent){
+        public Builder setParent(GuiScreen parent) {
             this.parent = parent;
             return this;
         }
@@ -106,13 +119,19 @@ public class VolumeSlider extends DebouncedSlider {
             return this;
         }
 
+        public Builder setClickListener(Runnable listener) {
+            this.clickListener = listener;
+            return this;
+        }
+
         public Builder setMessage(String message) {
             this.message = message;
             return this;
         }
 
         public VolumeSlider build() {
-            return new VolumeSlider(parent, buttonId, x, y, width, height, value, message, valueListener);
+            return new VolumeSlider(
+                    parent, buttonId, x, y, width, height, value, message, valueListener, clickListener);
         }
     }
 }

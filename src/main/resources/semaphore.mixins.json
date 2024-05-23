@@ -11,6 +11,7 @@
     "core.MinecraftMixin",
     "core.sound.SoundManagerAccessor",
     "core.sound.SoundHandlerAccessor",
+    "core.sound.SoundManagerMixin",
     "core.gui.GuiScreenOptionsSoundsMixin",
     "compat.AudioChannelMixin"
   ],

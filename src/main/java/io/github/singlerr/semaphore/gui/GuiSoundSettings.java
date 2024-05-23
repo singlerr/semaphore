@@ -3,13 +3,13 @@ package io.github.singlerr.semaphore.gui;
 
 import io.github.singlerr.semaphore.config.ModConfig;
 import io.github.singlerr.semaphore.gui.widgets.VolumeSlider;
+import io.github.singlerr.semaphore.registries.ClientRegistries;
+import io.github.singlerr.semaphore.sound.ClientSoundHandler;
 import java.io.IOException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiOptionButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.client.settings.GameSettings;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 
@@ -32,7 +32,7 @@ public class GuiSoundSettings extends GuiScreen {
 
         // Miss call
         this.buttonList.add(VolumeSlider.builder()
-                        .setParent(this)
+                .setParent(this)
                 .setButtonId(btnId++)
                 .setMessage("gui.settings.sound.player.miss.call")
                 .setX(this.width / 2 - 155 + i % 2 * 160)
@@ -74,6 +74,13 @@ public class GuiSoundSettings extends GuiScreen {
                 .setValueListener((v) -> {
                     ModConfig.soundSettings.callDenyVolume = v;
                 })
+                .setClickListener(() -> {
+                    if (!ClientSoundHandler.isSoundPlaying(ClientRegistries.SOUND_CALL_NO)) {
+                        ClientSoundHandler.stopExcept(ClientRegistries.SOUND_CALL_NO);
+                        ClientSoundHandler.playNonRepeatable(
+                                ClientRegistries.SOUND_CALL_NO, () -> ModConfig.soundSettings.callDenyVolume);
+                    }
+                })
                 .build());
 
         i++;
@@ -88,6 +95,13 @@ public class GuiSoundSettings extends GuiScreen {
                 .setValue(ModConfig.soundSettings.callAcceptVolume)
                 .setValueListener((v) -> {
                     ModConfig.soundSettings.callAcceptVolume = v;
+                })
+                .setClickListener(() -> {
+                    if (!ClientSoundHandler.isSoundPlaying(ClientRegistries.SOUND_CALL_YES)) {
+                        ClientSoundHandler.stopExcept(ClientRegistries.SOUND_CALL_YES);
+                        ClientSoundHandler.playNonRepeatable(
+                                ClientRegistries.SOUND_CALL_YES, () -> ModConfig.soundSettings.callAcceptVolume);
+                    }
                 })
                 .build());
 
@@ -104,6 +118,13 @@ public class GuiSoundSettings extends GuiScreen {
                 .setValueListener((v) -> {
                     ModConfig.soundSettings.callCloseVolume = v;
                 })
+                .setClickListener(() -> {
+                    if (!ClientSoundHandler.isSoundPlaying(ClientRegistries.SOUND_CALL_OFF)) {
+                        ClientSoundHandler.stopExcept(ClientRegistries.SOUND_CALL_OFF);
+                        ClientSoundHandler.playNonRepeatable(
+                                ClientRegistries.SOUND_CALL_OFF, () -> ModConfig.soundSettings.callCloseVolume);
+                    }
+                })
                 .build());
 
         i++;
@@ -118,6 +139,13 @@ public class GuiSoundSettings extends GuiScreen {
                 .setValue(ModConfig.soundSettings.callingVolume)
                 .setValueListener((v) -> {
                     ModConfig.soundSettings.callingVolume = v;
+                })
+                .setClickListener(() -> {
+                    if (!ClientSoundHandler.isSoundPlaying(ClientRegistries.SOUND_CALLING)) {
+                        ClientSoundHandler.stopExcept(ClientRegistries.SOUND_CALLING);
+                        ClientSoundHandler.playNonRepeatable(
+                                ClientRegistries.SOUND_CALLING, () -> ModConfig.soundSettings.callingVolume);
+                    }
                 })
                 .build());
 
@@ -135,6 +163,13 @@ public class GuiSoundSettings extends GuiScreen {
                 .setValueListener((v) -> {
                     ModConfig.soundSettings.touchVolume = v;
                 })
+                .setClickListener(() -> {
+                    if (!ClientSoundHandler.isSoundPlaying(ClientRegistries.SOUND_PHONE_TOUCH)) {
+                        ClientSoundHandler.stopExcept(ClientRegistries.SOUND_PHONE_TOUCH);
+                        ClientSoundHandler.playNonRepeatable(
+                                ClientRegistries.SOUND_PHONE_TOUCH, () -> ModConfig.soundSettings.touchVolume);
+                    }
+                })
                 .build());
 
         i++;
@@ -150,6 +185,13 @@ public class GuiSoundSettings extends GuiScreen {
                 .setValue(ModConfig.soundSettings.ringVolume)
                 .setValueListener((v) -> {
                     ModConfig.soundSettings.ringVolume = v;
+                })
+                .setClickListener(() -> {
+                    if (!ClientSoundHandler.isSoundPlaying(ClientRegistries.SOUND_PHONE_BELL)) {
+                        ClientSoundHandler.stopExcept(ClientRegistries.SOUND_PHONE_BELL);
+                        ClientSoundHandler.playNonRepeatable(
+                                ClientRegistries.SOUND_PHONE_BELL, () -> ModConfig.soundSettings.ringVolume);
+                    }
                 })
                 .build());
 
@@ -167,6 +209,13 @@ public class GuiSoundSettings extends GuiScreen {
                 .setValueListener((v) -> {
                     ModConfig.soundSettings.vibrateVolume = v;
                 })
+                .setClickListener(() -> {
+                    if (!ClientSoundHandler.isSoundPlaying(ClientRegistries.SOUND_PHONE_VIBRATE)) {
+                        ClientSoundHandler.stopExcept(ClientRegistries.SOUND_PHONE_VIBRATE);
+                        ClientSoundHandler.playNonRepeatable(
+                                ClientRegistries.SOUND_PHONE_VIBRATE, () -> ModConfig.soundSettings.vibrateVolume);
+                    }
+                })
                 .build());
         i++;
 
@@ -175,7 +224,6 @@ public class GuiSoundSettings extends GuiScreen {
         this.buttonList.add(new GuiButton(200, this.width / 2 - 100, this.height / 6 + 168, I18n.format("gui.done")));
     }
 
-
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawDefaultBackground();
@@ -183,21 +231,17 @@ public class GuiSoundSettings extends GuiScreen {
         super.drawScreen(mouseX, mouseY, partialTicks);
 
         for (GuiButton component : buttonList) {
-            if(! (component instanceof VolumeSlider))
-                continue;
+            if (!(component instanceof VolumeSlider)) continue;
 
-            if(component.isMouseOver()){
+            if (component.isMouseOver()) {
                 ((VolumeSlider) component).onHover(mouseX, mouseY);
             }
         }
     }
 
-
-
-
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
-        if(button.id == 200){
+        if (button.id == 200) {
             Minecraft.getMinecraft().displayGuiScreen(parent);
         }
     }

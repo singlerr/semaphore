@@ -18,8 +18,8 @@ public final class StaticSoundRecord extends PositionedSoundRecord {
         super(
                 soundEvent.getSoundName(),
                 SoundCategory.MASTER,
-                1.0F,
                 volumeSupplier.get().floatValue(),
+                1.0F,
                 repeat,
                 ModConfig.bellRingDelay,
                 ISound.AttenuationType.NONE,

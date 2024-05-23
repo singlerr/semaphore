@@ -27,15 +27,35 @@ public class ClientSoundHandler {
 
     private final Map<ResourceLocation, ISound> sounds = new HashMap<>();
 
+    public static boolean isSoundPlaying(SoundEvent soundEvent) {
+        if (!sounds.containsKey(soundEvent.getSoundName())) return false;
+        ISound sound = sounds.get(soundEvent.getSoundName());
+        return getSoundKey(sound) != null;
+    }
+
+    public static boolean isSoundPlaying(ResourceLocationBuilder id) {
+        synchronized (AudioPlayer.getCurrentAudio()) {
+            return AudioPlayer.getCurrentAudio().isRunning();
+        }
+    }
+
+    public static void playBell() {
+        playNonRepeatable(ClientRegistries.SOUND_PHONE_BELL, () -> ModConfig.soundSettings.ringVolume);
+    }
+
+    public static void playVibrate() {
+        playNonRepeatable(ClientRegistries.SOUND_PHONE_VIBRATE, () -> ModConfig.soundSettings.vibrateVolume);
+    }
+
     public static void playCallEstablishedSound() {
         playNonRepeatable(ClientRegistries.SOUND_CALL_YES, () -> ModConfig.soundSettings.callAcceptVolume);
     }
 
     public static void playRejectedBy(PlayerContext.CallRejectReason reason) {
         if (reason == PlayerContext.CallRejectReason.PLAYER_IN_CALL) {
-            playNonRepeatable(ClientRegistries.IN_CALL_SOUND, ModConfig.soundSettings.playerInCallVolume);
+            playNonRepeatable(ClientRegistries.IN_CALL_SOUND, () -> ModConfig.soundSettings.playerInCallVolume * 100);
         } else {
-            playNonRepeatable(ClientRegistries.MISS_CALL_SOUND, ModConfig.soundSettings.missCallVolume);
+            playNonRepeatable(ClientRegistries.MISS_CALL_SOUND, () -> ModConfig.soundSettings.missCallVolume);
         }
         playNonRepeatable(ClientRegistries.SOUND_CALL_NO, () -> ModConfig.soundSettings.callDenyVolume);
     }
@@ -76,19 +96,19 @@ public class ClientSoundHandler {
         }
     }
 
-    private void playNonRepeatable(ResourceLocationBuilder resourceLocationBuilder, double volume) {
+    public void playNonRepeatable(ResourceLocationBuilder resourceLocationBuilder, Supplier<Double> volume) {
         try {
-            AudioPlayer.play(resourceLocationBuilder, () -> 100 * volume);
+            AudioPlayer.play(resourceLocationBuilder, volume);
         } catch (Exception ex) {
             log.error(ex);
         }
     }
 
-    private void playNonRepeatable(SoundEvent soundEvent, Supplier<Double> volumeSupplier) {
+    public void playNonRepeatable(SoundEvent soundEvent, Supplier<Double> volumeSupplier) {
         Minecraft.getMinecraft().getSoundHandler().playSound(getRepeatable(soundEvent, volumeSupplier, false));
     }
 
-    private void playRepeatable(SoundEvent soundEvent, Supplier<Double> volumeSupplier) {
+    public void playRepeatable(SoundEvent soundEvent, Supplier<Double> volumeSupplier) {
         ISound sound;
 
         if (sounds.containsKey(soundEvent.getSoundName())) {
@@ -109,7 +129,15 @@ public class ClientSoundHandler {
         }
     }
 
-    private void stopAll() {
+    public void stopExcept(SoundEvent event) {
+        for (Map.Entry<ResourceLocation, ISound> entry : sounds.entrySet()) {
+            if (entry.getKey().equals(event.getSoundName())) continue;
+            Minecraft.getMinecraft().getSoundHandler().stopSound(entry.getValue());
+            removeSound(entry.getValue());
+        }
+    }
+
+    public void stopAll() {
         for (ISound value : sounds.values()) {
             Minecraft.getMinecraft().getSoundHandler().stopSound(value);
         }

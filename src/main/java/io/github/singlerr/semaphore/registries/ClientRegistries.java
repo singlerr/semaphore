@@ -7,6 +7,7 @@ import io.github.singlerr.semaphore.eventhandler.ItemInteractionHandler;
 import io.github.singlerr.semaphore.eventhandler.NotificationRenderer;
 import io.github.singlerr.semaphore.gui.NotificationWindow;
 import io.github.singlerr.semaphore.gui.PhoneScreen;
+import io.github.singlerr.semaphore.sound.utils.AudioPlayer;
 import io.github.singlerr.semaphore.state.player.PlayerContext;
 import io.github.singlerr.semaphore.utils.EventPool;
 import io.github.singlerr.semaphore.utils.ResourceLocationBuilder;
@@ -114,5 +115,10 @@ public final class ClientRegistries {
 
         log.info("Initializing gui screen");
         phoneScreen = new PhoneScreen(playerState);
+        try {
+            AudioPlayer.init();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

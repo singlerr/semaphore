@@ -9,8 +9,9 @@
   ],
   "client": [
     "core.MinecraftMixin",
-    "core.SoundManagerAccessor",
-    "core.SoundHandlerAccessor",
+    "core.sound.SoundManagerAccessor",
+    "core.sound.SoundHandlerAccessor",
+    "core.gui.GuiScreenOptionsSoundsMixin",
     "compat.AudioChannelMixin"
   ],
   "server": [

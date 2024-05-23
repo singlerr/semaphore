@@ -2,7 +2,7 @@
 package io.github.singlerr.semaphore.compat.audio;
 
 import de.maxhenkel.voicechat.api.events.ClientReceiveSoundEvent;
-import io.github.singlerr.semaphore.sound.AudioPlayer;
+import io.github.singlerr.semaphore.sound.utils.AudioPlayer;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass

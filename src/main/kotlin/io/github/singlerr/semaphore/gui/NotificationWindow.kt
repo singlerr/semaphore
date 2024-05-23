@@ -19,8 +19,6 @@ import org.lwjgl.input.Keyboard
 
 class NotificationWindow(playerId: UUID) {
 
-    private var hidden: Boolean = true
-
     val handle: Window
 
     val container: UIComponent

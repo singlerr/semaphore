@@ -1,5 +1,5 @@
 /* (C) 2024 singlerr */
-package io.github.singlerr.semaphore.sound;
+package io.github.singlerr.semaphore.sound.utils;
 
 import de.maxhenkel.voicechat.voice.client.speaker.Speaker;
 import de.maxhenkel.voicechat.voice.client.speaker.SpeakerManager;
@@ -7,8 +7,6 @@ import de.maxhenkel.voicechat.voice.common.NamedThreadPoolFactory;
 import io.github.singlerr.semaphore.utils.ExtensionsKt;
 import io.github.singlerr.semaphore.utils.ResourceLocationBuilder;
 import java.io.BufferedInputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -44,7 +42,7 @@ public class AudioPlayer {
         caches.put(resourceLocation, cache);
     }
 
-    public static void play(ResourceLocationBuilder builder) throws Exception {
+    public static void play(ResourceLocationBuilder builder, Supplier<Double> volumeSupplier) throws Exception {
         EXECUTOR.submit(() -> {
             try {
                 ResourceLocation loc = builder.build();
@@ -55,11 +53,12 @@ public class AudioPlayer {
                 } else {
                     data = caches.get(loc);
                 }
-
                 AudioSupplier supplier = new AudioSupplier(data);
                 short[] frame;
                 while ((frame = supplier.get()) != null) {
-                    speaker.play(frame, 100f, "none");
+                    synchronized (volumeSupplier) {
+                        speaker.play(frame, volumeSupplier.get().floatValue(), "none");
+                    }
                     Thread.sleep(20L);
                 }
             } catch (Exception e) {
@@ -68,14 +67,7 @@ public class AudioPlayer {
         });
     }
 
-    private Path getPath(ResourceLocationBuilder builder) throws Exception {
-        return Paths.get(AudioPlayer.class
-                .getClassLoader()
-                .getResource(builder.asResourcePath())
-                .toURI());
-    }
-
-    private class AudioSupplier implements Supplier<short[]> {
+    private final class AudioSupplier implements Supplier<short[]> {
 
         private final short[] audioData;
         private final short[] frame;

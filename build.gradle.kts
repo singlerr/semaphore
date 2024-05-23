@@ -7,6 +7,7 @@ plugins {
     id("dev.architectury.architectury-pack200") version "0.1.3"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("com.diffplug.spotless") version "6.11.0"
+    `maven-publish`
     kotlin("jvm") version "1.9.0"
 }
 
@@ -77,7 +78,9 @@ loom {
     forge {
         pack200Provider.set(dev.architectury.pack200.java.Pack200Adapter())
         mixinConfig("${mod_id}.mixins.json")
+        //        accessTransformer(file("src/main/resources/META-INF/accesstransformer.cfg"))
     }
+
     mixin { defaultRefmapName.set("${mod_id}.refmap.json") }
 }
 
@@ -199,4 +202,17 @@ spotless {
 
         ktfmt().kotlinlangStyle()
     }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            groupId = mod_group_id
+            artifactId = mod_id
+            version = "${minecraft_version}-${mod_version}"
+            from(components["java"])
+        }
+    }
+
+    repositories { mavenLocal() }
 }

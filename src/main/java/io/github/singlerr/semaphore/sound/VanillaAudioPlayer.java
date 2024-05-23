@@ -3,6 +3,7 @@ package io.github.singlerr.semaphore.sound;
 
 import net.minecraft.util.SoundEvent;
 
+@Deprecated
 public interface VanillaAudioPlayer {
 
     void play(SoundEvent soundEvent, boolean repeat);

@@ -1,5 +1,5 @@
 /* (C) 2024 singlerr */
-package io.github.singlerr.semaphore.sound;
+package io.github.singlerr.semaphore.sound.utils;
 
 import de.maxhenkel.voicechat.api.mp3.Mp3Decoder;
 import io.github.singlerr.semaphore.compat.audio.Plugin;

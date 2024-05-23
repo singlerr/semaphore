@@ -3,6 +3,28 @@ gui.phonescreen.title=Phone
 gui.phonescreen.misscall=Opponent missed call
 gui.notification.accept=Press %1$s
 gui.notification.deny=Press %1$s
+
+#Gui - SoundSettings
+gui.settings.sound.open=Open Extra Sound Settings
+gui.settings.sound.title=Sound settings
+gui.settings.sound.player.miss.call=Miss call : %1$s
+gui.settings.sound.player.miss.call.hover=Set volume of sound when call missed
+gui.settings.sound.player.in.call=Player in call : %1$s
+gui.settings.sound.player.in.call.hover=Set volume of sound when a player is in call
+gui.settings.sound.player.reject.call=Reject call : %1$s
+gui.settings.sound.player.reject.call.hover=Set volume of sound when call rejecting
+gui.settings.sound.player.accept.call=Accept call : %1$s
+gui.settings.sound.player.accept.call.hover=Set volume of sound when call accepting
+gui.settings.sound.player.close.call=Close call : %1$s
+gui.settings.sound.player.close.call.hover=Set volume of sound when call closing
+gui.settings.sound.player.calling=Calling : %1$s
+gui.settings.sound.player.calling.hover=Set volume of sound when calling to another
+gui.settings.sound.player.touch=Touch : %1$s
+gui.settings.sound.player.touch.hover=Set volume of sound on touching screen
+gui.settings.sound.player.ring=Bell : %1$s
+gui.settings.sound.player.ring.hover=Set volume of sound when bell ringing
+gui.settings.sound.player.vibrate=Vibrate : %1$s
+gui.settings.sound.player.vibrate.hover=Set volume of sound when phone vibrating
 #Key
 key.phone.show=Turn On
 key.phone.hide=Turn Off

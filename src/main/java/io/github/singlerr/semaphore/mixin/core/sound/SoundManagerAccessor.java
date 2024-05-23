@@ -1,5 +1,5 @@
 /* (C) 2024 singlerr */
-package io.github.singlerr.semaphore.mixin.core;
+package io.github.singlerr.semaphore.mixin.core.sound;
 
 import java.util.Map;
 import net.minecraft.client.audio.ISound;

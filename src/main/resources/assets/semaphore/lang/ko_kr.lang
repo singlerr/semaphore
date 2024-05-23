@@ -3,6 +3,27 @@ gui.phonescreen.title=전화번호부
 gui.phonescreen.misscall=상대방이 전화를 받지 않았습니다.
 gui.notification.accept=%1$s키
 gui.notification.deny=%1$s키
+
+gui.settings.sound.open=휴대폰 소리 설정
+gui.settings.sound.title=휴대폰 소리 설정
+gui.settings.sound.player.miss.call=부재중 음성 소리 : %1$s
+gui.settings.sound.player.miss.call.hover=상대방이 부재중일 때 음성 볼륨을 설정합니다
+gui.settings.sound.player.in.call=매너콜 음성 소리 : %1$s
+gui.settings.sound.player.in.call.hover=상대방이 통화 중일 때 음성 볼륨을 설정합니다
+gui.settings.sound.player.reject.call=통화 거절 효과음 : %1$s
+gui.settings.sound.player.reject.call.hover=통화 거절 효과음 볼륨을 설정합니다
+gui.settings.sound.player.accept.call=통화 수락 효과음 : %1$s
+gui.settings.sound.player.accept.call.hover=통화 수락 효과음 볼륨을 설정합니다
+gui.settings.sound.player.close.call=통화 종료 효과음 : %1$s
+gui.settings.sound.player.close.call.hover=통화 거절 효과음 볼륨을 설정합니다
+gui.settings.sound.player.calling=발신음 : %1$s
+gui.settings.sound.player.calling.hover=통화 발신음 볼륨을 설정합니다
+gui.settings.sound.player.touch=터치 효과음 : %1$s
+gui.settings.sound.player.touch.hover=화면 터치 효과음 볼륨을 설정합니다
+gui.settings.sound.player.ring=벨소리 : %1$s
+gui.settings.sound.player.ring.hover=벨소리 볼륨을 설정합니다
+gui.settings.sound.player.vibrate=진동 효과음 : %1$s
+gui.settings.sound.player.vibrate.hover=진동 효과음 볼륨을 설정합니다
 #Key
 key.phone.show=휴대폰 켜기
 key.phone.hide=휴대폰 끄기

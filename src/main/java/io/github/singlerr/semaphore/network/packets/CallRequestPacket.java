@@ -1,6 +1,7 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.network.packets;
 
+import io.github.singlerr.semaphore.config.ModConfig;
 import io.github.singlerr.semaphore.gui.NotificationWindow;
 import io.github.singlerr.semaphore.gui.PhoneScreen;
 import io.github.singlerr.semaphore.network.Packet;
@@ -14,6 +15,7 @@ import io.github.singlerr.semaphore.utils.ClientUtils;
 import io.netty.buffer.ByteBuf;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import lombok.*;
 import lombok.extern.log4j.Log4j2;
 import net.minecraft.client.Minecraft;
@@ -131,13 +133,13 @@ public class CallRequestPacket extends Packet {
 
             CommonRegistries.NETWORK.sendTo(packet, calleePlayer);
 
-            //            ServerRegistries.getTaskScheduler()
-            //                    .schedule(
-            //                            () -> {
-            //                                checkMissCall(serverCaller.getOwner(), serverCallee.getOwner());
-            //                            },
-            //                            (long) (ModConfig.callTimeout * 1000),
-            //                            TimeUnit.MILLISECONDS);
+            ServerRegistries.getTaskScheduler()
+                    .schedule(
+                            () -> {
+                                checkMissCall(serverCaller.getOwner(), serverCallee.getOwner());
+                            },
+                            (long) (ModConfig.callTimeout * 1000),
+                            TimeUnit.MILLISECONDS);
             return null;
         }
 
@@ -170,6 +172,19 @@ public class CallRequestPacket extends Packet {
 
             if (!serverCallerState.isPresent() || !serverCalleeState.isPresent()) {
                 log.warn("Server state not found for caller: {} or callee: {}", caller, callee);
+                CallRejectPacket respPacket = CallRejectPacket.builder()
+                        .caller(PlayerContext.from(caller))
+                        .callee(PlayerContext.from(callee))
+                        .reason(PlayerContext.CallRejectReason.PLAYER_NOT_ONLINE)
+                        .build();
+
+                EntityPlayerMP callerPlayer =
+                        FMLServerHandler.instance().getServer().getPlayerList().getPlayerByUUID(caller);
+
+                if (callerPlayer != null) {
+                    CommonRegistries.NETWORK.sendTo(respPacket, callerPlayer);
+                }
+
                 return;
             }
 

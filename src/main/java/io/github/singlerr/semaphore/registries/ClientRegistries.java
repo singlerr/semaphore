@@ -51,14 +51,6 @@ public final class ClientRegistries {
     public static final SoundEvent SOUND_PHONE_VIBRATE =
             new SoundEvent(new ResourceLocation(Semaphore.MOD_ID, "phone_vibrate"));
 
-    @Getter
-    public static PlayerContext playerState;
-
-    private static final Map<UUID, NotificationWindow> windowCaches = new ConcurrentHashMap<>();
-
-    @Getter
-    public static PhoneScreen phoneScreen;
-
     public static final ResourceLocationBuilder MISS_CALL_SOUND = ResourceLocationBuilder.builder()
             .namespace(Semaphore.MOD_ID)
             .append("sounds")
@@ -68,6 +60,18 @@ public final class ClientRegistries {
             .namespace(Semaphore.MOD_ID)
             .append("sounds")
             .append("in_call.wav");
+
+    private static final Map<UUID, NotificationWindow> windowCaches = new ConcurrentHashMap<>();
+
+    /***
+     * Due to kotlin's severe error of lombok @Getter recognition
+     * we unfortunately have to reveal the field to public
+     */
+    @Getter
+    public static PlayerContext playerState;
+
+    @Getter
+    public static PhoneScreen phoneScreen;
 
     private static final EventPool eventPool = new EventPool();
 

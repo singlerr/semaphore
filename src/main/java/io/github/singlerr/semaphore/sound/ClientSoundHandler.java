@@ -2,20 +2,20 @@
 package io.github.singlerr.semaphore.sound;
 
 import io.github.singlerr.semaphore.config.ModConfig;
-import io.github.singlerr.semaphore.mixin.core.SoundHandlerAccessor;
-import io.github.singlerr.semaphore.mixin.core.SoundManagerAccessor;
+import io.github.singlerr.semaphore.mixin.core.sound.SoundHandlerAccessor;
+import io.github.singlerr.semaphore.mixin.core.sound.SoundManagerAccessor;
 import io.github.singlerr.semaphore.registries.ClientRegistries;
+import io.github.singlerr.semaphore.sound.utils.AudioPlayer;
 import io.github.singlerr.semaphore.state.player.PlayerContext;
 import io.github.singlerr.semaphore.utils.ResourceLocationBuilder;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 import lombok.experimental.UtilityClass;
 import lombok.extern.log4j.Log4j2;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -28,32 +28,32 @@ public class ClientSoundHandler {
     private final Map<ResourceLocation, ISound> sounds = new HashMap<>();
 
     public static void playCallEstablishedSound() {
-        playNonRepeatable(ClientRegistries.SOUND_CALL_YES);
+        playNonRepeatable(ClientRegistries.SOUND_CALL_YES, () -> ModConfig.soundSettings.callAcceptVolume);
     }
 
     public static void playRejectedBy(PlayerContext.CallRejectReason reason) {
         if (reason == PlayerContext.CallRejectReason.PLAYER_IN_CALL) {
-            playNonRepeatable(ClientRegistries.IN_CALL_SOUND);
+            playNonRepeatable(ClientRegistries.IN_CALL_SOUND, ModConfig.soundSettings.playerInCallVolume);
         } else {
-            playNonRepeatable(ClientRegistries.MISS_CALL_SOUND);
+            playNonRepeatable(ClientRegistries.MISS_CALL_SOUND, ModConfig.soundSettings.missCallVolume);
         }
-        playNonRepeatable(ClientRegistries.SOUND_CALL_NO);
+        playNonRepeatable(ClientRegistries.SOUND_CALL_NO, () -> ModConfig.soundSettings.callDenyVolume);
     }
 
     public static void playTouchSound() {
-        playNonRepeatable(ClientRegistries.SOUND_PHONE_TOUCH);
+        playNonRepeatable(ClientRegistries.SOUND_PHONE_TOUCH, () -> ModConfig.soundSettings.touchVolume);
     }
 
     public static void playOkSound() {
-        playNonRepeatable(ClientRegistries.SOUND_CALL_YES);
+        playNonRepeatable(ClientRegistries.SOUND_CALL_YES, () -> ModConfig.soundSettings.callAcceptVolume);
     }
 
     public static void playNoSound() {
-        playNonRepeatable(ClientRegistries.SOUND_CALL_NO);
+        playNonRepeatable(ClientRegistries.SOUND_CALL_NO, () -> ModConfig.soundSettings.callDenyVolume);
     }
 
     public static void playCallClosedSound() {
-        playNonRepeatable(ClientRegistries.SOUND_CALL_OFF);
+        playNonRepeatable(ClientRegistries.SOUND_CALL_OFF, () -> ModConfig.soundSettings.callCloseVolume);
     }
 
     public static void stopCallingSound() {
@@ -65,32 +65,36 @@ public class ClientSoundHandler {
     }
 
     public static void playCallingSound() {
-        playRepeatable(ClientRegistries.SOUND_CALLING);
+        playRepeatable(ClientRegistries.SOUND_CALLING, () -> ModConfig.soundSettings.callingVolume);
     }
 
     public static void playReceivingCallSound() {
-        playRepeatable(ModConfig.bellRing ? ClientRegistries.SOUND_PHONE_BELL : ClientRegistries.SOUND_PHONE_VIBRATE);
+        if (ModConfig.bellRing) {
+            playRepeatable(ClientRegistries.SOUND_PHONE_BELL, () -> ModConfig.soundSettings.ringVolume);
+        } else {
+            playRepeatable(ClientRegistries.SOUND_PHONE_VIBRATE, () -> ModConfig.soundSettings.vibrateVolume);
+        }
     }
 
-    private void playNonRepeatable(ResourceLocationBuilder resourceLocationBuilder) {
+    private void playNonRepeatable(ResourceLocationBuilder resourceLocationBuilder, double volume) {
         try {
-            AudioPlayer.play(resourceLocationBuilder);
+            AudioPlayer.play(resourceLocationBuilder, () -> 100 * volume);
         } catch (Exception ex) {
             log.error(ex);
         }
     }
 
-    private void playNonRepeatable(SoundEvent soundEvent) {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(soundEvent, 1.0F));
+    private void playNonRepeatable(SoundEvent soundEvent, Supplier<Double> volumeSupplier) {
+        Minecraft.getMinecraft().getSoundHandler().playSound(getRepeatable(soundEvent, volumeSupplier, false));
     }
 
-    private void playRepeatable(SoundEvent soundEvent) {
+    private void playRepeatable(SoundEvent soundEvent, Supplier<Double> volumeSupplier) {
         ISound sound;
 
         if (sounds.containsKey(soundEvent.getSoundName())) {
             sound = sounds.get(soundEvent.getSoundName());
         } else {
-            sound = getRepeatable(soundEvent, true);
+            sound = getRepeatable(soundEvent, volumeSupplier, true);
             sounds.put(soundEvent.getSoundName(), sound);
         }
         stopRepeatable(soundEvent);
@@ -143,17 +147,7 @@ public class ClientSoundHandler {
         accessor.getPlayingSounds().clear();
     }
 
-    public PositionedSoundRecord getRepeatable(SoundEvent soundEvent, boolean repeat) {
-        return new PositionedSoundRecord(
-                soundEvent.getSoundName(),
-                SoundCategory.MASTER,
-                1.0F,
-                1.0F,
-                repeat,
-                ModConfig.bellRingDelay,
-                ISound.AttenuationType.NONE,
-                0.0F,
-                0.0F,
-                0.0F);
+    public StaticSoundRecord getRepeatable(SoundEvent soundEvent, Supplier<Double> volumeSupplier, boolean repeat) {
+        return new StaticSoundRecord(soundEvent, volumeSupplier, repeat);
     }
 }

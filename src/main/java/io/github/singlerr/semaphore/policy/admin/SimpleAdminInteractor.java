@@ -1,7 +1,8 @@
 /* (C) 2024 singlerr */
-package io.github.singlerr.semaphore.policy.admin.interactors;
+package io.github.singlerr.semaphore.policy.admin;
 
 import de.maxhenkel.voicechat.api.VoicechatServerApi;
+import io.github.singlerr.semaphore.interactors.access.call.CallConnectionHandler;
 import io.github.singlerr.semaphore.interactors.access.database.DatabaseGateway;
 import io.github.singlerr.semaphore.interactors.admin.AdminInteractor;
 import io.github.singlerr.semaphore.interactors.admin.manager.CallConnectionManager;
@@ -9,6 +10,9 @@ import io.github.singlerr.semaphore.interactors.admin.manager.CallStateManager;
 import io.github.singlerr.semaphore.interactors.admin.manager.EntityManager;
 import io.github.singlerr.semaphore.interactors.admin.presenter.CallConnectionPresenter;
 import io.github.singlerr.semaphore.interactors.admin.presenter.EntityPresenter;
+import io.github.singlerr.semaphore.policy.admin.interactors.PlayerManager;
+import io.github.singlerr.semaphore.policy.admin.interactors.PrivilegedCallStateManager;
+import io.github.singlerr.semaphore.policy.admin.interactors.VoicechatCallConnectionManager;
 import io.github.singlerr.semaphore.policy.admin.presenters.EntityPresenterAdapter;
 import io.github.singlerr.semaphore.policy.callhandler.VoicechatCallConnectionHandler;
 
@@ -23,11 +27,9 @@ public final class SimpleAdminInteractor implements AdminInteractor {
 
     public SimpleAdminInteractor(
             DatabaseGateway database,
-            VoicechatServerApi voicechatServerApi,
+            CallConnectionHandler callConnectionHandler,
             CallConnectionPresenter callConnectionPresenter,
             EntityPresenterAdapter entityPresenter) {
-        VoicechatCallConnectionHandler callConnectionHandler =
-                new VoicechatCallConnectionHandler(database, voicechatServerApi);
         this.callConnectionManager =
                 new VoicechatCallConnectionManager(database, callConnectionHandler, callConnectionPresenter);
         this.callStateManager = new PrivilegedCallStateManager(database);

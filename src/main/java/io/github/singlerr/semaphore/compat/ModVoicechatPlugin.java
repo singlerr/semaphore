@@ -38,5 +38,6 @@ public class ModVoicechatPlugin implements VoicechatPlugin {
 
     private void onServerStarted(VoicechatServerStartedEvent event) {
         voicechatServerApi = event.getVoicechat();
+        Semaphore.serverStarted(event);
     }
 }

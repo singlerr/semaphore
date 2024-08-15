@@ -1,7 +1,9 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore;
 
+import de.maxhenkel.voicechat.api.events.VoicechatServerStartedEvent;
 import io.github.singlerr.semaphore.proxy.CommonProxy;
+import io.github.singlerr.semaphore.proxy.ServerProxy;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -39,4 +41,14 @@ public class Semaphore {
 
     @Mod.EventHandler
     public void serverStarting(FMLServerStartingEvent event) {}
+
+    public static void serverStarted(VoicechatServerStartedEvent event){
+        if(proxy instanceof ServerProxy){
+            ((ServerProxy) proxy).serverStarted(event);
+        }
+    }
+
+    public static CommonProxy getProxy() {
+        return proxy;
+    }
 }

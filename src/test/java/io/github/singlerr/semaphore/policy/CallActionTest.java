@@ -17,8 +17,8 @@ import io.github.singlerr.semaphore.interactors.caller.manager.data.CallRequest;
 import io.github.singlerr.semaphore.interactors.caller.presenter.CallRequestPresenter;
 import io.github.singlerr.semaphore.interactors.caller.presenter.ErrorPresenter;
 import io.github.singlerr.semaphore.interactors.caller.presenter.data.InverseCallRequest;
-import io.github.singlerr.semaphore.policy.callee.interactors.SimpleCalleeInteractor;
-import io.github.singlerr.semaphore.policy.caller.interactors.SimpleCallerInteractor;
+import io.github.singlerr.semaphore.policy.callee.SimpleCalleeInteractor;
+import io.github.singlerr.semaphore.policy.caller.SimpleCallerInteractor;
 import io.github.singlerr.semaphore.policy.database.PlayerDatabase;
 import org.junit.jupiter.api.Test;
 

@@ -1,11 +1,12 @@
 /* (C) 2024 singlerr */
-package io.github.singlerr.semaphore.policy.caller.interactors;
+package io.github.singlerr.semaphore.policy.caller;
 
 import io.github.singlerr.semaphore.interactors.access.database.DatabaseGateway;
 import io.github.singlerr.semaphore.interactors.caller.CallerInteractor;
 import io.github.singlerr.semaphore.interactors.caller.manager.CallRequestManager;
 import io.github.singlerr.semaphore.interactors.caller.presenter.CallRequestPresenter;
 import io.github.singlerr.semaphore.interactors.caller.presenter.ErrorPresenter;
+import io.github.singlerr.semaphore.policy.caller.interactors.CallStateMachine;
 
 public final class SimpleCallerInteractor implements CallerInteractor {
 

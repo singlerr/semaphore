@@ -1,5 +1,5 @@
 /* (C) 2024 singlerr */
-package io.github.singlerr.semaphore.policy.callee.interactors;
+package io.github.singlerr.semaphore.policy.callee;
 
 import io.github.singlerr.semaphore.interactors.access.call.CallConnectionHandler;
 import io.github.singlerr.semaphore.interactors.access.database.DatabaseGateway;
@@ -7,6 +7,7 @@ import io.github.singlerr.semaphore.interactors.callee.CalleeInteractor;
 import io.github.singlerr.semaphore.interactors.callee.manager.CallResponseManager;
 import io.github.singlerr.semaphore.interactors.callee.presenter.CallResponsePresenter;
 import io.github.singlerr.semaphore.interactors.callee.presenter.ErrorHandler;
+import io.github.singlerr.semaphore.policy.callee.interactors.CallStateMachine;
 
 public final class SimpleCalleeInteractor implements CalleeInteractor {
 

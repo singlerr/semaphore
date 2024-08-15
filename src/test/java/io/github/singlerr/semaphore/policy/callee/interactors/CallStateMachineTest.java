@@ -14,6 +14,7 @@ import io.github.singlerr.semaphore.interactors.callee.presenter.CallResponsePre
 import io.github.singlerr.semaphore.interactors.callee.presenter.ErrorHandler;
 import io.github.singlerr.semaphore.interactors.callee.presenter.data.CallResponse;
 import io.github.singlerr.semaphore.interactors.callee.presenter.data.Error;
+import io.github.singlerr.semaphore.policy.callee.SimpleCalleeInteractor;
 import io.github.singlerr.semaphore.policy.database.PlayerDatabase;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;

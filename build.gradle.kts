@@ -3,14 +3,12 @@ import com.diffplug.gradle.spotless.SpotlessExtension
 plugins {
     id("idea")
     id("java")
-    id("io.freefair.lombok") version "8.1.0"
     id("gg.essential.loom") version "1.5.polyfrost.1"
     id("dev.architectury.architectury-pack200") version "0.1.3"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("com.diffplug.spotless") version "6.11.0" apply false
     `maven-publish`
     kotlin("jvm") version "2.0.0"
-    kotlin("plugin.lombok") version "2.0.0"
 }
 
 val minecraft_version: String by project

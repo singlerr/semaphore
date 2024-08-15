@@ -4,6 +4,8 @@ gui.phonescreen.misscall=상대방이 전화를 받지 않았습니다.
 gui.notification.accept=%1$s키
 gui.notification.deny=%1$s키
 
+gui.settings.sound.test=테스트
+gui.settings.sound.test.hover=클릭하여 소리 볼륨을 확인합니다
 gui.settings.sound.open=휴대폰 소리 설정
 gui.settings.sound.title=휴대폰 소리 설정
 gui.settings.sound.player.miss.call=부재중 음성 소리 : %1$s

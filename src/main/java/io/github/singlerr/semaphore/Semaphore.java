@@ -24,21 +24,19 @@ public class Semaphore {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        proxy.preInit(event);
+        proxy.preInit();
     }
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
-        proxy.init(event);
+        proxy.init();
     }
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
-        proxy.postInit(event);
+        proxy.postInit();
     }
 
     @Mod.EventHandler
-    public void serverStarting(FMLServerStartingEvent event) {
-        proxy.serverStarting(event);
-    }
+    public void serverStarting(FMLServerStartingEvent event) {}
 }

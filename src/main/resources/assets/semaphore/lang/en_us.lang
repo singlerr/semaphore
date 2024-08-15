@@ -7,6 +7,8 @@ gui.notification.deny=Press %1$s
 #Gui - SoundSettings
 gui.settings.sound.open=Open Extra Sound Settings
 gui.settings.sound.title=Sound settings
+gui.settings.sound.test=Play test sound
+gui.settings.sound.test.hover=Click to test sound
 gui.settings.sound.player.miss.call=Miss call : %1$s
 gui.settings.sound.player.miss.call.hover=Set volume of sound when call missed
 gui.settings.sound.player.in.call=Player in call : %1$s

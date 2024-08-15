@@ -1,14 +1,16 @@
+import com.diffplug.gradle.spotless.SpotlessExtension
+
 plugins {
     id("idea")
     id("java")
-    id("org.jetbrains.kotlin.plugin.lombok") version "1.8.10"
-    id("io.freefair.lombok") version "8.3"
-    id("gg.essential.loom") version "0.10.0.+"
+    id("io.freefair.lombok") version "8.1.0"
+    id("gg.essential.loom") version "1.5.polyfrost.1"
     id("dev.architectury.architectury-pack200") version "0.1.3"
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("com.diffplug.spotless") version "6.11.0"
+    id("com.diffplug.spotless") version "6.11.0" apply false
     `maven-publish`
-    kotlin("jvm") version "1.9.0"
+    kotlin("jvm") version "2.0.0"
+    kotlin("plugin.lombok") version "2.0.0"
 }
 
 val minecraft_version: String by project
@@ -29,6 +31,8 @@ val mod_group_id: String by project
 val voicechat_version: String by project
 val voicechat_api_version: String by project
 
+val semaphore_base_version: String by project
+
 group = mod_group_id
 
 version = "${minecraft_version}-${mod_version}"
@@ -46,25 +50,12 @@ kotlin { jvmToolchain(8) }
 
 // Minecraft configuration:
 loom {
-    launchConfigs {
-        "client" {
-            property("mixin.debug", "true")
-            property("asmhelper.verbose", "true")
-            arg("--tweakClass", "org.spongepowered.asm.launch.MixinTweaker")
-            arg("--mixin", "${mod_id}.mixins.json")
-            //      arg("--username", "Dev")
-        }
-
-        "server" {
-            property("mixin.debug", "true")
-            property("asmhelper.verbose", "true")
-            arg("--tweakClass", "org.spongepowered.asm.launch.MixinTweaker")
-            arg("--mixin", "${mod_id}.mixins.json")
-        }
-    }
-
     runs {
         named("client") {
+            property("mixin.debug", "true")
+            property("asmhelper.verbose", "true")
+            vmArgs("--tweakClass", "org.spongepowered.asm.launch.MixinTweaker")
+            vmArgs("--mixin", "${mod_id}.mixins.json")
             vmArgs(
                 "-Ddevauth.enabled=true",
                 "-Ddevauth.configDir=./.devauth",
@@ -72,7 +63,14 @@ loom {
             )
             runDir = "run-client"
         }
-        named("server") { runDir = "run-server" }
+
+        named("server") {
+            property("mixin.debug", "true")
+            property("asmhelper.verbose", "true")
+            vmArgs("--tweakClass", "org.spongepowered.asm.launch.MixinTweaker")
+            vmArgs("--mixin", "${mod_id}.mixins.json")
+            runDir = "run-server"
+        }
     }
 
     forge {
@@ -100,9 +98,16 @@ repositories {
     }
     maven("https://repo.spongepowered.org/maven/")
     maven("https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1")
+    maven {
+        name = "singlerr's repo"
+        url = uri("https://github.com/singlerr/mvn-repo/raw/maven2/")
+    }
 }
 
 dependencies {
+    testImplementation(platform("org.junit:junit-bom:5.10.0"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+
     minecraft("com.mojang:minecraft:${minecraft_version}")
     mappings("de.oceanlabs.mcp:mcp_${mapping_channel}:${mapping_version}")
     forge("net.minecraftforge:forge:${minecraft_version}-${forge_version}")
@@ -114,12 +119,47 @@ dependencies {
     modRuntimeOnly(
         "maven.modrinth:simple-voice-chat:forge-${minecraft_version}-${voicechat_version}"
     )
-    shadowImpl("gg.essential:elementa-${minecraft_version}-forge:642")
-    shadowImpl("com.github.psambit9791:jdsp:2.0.0")
+    include(modImplementation("gg.essential:elementa-${minecraft_version}-forge:642")!!)
+    include(modImplementation("com.github.psambit9791:jdsp:2.0.0")!!)
 
     modRuntimeOnly("me.djtheredstoner:DevAuth-forge-legacy:1.1.0")
 
-    annotationProcessor("org.spongepowered:mixin:0.8.5-SNAPSHOT")
+    // CallHandler
+    include(
+        implementation(
+            "io.github.singlerr.semaphore.callhandler:callhandler:${semaphore_base_version}"
+        )!!
+    )
+
+    // Datagateways
+    include(
+        implementation(
+            "io.github.singlerr.semaphore.datagateways:datagateways:${semaphore_base_version}"
+        )!!
+    )
+
+    // Interactors
+    include(
+        implementation(
+            "io.github.singlerr.semaphore.interactors:accessor:${semaphore_base_version}"
+        )!!
+    )
+    include(
+        implementation("io.github.singlerr.semaphore.interactors:admin:${semaphore_base_version}")!!
+    )
+    include(
+        implementation(
+            "io.github.singlerr.semaphore.interactors:callee:${semaphore_base_version}"
+        )!!
+    )
+    include(
+        implementation(
+            "io.github.singlerr.semaphore.interactors:caller:${semaphore_base_version}"
+        )!!
+    )
+
+    // Controllers
+
 }
 
 tasks.withType<JavaCompile> { options.encoding = "UTF-8" }
@@ -170,6 +210,8 @@ tasks.jar {
     destinationDirectory.set(layout.buildDirectory.dir("badjars"))
 }
 
+tasks.test { useJUnitPlatform() }
+
 tasks.shadowJar {
     destinationDirectory.set(layout.buildDirectory.dir("badjars"))
     archiveClassifier.set("all-dev")
@@ -185,22 +227,26 @@ tasks.shadowJar {
     doLast { configurations.forEach { println("Copying jars into mod: ${it.files}") } }
 }
 
-spotless {
-    java {
-        target("src/*/java/**/*.java", "*/src/*/java/**/*.java")
-        palantirJavaFormat()
-        licenseHeader("/* (C) \$YEAR singlerr */")
-    }
-    kotlinGradle {
-        target("*.gradle.kts", "*/**.gradle.kts")
+allprojects {
+    apply(plugin = "com.diffplug.spotless")
 
-        ktfmt().kotlinlangStyle()
-    }
+    configure<SpotlessExtension> {
+        java {
+            target("src/*/java/**/*.java", "*/src/*/java/**/*.java")
+            palantirJavaFormat()
+            licenseHeader("/* (C) \$YEAR singlerr */")
+        }
+        kotlinGradle {
+            target("*.gradle.kts", "*/**.gradle.kts")
 
-    kotlin {
-        target("src/*/kotlin/**/*.kt", "*/src/*/kotlin/**/*.kt")
+            ktfmt().kotlinlangStyle()
+        }
 
-        ktfmt().kotlinlangStyle()
+        kotlin {
+            target("src/*/kotlin/**/*.kt", "*/src/*/kotlin/**/*.kt")
+
+            ktfmt().kotlinlangStyle()
+        }
     }
 }
 

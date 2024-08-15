@@ -1,25 +1,22 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.proxy;
 
-import io.github.singlerr.semaphore.registries.CommonRegistries;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import io.github.singlerr.semaphore.instances.AdminInteractorAccess;
+import io.github.singlerr.semaphore.policy.admin.interactors.SimpleAdminInteractor;
+import io.github.singlerr.semaphore.policy.database.StubDatabase;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
-public class CommonProxy {
+public abstract class CommonProxy {
 
-    public void preInit(FMLPreInitializationEvent event) {
-        CommonRegistries.apply(event);
+    public void preInit(){
+
     }
 
-    public void init(FMLInitializationEvent event) {
-        CommonRegistries.apply(event);
+    public void init(){
+
     }
 
-    public void postInit(FMLPostInitializationEvent event) {
-        CommonRegistries.apply(event);
-    }
+    public void postInit(){
 
-    public void serverStarting(FMLServerStartingEvent event) {}
+    }
 }

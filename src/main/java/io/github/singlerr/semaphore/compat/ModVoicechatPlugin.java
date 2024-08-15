@@ -1,0 +1,42 @@
+/* (C) 2024 singlerr */
+package io.github.singlerr.semaphore.compat;
+
+import de.maxhenkel.voicechat.api.ForgeVoicechatPlugin;
+import de.maxhenkel.voicechat.api.VoicechatApi;
+import de.maxhenkel.voicechat.api.VoicechatPlugin;
+import de.maxhenkel.voicechat.api.VoicechatServerApi;
+import de.maxhenkel.voicechat.api.events.EventRegistration;
+import de.maxhenkel.voicechat.api.events.VoicechatServerStartedEvent;
+import io.github.singlerr.semaphore.Semaphore;
+import lombok.Getter;
+import org.jetbrains.annotations.Nullable;
+
+@ForgeVoicechatPlugin
+public class ModVoicechatPlugin implements VoicechatPlugin {
+
+    @Getter
+    private static VoicechatApi voicechatApi;
+
+    @Getter
+    @Nullable
+    private static VoicechatServerApi voicechatServerApi;
+
+    @Override
+    public String getPluginId() {
+        return Semaphore.MOD_ID;
+    }
+
+    @Override
+    public void initialize(VoicechatApi api) {
+        voicechatApi = api;
+    }
+
+    @Override
+    public void registerEvents(EventRegistration registration) {
+        registration.registerEvent(VoicechatServerStartedEvent.class, this::onServerStarted);
+    }
+
+    private void onServerStarted(VoicechatServerStartedEvent event) {
+        voicechatServerApi = event.getVoicechat();
+    }
+}

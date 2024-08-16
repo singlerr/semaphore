@@ -1,8 +1,8 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.policy.caller.presenters;
 
-import io.github.singlerr.semaphore.interactors.callee.presenter.ErrorHandler;
-import io.github.singlerr.semaphore.interactors.callee.presenter.data.Error;
+import io.github.singlerr.semaphore.interactors.caller.presenter.ErrorPresenter;
+import io.github.singlerr.semaphore.interactors.caller.presenter.data.Error;
 import io.github.singlerr.semaphore.policy.admin.presenters.EntityPresenterAdapter;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,14 +12,19 @@ import net.minecraft.client.gui.GuiScreen;
 import org.jetbrains.annotations.NotNull;
 import scala.actors.threadpool.Arrays;
 
-public final class ErrorPresenterAdapter implements ErrorHandler {
+public final class ErrorPresenterAdapter implements ErrorPresenter {
 
-    private final Supplier<ErrorContext> contextSupplier;
+    private Supplier<ErrorContext> contextSupplier;
 
     private Collection<PredicatePresenter> registeredPresenters;
 
     public ErrorPresenterAdapter(Supplier<ErrorContext> contextSupplier) {
         this.contextSupplier = contextSupplier;
+        this.registeredPresenters = new ArrayList<>();
+    }
+
+    public ErrorPresenterAdapter() {
+        this.contextSupplier = () -> null;
         this.registeredPresenters = new ArrayList<>();
     }
 
@@ -29,12 +34,12 @@ public final class ErrorPresenterAdapter implements ErrorHandler {
 
     private void invoke(ErrorContext context, Error entity) {
         for (PredicatePresenter presenter : registeredPresenters) {
-            if (presenter.shouldPresent(context)) presenter.getPresenter().error(entity);
+            if (presenter.shouldPresent(context)) presenter.getPresenter().present(entity);
         }
     }
 
     @Override
-    public void error(Error entity) {
+    public void present(Error entity) {
         ErrorContext context = contextSupplier.get();
         if (context == null) return;
 
@@ -57,9 +62,9 @@ public final class ErrorPresenterAdapter implements ErrorHandler {
     public static class PredicatePresenter {
 
         private final Predicate<ErrorContext> condition;
-        private final ErrorHandler presenter;
+        private final ErrorPresenter presenter;
 
-        public PredicatePresenter(@NotNull Predicate<ErrorContext> condition, @NotNull ErrorHandler presenter) {
+        public PredicatePresenter(@NotNull Predicate<ErrorContext> condition, @NotNull ErrorPresenter presenter) {
             this.condition = condition;
             this.presenter = presenter;
         }
@@ -68,7 +73,7 @@ public final class ErrorPresenterAdapter implements ErrorHandler {
             return condition.test(context);
         }
 
-        public ErrorHandler getPresenter() {
+        public ErrorPresenter getPresenter() {
             return presenter;
         }
     }

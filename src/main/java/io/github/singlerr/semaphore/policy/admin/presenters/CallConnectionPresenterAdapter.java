@@ -8,20 +8,28 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import lombok.Data;
 import net.minecraft.client.gui.GuiScreen;
 import org.jetbrains.annotations.NotNull;
 import scala.actors.threadpool.Arrays;
 
 public final class CallConnectionPresenterAdapter implements CallConnectionPresenter {
 
-    private final Supplier<PresenterContext> contextSupplier;
+    private Supplier<PresenterContext> contextSupplier;
 
     private Collection<PredicatePresenter> registeredPresenters;
 
     public CallConnectionPresenterAdapter(Supplier<PresenterContext> contextSupplier) {
         this.contextSupplier = contextSupplier;
         this.registeredPresenters = new ArrayList<>();
+    }
+
+    public CallConnectionPresenterAdapter() {
+        this.contextSupplier = () -> null;
+        this.registeredPresenters = new ArrayList<>();
+    }
+
+    public void setContextSupplier(Supplier<PresenterContext> contextSupplier) {
+        this.contextSupplier = contextSupplier;
     }
 
     public void initialize(PredicatePresenter... presenters) {
@@ -56,10 +64,13 @@ public final class CallConnectionPresenterAdapter implements CallConnectionPrese
         invoke(context, error);
     }
 
-    @Data
     public static class PresenterContext {
 
         private final GuiScreen currentScreen;
+
+        public PresenterContext(GuiScreen currentScreen) {
+            this.currentScreen = currentScreen;
+        }
     }
 
     public static class PredicatePresenter {

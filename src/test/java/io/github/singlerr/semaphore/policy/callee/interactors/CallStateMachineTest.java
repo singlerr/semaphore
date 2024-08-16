@@ -76,7 +76,7 @@ class CallStateMachineTest {
         assertEquals(0, stubDatabase.getById(stubCaller.id()).stateId());
     }
 
-    private class StubResponsePresenter implements CallResponsePresenter {
+    private static class StubResponsePresenter implements CallResponsePresenter {
 
         @Override
         public void error(Error entity) {
@@ -89,7 +89,7 @@ class CallStateMachineTest {
         }
     }
 
-    private class StubErrorHandler implements ErrorHandler {
+    private static class StubErrorHandler implements ErrorHandler {
 
         @Override
         public void error(Error entity) {
@@ -97,7 +97,7 @@ class CallStateMachineTest {
         }
     }
 
-    private class StubCallConnectionHandler implements CallConnectionHandler {
+    private static class StubCallConnectionHandler implements CallConnectionHandler {
 
         private CallConnection cache;
 

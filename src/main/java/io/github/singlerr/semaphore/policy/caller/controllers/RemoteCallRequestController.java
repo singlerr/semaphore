@@ -1,3 +1,4 @@
+/* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.policy.caller.controllers;
 
 import io.github.singlerr.semaphore.interactors.caller.controller.CallRequestController;
@@ -5,7 +6,5 @@ import io.github.singlerr.semaphore.interactors.caller.controller.data.CallReque
 
 public final class RemoteCallRequestController implements CallRequestController {
     @Override
-    public void request(CallRequest request) {
-
-    }
+    public void request(CallRequest request) {}
 }

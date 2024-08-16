@@ -1,7 +1,9 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.policy.callee.presenters;
 
+import io.github.singlerr.semaphore.interactors.callee.presenter.CallResponsePresenter;
 import io.github.singlerr.semaphore.interactors.callee.presenter.ErrorHandler;
+import io.github.singlerr.semaphore.interactors.callee.presenter.data.CallResponse;
 import io.github.singlerr.semaphore.interactors.callee.presenter.data.Error;
 import io.github.singlerr.semaphore.policy.admin.presenters.EntityPresenterAdapter;
 import java.util.ArrayList;
@@ -12,15 +14,24 @@ import net.minecraft.client.gui.GuiScreen;
 import org.jetbrains.annotations.NotNull;
 import scala.actors.threadpool.Arrays;
 
-public final class CallPresenterAdapter implements ErrorHandler {
+public final class CallPresenterAdapter implements CallResponsePresenter {
 
-    private final Supplier<PresenterContext> contextSupplier;
+    private Supplier<PresenterContext> contextSupplier;
 
     private Collection<PredicatePresenter> registeredPresenters;
 
     public CallPresenterAdapter(Supplier<PresenterContext> contextSupplier) {
         this.contextSupplier = contextSupplier;
         this.registeredPresenters = new ArrayList<>();
+    }
+
+    public CallPresenterAdapter() {
+        this.contextSupplier = () -> null;
+        this.registeredPresenters = new ArrayList<>();
+    }
+
+    public void setContextSupplier(Supplier<PresenterContext> contextSupplier) {
+        this.contextSupplier = contextSupplier;
     }
 
     public void initialize(EntityPresenterAdapter.PredicatePresenter... presenters) {
@@ -33,8 +44,22 @@ public final class CallPresenterAdapter implements ErrorHandler {
         }
     }
 
+    private void invoke(PresenterContext context, CallResponse entity) {
+        for (PredicatePresenter presenter : registeredPresenters) {
+            if (presenter.shouldPresent(context)) presenter.getPresenter().present(entity);
+        }
+    }
+
     @Override
     public void error(Error entity) {
+        PresenterContext context = contextSupplier.get();
+        if (context == null) return;
+
+        invoke(context, entity);
+    }
+
+    @Override
+    public void present(CallResponse entity) {
         PresenterContext context = contextSupplier.get();
         if (context == null) return;
 
@@ -57,9 +82,9 @@ public final class CallPresenterAdapter implements ErrorHandler {
     public static class PredicatePresenter {
 
         private final Predicate<PresenterContext> condition;
-        private final ErrorHandler presenter;
+        private final CallResponsePresenter presenter;
 
-        public PredicatePresenter(@NotNull Predicate<PresenterContext> condition, @NotNull ErrorHandler presenter) {
+        public PredicatePresenter(@NotNull Predicate<PresenterContext> condition, @NotNull CallResponsePresenter presenter) {
             this.condition = condition;
             this.presenter = presenter;
         }
@@ -68,7 +93,7 @@ public final class CallPresenterAdapter implements ErrorHandler {
             return condition.test(context);
         }
 
-        public ErrorHandler getPresenter() {
+        public CallResponsePresenter getPresenter() {
             return presenter;
         }
     }

@@ -35,7 +35,7 @@ class CallStateMachineTest {
         assertEquals(2, stubDatabase.getById(stubCallee.id()).stateId());
     }
 
-    private class StubResponsePresenter implements CallRequestPresenter {
+    private static class StubResponsePresenter implements CallRequestPresenter {
 
         @Override
         public void present(InverseCallRequest request) {
@@ -43,7 +43,7 @@ class CallStateMachineTest {
         }
     }
 
-    private class StubErrorHandler implements ErrorPresenter {
+    private static class StubErrorHandler implements ErrorPresenter {
 
         @Override
         public void present(Error error) {

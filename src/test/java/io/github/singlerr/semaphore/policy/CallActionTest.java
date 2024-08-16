@@ -1,6 +1,8 @@
+/* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.policy;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 import io.github.singlerr.semaphore.interactors.access.call.CallConnection;
 import io.github.singlerr.semaphore.interactors.access.call.CallConnectionHandler;
 import io.github.singlerr.semaphore.interactors.access.call.CallState;
@@ -20,19 +22,19 @@ import io.github.singlerr.semaphore.interactors.caller.presenter.data.InverseCal
 import io.github.singlerr.semaphore.policy.callee.SimpleCalleeInteractor;
 import io.github.singlerr.semaphore.policy.caller.SimpleCallerInteractor;
 import io.github.singlerr.semaphore.policy.database.PlayerDatabase;
-import org.junit.jupiter.api.Test;
-
 import java.util.UUID;
+import org.junit.jupiter.api.Test;
 
 class CallActionTest {
 
     @Test
-    void testRequestCallAndAccept(){
+    void testRequestCallAndAccept() {
         DatabaseGateway stubDatabase = new PlayerDatabase();
         CallConnectionHandler stubCallConnectionHandler = new StubCallConnectionHandler();
         CalleeInteractor stubCalleeInteractor = new SimpleCalleeInteractor(
                 stubDatabase, stubCallConnectionHandler, new StubErrorHandler(), new StubResponsePresenter());
-        CallerInteractor stubCallerInteractor = new SimpleCallerInteractor(stubDatabase, new StubErrorPresenter(), new StubRequestPresenter());
+        CallerInteractor stubCallerInteractor =
+                new SimpleCallerInteractor(stubDatabase, new StubErrorPresenter(), new StubRequestPresenter());
 
         Entity stubCaller = new Entity(UUID.randomUUID(), 0);
         Entity stubCallee = new Entity(UUID.randomUUID(), 0);
@@ -64,7 +66,7 @@ class CallActionTest {
         assertEquals(0, stubDatabase.getById(stubCallee.id()).stateId());
     }
 
-    private class StubRequestPresenter implements CallRequestPresenter {
+    private static class StubRequestPresenter implements CallRequestPresenter {
 
         @Override
         public void present(InverseCallRequest request) {
@@ -72,7 +74,7 @@ class CallActionTest {
         }
     }
 
-    private class StubErrorPresenter implements ErrorPresenter {
+    private static class StubErrorPresenter implements ErrorPresenter {
 
         @Override
         public void present(io.github.singlerr.semaphore.interactors.caller.presenter.data.Error error) {
@@ -80,7 +82,7 @@ class CallActionTest {
         }
     }
 
-    private class StubResponsePresenter implements CallResponsePresenter {
+    private static class StubResponsePresenter implements CallResponsePresenter {
 
         @Override
         public void error(Error entity) {
@@ -93,7 +95,7 @@ class CallActionTest {
         }
     }
 
-    private class StubErrorHandler implements ErrorHandler {
+    private static class StubErrorHandler implements ErrorHandler {
 
         @Override
         public void error(Error entity) {
@@ -101,7 +103,7 @@ class CallActionTest {
         }
     }
 
-    private class StubCallConnectionHandler implements CallConnectionHandler {
+    private static class StubCallConnectionHandler implements CallConnectionHandler {
 
         private CallConnection cache;
 

@@ -12,7 +12,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 
 @Mod(modid = Semaphore.MOD_ID, dependencies = Semaphore.MOD_DEPENDENCIES)
-public class Semaphore {
+public final class Semaphore {
 
     public static final String MOD_DEPENDENCIES = "required-after:voicechat";
 
@@ -42,8 +42,8 @@ public class Semaphore {
     @Mod.EventHandler
     public void serverStarting(FMLServerStartingEvent event) {}
 
-    public static void serverStarted(VoicechatServerStartedEvent event){
-        if(proxy instanceof ServerProxy){
+    public static void serverStarted(VoicechatServerStartedEvent event) {
+        if (proxy instanceof ServerProxy) {
             ((ServerProxy) proxy).serverStarted(event);
         }
     }

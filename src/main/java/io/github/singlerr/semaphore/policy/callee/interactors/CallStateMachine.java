@@ -10,8 +10,8 @@ import io.github.singlerr.semaphore.interactors.callee.CalleeInteractor;
 import io.github.singlerr.semaphore.interactors.callee.manager.base.BaseCallResponseManager;
 import io.github.singlerr.semaphore.interactors.callee.manager.data.ResponseType;
 import io.github.singlerr.semaphore.interactors.callee.presenter.data.Error;
+import io.github.singlerr.semaphore.policy.PolicyConstants;
 import io.github.singlerr.semaphore.policy.dfa.PlayerInput;
-import io.github.singlerr.semaphore.policy.dfa.PlayerState;
 import io.github.singlerr.semaphore.policy.dfa.PlayerStateDFA;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,23 +23,7 @@ public final class CallStateMachine extends BaseCallResponseManager {
     public CallStateMachine(
             DatabaseGateway database, CalleeInteractor interactor, CallConnectionHandler callConnectionHandler) {
         super(database, interactor, callConnectionHandler);
-        this.dfa = buildDFA();
-    }
-
-    private PlayerStateDFA buildDFA() {
-        return new PlayerStateDFA.Builder()
-                .encode(0, PlayerState.DEFAULT)
-                .encode(1, PlayerState.IN_CALL)
-                .encode(2, PlayerState.REQUESTING_CALL)
-                .encode(3, PlayerState.RECEIVING_CALL)
-                .transit(0, PlayerInput.REQUEST_CALL, 1)
-                .transit(0, PlayerInput.RECEIVE_CALL, 2)
-                .transit(1, PlayerInput.CLOSE_CALL, 0)
-                .transit(1, PlayerInput.ACCEPT_CALL, 3)
-                .transit(2, PlayerInput.REJECT_CALL, 0)
-                .transit(2, PlayerInput.ACCEPT_CALL, 3)
-                .transit(3, PlayerInput.CLOSE_CALL, 0)
-                .build();
+        this.dfa = PolicyConstants.STATE_DFA.clone();
     }
 
     @Override

@@ -1,7 +1,6 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.policy.admin;
 
-import de.maxhenkel.voicechat.api.VoicechatServerApi;
 import io.github.singlerr.semaphore.interactors.access.call.CallConnectionHandler;
 import io.github.singlerr.semaphore.interactors.access.database.DatabaseGateway;
 import io.github.singlerr.semaphore.interactors.admin.AdminInteractor;
@@ -14,7 +13,6 @@ import io.github.singlerr.semaphore.policy.admin.interactors.PlayerManager;
 import io.github.singlerr.semaphore.policy.admin.interactors.PrivilegedCallStateManager;
 import io.github.singlerr.semaphore.policy.admin.interactors.VoicechatCallConnectionManager;
 import io.github.singlerr.semaphore.policy.admin.presenters.EntityPresenterAdapter;
-import io.github.singlerr.semaphore.policy.callhandler.VoicechatCallConnectionHandler;
 
 public final class SimpleAdminInteractor implements AdminInteractor {
 

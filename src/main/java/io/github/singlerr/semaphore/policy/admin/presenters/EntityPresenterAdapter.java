@@ -14,12 +14,17 @@ import scala.actors.threadpool.Arrays;
 
 public final class EntityPresenterAdapter implements EntityPresenter {
 
-    private final Supplier<PresenterContext> contextSupplier;
+    private Supplier<PresenterContext> contextSupplier;
 
     private Collection<PredicatePresenter> registeredPresenters;
 
     public EntityPresenterAdapter(Supplier<PresenterContext> contextSupplier) {
         this.contextSupplier = contextSupplier;
+        this.registeredPresenters = new ArrayList<>();
+    }
+
+    public EntityPresenterAdapter() {
+        this.contextSupplier = () -> null;
         this.registeredPresenters = new ArrayList<>();
     }
 

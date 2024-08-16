@@ -9,8 +9,8 @@ import io.github.singlerr.semaphore.interactors.caller.presenter.CallRequestPres
 import io.github.singlerr.semaphore.interactors.caller.presenter.ErrorPresenter;
 import io.github.singlerr.semaphore.interactors.caller.presenter.data.Error;
 import io.github.singlerr.semaphore.interactors.caller.presenter.data.InverseCallRequest;
+import io.github.singlerr.semaphore.policy.PolicyConstants;
 import io.github.singlerr.semaphore.policy.dfa.PlayerInput;
-import io.github.singlerr.semaphore.policy.dfa.PlayerState;
 import io.github.singlerr.semaphore.policy.dfa.PlayerStateDFA;
 import java.util.Optional;
 import java.util.UUID;
@@ -25,25 +25,9 @@ public final class CallStateMachine implements CallRequestManager {
     public CallStateMachine(
             DatabaseGateway database, ErrorPresenter errorPresenter, CallRequestPresenter requestPresenter) {
         this.database = database;
-        this.dfa = buildDFA();
+        this.dfa = PolicyConstants.STATE_DFA.clone();
         this.errorPresenter = errorPresenter;
         this.requestPresenter = requestPresenter;
-    }
-
-    private PlayerStateDFA buildDFA() {
-        return new PlayerStateDFA.Builder()
-                .encode(0, PlayerState.DEFAULT)
-                .encode(1, PlayerState.IN_CALL)
-                .encode(2, PlayerState.REQUESTING_CALL)
-                .encode(3, PlayerState.RECEIVING_CALL)
-                .transit(0, PlayerInput.REQUEST_CALL, 1)
-                .transit(0, PlayerInput.RECEIVE_CALL, 2)
-                .transit(1, PlayerInput.CLOSE_CALL, 0)
-                .transit(1, PlayerInput.ACCEPT_CALL, 3)
-                .transit(2, PlayerInput.REJECT_CALL, 0)
-                .transit(2, PlayerInput.ACCEPT_CALL, 3)
-                .transit(3, PlayerInput.CLOSE_CALL, 0)
-                .build();
     }
 
     @Override

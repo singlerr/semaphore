@@ -14,13 +14,22 @@ import scala.actors.threadpool.Arrays;
 
 public final class ErrorHandlerAdapter implements ErrorHandler {
 
-    private final Supplier<ErrorContext> contextSupplier;
+    private Supplier<ErrorContext> contextSupplier;
 
     private Collection<PredicatePresenter> registeredPresenters;
 
     public ErrorHandlerAdapter(Supplier<ErrorContext> contextSupplier) {
         this.contextSupplier = contextSupplier;
         this.registeredPresenters = new ArrayList<>();
+    }
+
+    public ErrorHandlerAdapter() {
+        this.contextSupplier = () -> null;
+        this.registeredPresenters = new ArrayList<>();
+    }
+
+    public void setContextSupplier(Supplier<ErrorContext> contextSupplier) {
+        this.contextSupplier = contextSupplier;
     }
 
     public void initialize(EntityPresenterAdapter.PredicatePresenter... presenters) {

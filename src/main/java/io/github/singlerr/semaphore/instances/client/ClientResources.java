@@ -2,11 +2,9 @@
 package io.github.singlerr.semaphore.instances.client;
 
 import io.github.singlerr.semaphore.utils.SideUtils;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import java.util.HashMap;
 import java.util.Map;
+import net.minecraftforge.fml.relauncher.Side;
 
 public final class ClientResources {
 
@@ -20,8 +18,6 @@ public final class ClientResources {
             throw new IllegalStateException("Cannot assign twice of " + beanCls.getSimpleName());
         beans.put(beanCls, bean);
     }
-
-
 
     public static <T> T getInstance(Class<T> beanCls) {
         return (T) beans.get(beanCls);

@@ -12,10 +12,8 @@ import io.github.singlerr.semaphore.interactors.admin.presenter.data.Presentable
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.PresentableEntity;
 import io.github.singlerr.semaphore.policy.admin.presenters.CallConnectionPresenterAdapter;
 import io.github.singlerr.semaphore.policy.admin.presenters.EntityPresenterAdapter;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
-
 import java.util.List;
+import net.minecraft.client.gui.GuiScreen;
 
 public final class GuiControlPanel extends GuiScreen implements CallConnectionPresenter, EntityPresenter {
 
@@ -37,14 +35,12 @@ public final class GuiControlPanel extends GuiScreen implements CallConnectionPr
         super.initGui();
     }
 
-    public void onGuiOpened(){
+    public void onGuiOpened() {
         entityController.getAllEntities(new EntityQuery.GetAllEntities());
     }
 
     @Override
-    public void present(List<PresentableEntity> entities) {
-
-    }
+    public void present(List<PresentableEntity> entities) {}
 
     @Override
     public void present(PresentableCallConnection entity) {}

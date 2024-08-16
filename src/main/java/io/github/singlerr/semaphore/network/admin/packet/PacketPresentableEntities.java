@@ -1,21 +1,21 @@
+/* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.network.admin.packet;
 
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.PresentableEntity;
 import io.github.singlerr.semaphore.network.utils.SerializationUtils;
 import io.netty.buffer.ByteBuf;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 public final class PacketPresentableEntities implements IMessage {
 
     private List<PresentableEntity> entities;
 
-    public PacketPresentableEntities(){}
+    public PacketPresentableEntities() {}
 
-    public PacketPresentableEntities(List<PresentableEntity> entities){
+    public PacketPresentableEntities(List<PresentableEntity> entities) {
         this.entities = entities;
     }
 

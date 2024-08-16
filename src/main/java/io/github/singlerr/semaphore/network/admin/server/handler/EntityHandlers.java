@@ -9,13 +9,12 @@ import io.github.singlerr.semaphore.network.admin.packet.PacketGetAllEntities;
 import io.github.singlerr.semaphore.network.admin.packet.PacketGetEntity;
 import io.github.singlerr.semaphore.network.admin.server.ServerboundEntityController;
 
-import java.util.UUID;
-
 public final class EntityHandlers {
 
     private EntityHandlers() {}
 
-    public static class GetAllEntitiesHandler extends ServerboundPacketHandler<PacketGetAllEntities, PacketGetAllEntities> {
+    public static class GetAllEntitiesHandler
+            extends ServerboundPacketHandler<PacketGetAllEntities, PacketGetAllEntities> {
 
         private ServerboundEntityController entityController;
 
@@ -36,7 +35,6 @@ public final class EntityHandlers {
         }
     }
 
-
     public static class GetEntityHandler extends ServerboundPacketHandler<PacketGetEntity, PacketGetEntity> {
 
         private ServerboundEntityController entityController;
@@ -56,7 +54,6 @@ public final class EntityHandlers {
             this.entityController.getEntity(query);
             return null;
         }
-
     }
 
     public static class CreateEntityHandler extends ServerboundPacketHandler<PacketCreateEntity, PacketCreateEntity> {

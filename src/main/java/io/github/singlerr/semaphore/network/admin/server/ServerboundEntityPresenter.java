@@ -8,9 +8,8 @@ import io.github.singlerr.semaphore.network.NetworkManager;
 import io.github.singlerr.semaphore.network.admin.packet.PacketErrorEntity;
 import io.github.singlerr.semaphore.network.admin.packet.PacketPresentableEntities;
 import io.github.singlerr.semaphore.network.admin.packet.PacketPresentableEntity;
-import net.minecraft.entity.player.EntityPlayerMP;
-
 import java.util.List;
+import net.minecraft.entity.player.EntityPlayerMP;
 
 public final class ServerboundEntityPresenter implements EntityPresenter {
 
@@ -22,25 +21,25 @@ public final class ServerboundEntityPresenter implements EntityPresenter {
 
     @Override
     public void present(PresentableEntity entity) {
-        if(entity.getContext() instanceof EntityPlayerMP){
-            this.networkManager.sendTo(new PacketPresentableEntity(entity.id(), entity.state()), (EntityPlayerMP) entity.getContext());
+        if (entity.getContext() instanceof EntityPlayerMP) {
+            this.networkManager.sendTo(
+                    new PacketPresentableEntity(entity.id(), entity.state()), (EntityPlayerMP) entity.getContext());
         }
     }
 
     @Override
     public void presentError(ErrorEntity error) {
-        if(error.getContext() instanceof EntityPlayerMP){
+        if (error.getContext() instanceof EntityPlayerMP) {
             this.networkManager.sendTo(new PacketErrorEntity(error.message()), (EntityPlayerMP) error.getContext());
         }
     }
 
     @Override
     public void present(List<PresentableEntity> entities) {
-        if(entities.isEmpty())
-            return;
+        if (entities.isEmpty()) return;
 
         Object context = entities.get(0).getContext();
-        if(context instanceof EntityPlayerMP){
+        if (context instanceof EntityPlayerMP) {
             this.networkManager.sendTo(new PacketPresentableEntities(entities), (EntityPlayerMP) context);
         }
     }

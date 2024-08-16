@@ -22,11 +22,9 @@ import io.github.singlerr.semaphore.policy.admin.presenters.EntityPresenterAdapt
 import io.github.singlerr.semaphore.policy.callee.presenters.CallPresenterAdapter;
 import io.github.singlerr.semaphore.policy.callee.presenters.ErrorHandlerAdapter;
 import io.github.singlerr.semaphore.policy.caller.presenters.CallRequestPresenterAdapter;
-import net.minecraft.client.Minecraft;
-import net.minecraftforge.common.MinecraftForge;
-
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraftforge.common.MinecraftForge;
 
 public final class ClientProxy extends CommonProxy {
 
@@ -105,8 +103,10 @@ public final class ClientProxy extends CommonProxy {
         networkManager.registerClientboundPacket(PacketDeleteEntity.class);
         networkManager.registerClientboundPacket(PacketGetEntity.class);
         networkManager.registerClientboundPacket(PacketGetAllEntities.class);
-        networkManager.registerClientboundPacket(PacketPresentableEntity.class, new EntityHandlers.PresentableEntityHandler(clientEntityPresenter));
-        networkManager.registerClientboundPacket(PacketPresentableEntities.class, new EntityHandlers.PresentableEntitiesHandler(clientEntityPresenter));
+        networkManager.registerClientboundPacket(
+                PacketPresentableEntity.class, new EntityHandlers.PresentableEntityHandler(clientEntityPresenter));
+        networkManager.registerClientboundPacket(
+                PacketPresentableEntities.class, new EntityHandlers.PresentableEntitiesHandler(clientEntityPresenter));
     }
 
     private void initCalleeAndCaller(
@@ -133,7 +133,4 @@ public final class ClientProxy extends CommonProxy {
         networkManager.registerClientboundPacket(
                 PacketInverseCallRequest.class, new CallRequestHandlers.InverseCallRequestHandler(requestPresenter));
     }
-
-
-
 }

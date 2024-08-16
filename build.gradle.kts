@@ -118,7 +118,7 @@ dependencies {
     shadowImpl("io.github.singlerr.semaphore.interactors:callee:${semaphore_base_version}")
     shadowImpl("io.github.singlerr.semaphore.interactors:caller:${semaphore_base_version}")
 
-//    modRuntimeOnly("me.djtheredstoner:DevAuth-forge-legacy:1.1.0")
+    //    modRuntimeOnly("me.djtheredstoner:DevAuth-forge-legacy:1.1.0")
 }
 
 tasks.withType<JavaCompile> { options.encoding = "UTF-8" }

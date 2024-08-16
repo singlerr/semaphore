@@ -1,16 +1,16 @@
+/* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.network.admin.client;
 
 import io.github.singlerr.semaphore.interactors.admin.presenter.EntityPresenter;
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.ErrorEntity;
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.PresentableEntity;
-
 import java.util.List;
 
 public final class ClientboundEntityPresenter implements EntityPresenter {
 
     private final EntityPresenter source;
 
-    public ClientboundEntityPresenter(EntityPresenter source){
+    public ClientboundEntityPresenter(EntityPresenter source) {
         this.source = source;
     }
 

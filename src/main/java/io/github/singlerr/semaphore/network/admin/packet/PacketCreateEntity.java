@@ -3,9 +3,8 @@ package io.github.singlerr.semaphore.network.admin.packet;
 
 import io.github.singlerr.semaphore.network.utils.SerializationUtils;
 import io.netty.buffer.ByteBuf;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-
 import java.util.UUID;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 public final class PacketCreateEntity implements IMessage {
 
@@ -13,7 +12,7 @@ public final class PacketCreateEntity implements IMessage {
 
     public PacketCreateEntity() {}
 
-    public PacketCreateEntity(UUID id){
+    public PacketCreateEntity(UUID id) {
         this.id = id;
     }
 

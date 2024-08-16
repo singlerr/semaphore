@@ -97,18 +97,16 @@ public abstract class CommonProxy {
 
     private static class BlockRegistries {
 
-        public void registerBlock(RegistryEvent.Register<Block> registry) {
-
-        }
+        public void registerBlock(RegistryEvent.Register<Block> registry) {}
     }
 
-    private static class ItemRegistries{
+    private static class ItemRegistries {
 
         private ItemPhone phone = new ItemPhone();
         private ItemControlPanel controlPanel = new ItemControlPanel();
 
         @SubscribeEvent
-        public void registerItem(RegistryEvent.Register<Item> registry){
+        public void registerItem(RegistryEvent.Register<Item> registry) {
             CreativeTabs tab = new CreativeTabs(Semaphore.MOD_ID) {
                 @Override
                 public ItemStack createIcon() {
@@ -125,9 +123,11 @@ public abstract class CommonProxy {
         }
 
         @SubscribeEvent
-        public void registerItemModel(ModelRegistryEvent registry){
-            ModelLoader.setCustomModelResourceLocation(phone, 0, new ModelResourceLocation(phone.getRegistryName(), "inventory"));
-            ModelLoader.setCustomModelResourceLocation(controlPanel, 0, new ModelResourceLocation(phone.getRegistryName(), "inventory"));
+        public void registerItemModel(ModelRegistryEvent registry) {
+            ModelLoader.setCustomModelResourceLocation(
+                    phone, 0, new ModelResourceLocation(phone.getRegistryName(), "inventory"));
+            ModelLoader.setCustomModelResourceLocation(
+                    controlPanel, 0, new ModelResourceLocation(phone.getRegistryName(), "inventory"));
         }
     }
 }

@@ -95,7 +95,8 @@ public final class ServerProxy extends CommonProxy {
                 PacketDeleteEntity.class, new EntityHandlers.DeleteEntityHandler(entityController));
         networkManager.registerServerboundPacket(
                 PacketGetEntity.class, new EntityHandlers.GetEntityHandler(entityController));
-        networkManager.registerServerboundPacket(PacketGetAllEntities.class, new EntityHandlers.GetAllEntitiesHandler(entityController));
+        networkManager.registerServerboundPacket(
+                PacketGetAllEntities.class, new EntityHandlers.GetAllEntitiesHandler(entityController));
         networkManager.registerServerboundPacket(PacketPresentableEntity.class);
         networkManager.registerServerboundPacket(PacketPresentableEntities.class);
     }

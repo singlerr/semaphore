@@ -8,8 +8,6 @@ import io.github.singlerr.semaphore.interactors.admin.controller.data.EntityQuer
 import io.github.singlerr.semaphore.interactors.admin.presenter.EntityPresenter;
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.ErrorEntity;
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.PresentableEntity;
-
-import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 public final class EntityControllerAdapter implements EntityController {
@@ -45,11 +43,12 @@ public final class EntityControllerAdapter implements EntityController {
 
     @Override
     public void getAllEntities(EntityQuery.GetAllEntities query) {
-        this.entityPresenter.present(this.database.getAll().stream().map(e -> {
-            PresentableEntity entity = new PresentableEntity(e.id(), e.stateId());
-            if(query.getContext() != null)
-                entity.setContext(query.getContext());
-            return entity;
-        }).collect(Collectors.toList()));
+        this.entityPresenter.present(this.database.getAll().stream()
+                .map(e -> {
+                    PresentableEntity entity = new PresentableEntity(e.id(), e.stateId());
+                    if (query.getContext() != null) entity.setContext(query.getContext());
+                    return entity;
+                })
+                .collect(Collectors.toList()));
     }
 }

@@ -1,23 +1,14 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "io.github.singlerr.semaphore.mixin",
+  "package": "io.github.singlerr.semaphore",
   "compatibilityLevel": "JAVA_8",
   "refmap": "semaphore.refmap.json",
   "mixins": [
-    "core.EntityPlayerMixin"
   ],
   "client": [
-    "core.MinecraftMixin",
-    "core.sound.SoundManagerAccessor",
-    "core.sound.SoundHandlerAccessor",
-    "core.sound.SoundManagerMixin",
-    "core.gui.GuiScreenOptionsSoundsMixin",
-    "compat.ClientVoicechatMixin",
-    "compat.AudioChannelMixin"
   ],
   "server": [
-    "compat.VoicechatServerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

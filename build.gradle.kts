@@ -76,7 +76,7 @@ loom {
 sourceSets.main { output.setResourcesDir(file("$buildDir/classes/java/main")) }
 
 val shadowImpl: Configuration by
-    configurations.creating { configurations.implementation.get().extendsFrom(this) }
+    configurations.creating { configurations.modImplementation.get().extendsFrom(this) }
 
 repositories {
     mavenCentral()
@@ -103,38 +103,18 @@ dependencies {
     modRuntimeOnly(
         "maven.modrinth:simple-voice-chat:forge-${minecraft_version}-${voicechat_version}"
     )
-    include(modImplementation("gg.essential:elementa-${minecraft_version}-forge:642")!!)
-    include(modImplementation("com.github.psambit9791:jdsp:2.0.0")!!)
-    include(implementation(project(":policy-impl"))!!)
-    include(
-        implementation(
-            "io.github.singlerr.semaphore.callhandler:callhandler:${semaphore_base_version}"
-        )!!
-    ) // Datagateways
-    include(
-        implementation(
-            "io.github.singlerr.semaphore.datagateways:datagateways:${semaphore_base_version}"
-        )!!
-    )
+    implementation(project(":policy-impl"))
+    shadowImpl("gg.essential:elementa-${minecraft_version}-forge:642")
+    shadowImpl("com.github.psambit9791:jdsp:2.0.0")
+
+    shadowImpl("io.github.singlerr.semaphore.callhandler:callhandler:${semaphore_base_version}")
+    // Datagateways
+    shadowImpl("io.github.singlerr.semaphore.datagateways:datagateways:${semaphore_base_version}")
     // Interactors
-    include(
-        implementation(
-            "io.github.singlerr.semaphore.interactors:accessor:${semaphore_base_version}"
-        )!!
-    )
-    include(
-        implementation("io.github.singlerr.semaphore.interactors:admin:${semaphore_base_version}")!!
-    )
-    include(
-        implementation(
-            "io.github.singlerr.semaphore.interactors:callee:${semaphore_base_version}"
-        )!!
-    )
-    include(
-        implementation(
-            "io.github.singlerr.semaphore.interactors:caller:${semaphore_base_version}"
-        )!!
-    )
+    shadowImpl("io.github.singlerr.semaphore.interactors:accessor:${semaphore_base_version}")
+    shadowImpl("io.github.singlerr.semaphore.interactors:admin:${semaphore_base_version}")
+    shadowImpl("io.github.singlerr.semaphore.interactors:callee:${semaphore_base_version}")
+    shadowImpl("io.github.singlerr.semaphore.interactors:caller:${semaphore_base_version}")
 
     modRuntimeOnly("me.djtheredstoner:DevAuth-forge-legacy:1.1.0")
 }

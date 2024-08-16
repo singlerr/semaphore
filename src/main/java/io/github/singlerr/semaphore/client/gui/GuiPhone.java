@@ -48,7 +48,5 @@ public final class GuiPhone extends GuiScreen implements ErrorHandler, CallRespo
     }
 
     @Override
-    public void present(InverseCallRequest request) {
-
-    }
+    public void present(InverseCallRequest request) {}
 }

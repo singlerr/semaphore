@@ -1,3 +1,4 @@
+/* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.network.caller.client;
 
 import io.github.singlerr.semaphore.interactors.caller.controller.CallRequestController;
@@ -9,7 +10,7 @@ public final class ClientboundCallRequestController implements CallRequestContro
 
     private final NetworkManager networkManager;
 
-    public ClientboundCallRequestController(NetworkManager networkManager){
+    public ClientboundCallRequestController(NetworkManager networkManager) {
         this.networkManager = networkManager;
     }
 

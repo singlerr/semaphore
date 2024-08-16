@@ -1,3 +1,4 @@
+/* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.network.caller.server;
 
 import io.github.singlerr.semaphore.interactors.caller.presenter.CallRequestPresenter;
@@ -8,12 +9,10 @@ public final class ServerboundCallRequestPresenter implements CallRequestPresent
 
     private final NetworkManager networkManager;
 
-    public ServerboundCallRequestPresenter(NetworkManager networkManager){
+    public ServerboundCallRequestPresenter(NetworkManager networkManager) {
         this.networkManager = networkManager;
     }
 
     @Override
-    public void present(InverseCallRequest request) {
-
-    }
+    public void present(InverseCallRequest request) {}
 }

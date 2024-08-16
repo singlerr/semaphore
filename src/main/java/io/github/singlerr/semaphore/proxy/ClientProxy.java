@@ -23,11 +23,10 @@ import io.github.singlerr.semaphore.policy.admin.presenters.EntityPresenterAdapt
 import io.github.singlerr.semaphore.policy.callee.presenters.CallPresenterAdapter;
 import io.github.singlerr.semaphore.policy.callee.presenters.ErrorHandlerAdapter;
 import io.github.singlerr.semaphore.policy.caller.presenters.CallRequestPresenterAdapter;
-import net.minecraft.block.Block;
-import net.minecraftforge.event.RegistryEvent;
-
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.block.Block;
+import net.minecraftforge.event.RegistryEvent;
 
 public final class ClientProxy extends CommonProxy {
 
@@ -60,7 +59,8 @@ public final class ClientProxy extends CommonProxy {
         entityPresenter.initialize(entityPresenters.toArray(new EntityPresenterAdapter.PredicatePresenter[0]));
         callConnectionPresenter.initialize(
                 connectionPresenters.toArray(new CallConnectionPresenterAdapter.PredicatePresenter[0]));
-        callRequestPresenter.initialize(requestPresenters.toArray(new CallRequestPresenterAdapter.PredicatePresenter[0]));
+        callRequestPresenter.initialize(
+                requestPresenters.toArray(new CallRequestPresenterAdapter.PredicatePresenter[0]));
         responsePresenter.initialize(responsePresenters.toArray(new CallPresenterAdapter.PredicatePresenter[0]));
     }
 
@@ -103,9 +103,14 @@ public final class ClientProxy extends CommonProxy {
         networkManager.registerClientboundPacket(PacketGetEntity.class);
     }
 
-    private void initCalleeAndCaller(NetworkManager networkManager, List<CallPresenterAdapter.PredicatePresenter> responsePresenters, List<CallRequestPresenterAdapter.PredicatePresenter> requestPresenters,  List<ErrorHandlerAdapter.PredicatePresenter> errorPresenters) {
+    private void initCalleeAndCaller(
+            NetworkManager networkManager,
+            List<CallPresenterAdapter.PredicatePresenter> responsePresenters,
+            List<CallRequestPresenterAdapter.PredicatePresenter> requestPresenters,
+            List<ErrorHandlerAdapter.PredicatePresenter> errorPresenters) {
         ClientboundCallRequestController callRequestController = new ClientboundCallRequestController(networkManager);
-        ClientboundCallResponseController callResponseController = new ClientboundCallResponseController(networkManager);
+        ClientboundCallResponseController callResponseController =
+                new ClientboundCallResponseController(networkManager);
         ClientboundCallRequestPresenter requestPresenter = new ClientboundCallRequestPresenter(callRequestPresenter);
 
         GuiPhone guiPhone = new GuiPhone(callRequestController, callResponseController);
@@ -117,13 +122,12 @@ public final class ClientProxy extends CommonProxy {
         // Must keep packet register order same with client and server
         networkManager.registerClientboundPacket(PacketCallResponse.class);
         networkManager.registerClientboundPacket(PacketCallRequest.class);
-        networkManager.registerClientboundPacket(PacketInverseCallRequest.class, new CallRequestHandlers.InverseCallRequestHandler(requestPresenter));
+        networkManager.registerClientboundPacket(
+                PacketInverseCallRequest.class, new CallRequestHandlers.InverseCallRequestHandler(requestPresenter));
     }
 
-    private static class BlockRegistries{
+    private static class BlockRegistries {
 
-        public void registerBlock(RegistryEvent<Block> registry){
-
-        }
+        public void registerBlock(RegistryEvent<Block> registry) {}
     }
 }

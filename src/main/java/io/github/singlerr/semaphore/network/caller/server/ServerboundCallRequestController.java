@@ -1,3 +1,4 @@
+/* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.network.caller.server;
 
 import io.github.singlerr.semaphore.interactors.caller.controller.CallRequestController;
@@ -7,7 +8,7 @@ public final class ServerboundCallRequestController implements CallRequestContro
 
     private final CallRequestController source;
 
-    public ServerboundCallRequestController(CallRequestController source){
+    public ServerboundCallRequestController(CallRequestController source) {
         this.source = source;
     }
 

@@ -1,3 +1,4 @@
+/* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.network.caller.server.handlers;
 
 import io.github.singlerr.semaphore.interactors.caller.controller.data.CallRequest;
@@ -7,17 +8,17 @@ import io.github.singlerr.semaphore.network.caller.server.ServerboundCallRequest
 
 public final class CallRequestHandlers {
 
-    private CallRequestHandlers(){}
+    private CallRequestHandlers() {}
 
     public static class CallRequestHandler extends ServerboundPacketHandler<PacketCallRequest, PacketCallRequest> {
 
         private final ServerboundCallRequestController requestController;
 
-        public CallRequestHandler(){
+        public CallRequestHandler() {
             throw new IllegalStateException();
         }
 
-        public CallRequestHandler(ServerboundCallRequestController requestController){
+        public CallRequestHandler(ServerboundCallRequestController requestController) {
             this.requestController = requestController;
         }
 

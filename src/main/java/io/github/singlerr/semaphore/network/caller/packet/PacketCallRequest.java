@@ -1,19 +1,19 @@
+/* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.network.caller.packet;
 
 import io.github.singlerr.semaphore.network.utils.SerializationUtils;
 import io.netty.buffer.ByteBuf;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-
 import java.util.UUID;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 public final class PacketCallRequest implements IMessage {
 
     private UUID callerId;
     private UUID calleeId;
 
-    public PacketCallRequest(){}
+    public PacketCallRequest() {}
 
-    public PacketCallRequest(UUID callerId, UUID calleeId){
+    public PacketCallRequest(UUID callerId, UUID calleeId) {
         this.callerId = callerId;
         this.calleeId = calleeId;
     }

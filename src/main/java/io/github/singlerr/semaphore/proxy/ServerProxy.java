@@ -96,24 +96,30 @@ public final class ServerProxy extends CommonProxy {
                 PacketGetEntity.class, new EntityHandlers.GetEntityHandler(entityController));
     }
 
-    //Register call response
+    // Register call response
     private void initCallee(NetworkManager networkManager) {
         CalleeInteractor calleeInteractor = CalleeInteractorAccess.getInstance();
-        ServerboundCallResponseController responseController = new ServerboundCallResponseController(new RemoteCallResponseController(calleeInteractor.getResponseManager()));
+        ServerboundCallResponseController responseController = new ServerboundCallResponseController(
+                new RemoteCallResponseController(calleeInteractor.getResponseManager()));
 
-        networkManager.registerServerboundPacket(PacketCallResponse.class, new CallResponseHandlers.CallResponseHandler(responseController));
-        responsePresenter.initialize(new CallPresenterAdapter.PredicatePresenter((ctx) -> true, new ServerboundCallResponsePresenter(networkManager)));
+        networkManager.registerServerboundPacket(
+                PacketCallResponse.class, new CallResponseHandlers.CallResponseHandler(responseController));
+        responsePresenter.initialize(new CallPresenterAdapter.PredicatePresenter(
+                (ctx) -> true, new ServerboundCallResponsePresenter(networkManager)));
     }
 
-    //Register call request
+    // Register call request
     private void initCaller(NetworkManager networkManager) {
         CallerInteractor callerInteractor = CallerInteractorAccess.getInstance();
 
-        ServerboundCallRequestController requestController = new ServerboundCallRequestController(new RemoteCallRequestController(callerInteractor.getCallRequestManager()));
-        networkManager.registerServerboundPacket(PacketCallRequest.class, new CallRequestHandlers.CallRequestHandler(requestController));
+        ServerboundCallRequestController requestController = new ServerboundCallRequestController(
+                new RemoteCallRequestController(callerInteractor.getCallRequestManager()));
+        networkManager.registerServerboundPacket(
+                PacketCallRequest.class, new CallRequestHandlers.CallRequestHandler(requestController));
         networkManager.registerServerboundPacket(PacketInverseCallRequest.class);
 
-        callRequestPresenter.initialize(new CallRequestPresenterAdapter.PredicatePresenter((ctx) -> true, new ServerboundCallRequestPresenter(networkManager)));
+        callRequestPresenter.initialize(new CallRequestPresenterAdapter.PredicatePresenter(
+                (ctx) -> true, new ServerboundCallRequestPresenter(networkManager)));
     }
 
     public void serverStarted(VoicechatServerStartedEvent event) {

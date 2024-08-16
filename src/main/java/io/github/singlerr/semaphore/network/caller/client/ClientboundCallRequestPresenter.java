@@ -1,3 +1,4 @@
+/* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.network.caller.client;
 
 import io.github.singlerr.semaphore.interactors.caller.presenter.CallRequestPresenter;
@@ -7,7 +8,7 @@ public final class ClientboundCallRequestPresenter implements CallRequestPresent
 
     private final CallRequestPresenter source;
 
-    public ClientboundCallRequestPresenter(CallRequestPresenter source){
+    public ClientboundCallRequestPresenter(CallRequestPresenter source) {
         this.source = source;
     }
 

@@ -4,14 +4,12 @@ package io.github.singlerr.semaphore.policy.callee.presenters;
 import io.github.singlerr.semaphore.interactors.callee.presenter.CallResponsePresenter;
 import io.github.singlerr.semaphore.interactors.callee.presenter.data.CallResponse;
 import io.github.singlerr.semaphore.interactors.callee.presenter.data.Error;
-import io.github.singlerr.semaphore.policy.admin.presenters.EntityPresenterAdapter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import net.minecraft.client.gui.GuiScreen;
 import org.jetbrains.annotations.NotNull;
-import scala.actors.threadpool.Arrays;
 
 public final class CallPresenterAdapter implements CallResponsePresenter {
 
@@ -33,7 +31,7 @@ public final class CallPresenterAdapter implements CallResponsePresenter {
         this.contextSupplier = contextSupplier;
     }
 
-    public void initialize(EntityPresenterAdapter.PredicatePresenter... presenters) {
+    public void initialize(CallPresenterAdapter.PredicatePresenter... presenters) {
         registeredPresenters = Arrays.asList(presenters);
     }
 
@@ -65,18 +63,7 @@ public final class CallPresenterAdapter implements CallResponsePresenter {
         invoke(context, entity);
     }
 
-    public static class PresenterContext {
-
-        private final GuiScreen currentScreen;
-
-        public PresenterContext(GuiScreen currentScreen) {
-            this.currentScreen = currentScreen;
-        }
-
-        public GuiScreen getCurrentScreen() {
-            return currentScreen;
-        }
-    }
+    public static class PresenterContext {}
 
     public static class PredicatePresenter {
 

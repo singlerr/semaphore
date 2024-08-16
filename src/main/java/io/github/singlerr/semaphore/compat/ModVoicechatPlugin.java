@@ -8,16 +8,13 @@ import de.maxhenkel.voicechat.api.VoicechatServerApi;
 import de.maxhenkel.voicechat.api.events.EventRegistration;
 import de.maxhenkel.voicechat.api.events.VoicechatServerStartedEvent;
 import io.github.singlerr.semaphore.Semaphore;
-import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
 @ForgeVoicechatPlugin
 public class ModVoicechatPlugin implements VoicechatPlugin {
 
-    @Getter
     private static VoicechatApi voicechatApi;
 
-    @Getter
     @Nullable
     private static VoicechatServerApi voicechatServerApi;
 

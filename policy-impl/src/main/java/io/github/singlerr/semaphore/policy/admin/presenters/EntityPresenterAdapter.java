@@ -1,42 +1,37 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.policy.admin.presenters;
 
-import io.github.singlerr.semaphore.interactors.admin.presenter.CallConnectionPresenter;
+import io.github.singlerr.semaphore.interactors.admin.presenter.EntityPresenter;
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.ErrorEntity;
-import io.github.singlerr.semaphore.interactors.admin.presenter.data.PresentableCallConnection;
+import io.github.singlerr.semaphore.interactors.admin.presenter.data.PresentableEntity;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import net.minecraft.client.gui.GuiScreen;
 import org.jetbrains.annotations.NotNull;
-import scala.actors.threadpool.Arrays;
 
-public final class CallConnectionPresenterAdapter implements CallConnectionPresenter {
+public final class EntityPresenterAdapter implements EntityPresenter {
 
     private Supplier<PresenterContext> contextSupplier;
 
     private Collection<PredicatePresenter> registeredPresenters;
 
-    public CallConnectionPresenterAdapter(Supplier<PresenterContext> contextSupplier) {
+    public EntityPresenterAdapter(Supplier<PresenterContext> contextSupplier) {
         this.contextSupplier = contextSupplier;
         this.registeredPresenters = new ArrayList<>();
     }
 
-    public CallConnectionPresenterAdapter() {
+    public EntityPresenterAdapter() {
         this.contextSupplier = () -> null;
         this.registeredPresenters = new ArrayList<>();
-    }
-
-    public void setContextSupplier(Supplier<PresenterContext> contextSupplier) {
-        this.contextSupplier = contextSupplier;
     }
 
     public void initialize(PredicatePresenter... presenters) {
         registeredPresenters = Arrays.asList(presenters);
     }
 
-    private void invoke(PresenterContext context, PresentableCallConnection entity) {
+    private void invoke(PresenterContext context, PresentableEntity entity) {
         for (PredicatePresenter presenter : registeredPresenters) {
             if (presenter.shouldPresent(context)) presenter.getPresenter().present(entity);
         }
@@ -49,7 +44,7 @@ public final class CallConnectionPresenterAdapter implements CallConnectionPrese
     }
 
     @Override
-    public void present(PresentableCallConnection entity) {
+    public void present(PresentableEntity entity) {
         PresenterContext context = contextSupplier.get();
         if (context == null) return;
 
@@ -64,25 +59,18 @@ public final class CallConnectionPresenterAdapter implements CallConnectionPrese
         invoke(context, error);
     }
 
-    public static class PresenterContext {
-
-        private final GuiScreen currentScreen;
-
-        public PresenterContext(GuiScreen currentScreen) {
-            this.currentScreen = currentScreen;
-        }
-    }
+    public static class PresenterContext {}
 
     public static class PredicatePresenter {
 
         private final Predicate<PresenterContext> condition;
         private final Predicate<PresenterContext> errorCondition;
-        private final CallConnectionPresenter presenter;
+        private final EntityPresenter presenter;
 
         public PredicatePresenter(
                 @NotNull Predicate<PresenterContext> condition,
                 @NotNull Predicate<PresenterContext> errorCondition,
-                @NotNull CallConnectionPresenter presenter) {
+                @NotNull EntityPresenter presenter) {
             this.condition = condition;
             this.errorCondition = errorCondition;
             this.presenter = presenter;
@@ -96,7 +84,7 @@ public final class CallConnectionPresenterAdapter implements CallConnectionPrese
             return errorCondition.test(context);
         }
 
-        public CallConnectionPresenter getPresenter() {
+        public EntityPresenter getPresenter() {
             return presenter;
         }
     }

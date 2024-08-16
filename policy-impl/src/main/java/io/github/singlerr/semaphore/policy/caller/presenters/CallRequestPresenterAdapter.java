@@ -3,14 +3,12 @@ package io.github.singlerr.semaphore.policy.caller.presenters;
 
 import io.github.singlerr.semaphore.interactors.caller.presenter.CallRequestPresenter;
 import io.github.singlerr.semaphore.interactors.caller.presenter.data.InverseCallRequest;
-import io.github.singlerr.semaphore.policy.admin.presenters.EntityPresenterAdapter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import net.minecraft.client.gui.GuiScreen;
 import org.jetbrains.annotations.NotNull;
-import scala.actors.threadpool.Arrays;
 
 public final class CallRequestPresenterAdapter implements CallRequestPresenter {
 
@@ -32,7 +30,7 @@ public final class CallRequestPresenterAdapter implements CallRequestPresenter {
         this.contextSupplier = contextSupplier;
     }
 
-    public void initialize(EntityPresenterAdapter.PredicatePresenter... presenters) {
+    public void initialize(CallRequestPresenterAdapter.PredicatePresenter... presenters) {
         registeredPresenters = Arrays.asList(presenters);
     }
 
@@ -50,18 +48,7 @@ public final class CallRequestPresenterAdapter implements CallRequestPresenter {
         invoke(context, request);
     }
 
-    public static class PresenterContext {
-
-        private final GuiScreen currentScreen;
-
-        public PresenterContext(GuiScreen currentScreen) {
-            this.currentScreen = currentScreen;
-        }
-
-        public GuiScreen getCurrentScreen() {
-            return currentScreen;
-        }
-    }
+    public static class PresenterContext {}
 
     public static class PredicatePresenter {
 

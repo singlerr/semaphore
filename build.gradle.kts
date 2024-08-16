@@ -37,13 +37,6 @@ version = "${minecraft_version}-${mod_version}"
 
 base { archivesName.set(mod_id) }
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(8))
-        vendor.set(JvmVendorSpec.AZUL)
-    }
-}
-
 kotlin { jvmToolchain(8) }
 
 // Minecraft configuration:
@@ -96,16 +89,9 @@ repositories {
     }
     maven("https://repo.spongepowered.org/maven/")
     maven("https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1")
-    maven {
-        name = "singlerr's repo"
-        url = uri("https://github.com/singlerr/mvn-repo/raw/maven2/")
-    }
 }
 
 dependencies {
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-
     minecraft("com.mojang:minecraft:${minecraft_version}")
     mappings("de.oceanlabs.mcp:mcp_${mapping_channel}:${mapping_version}")
     forge("net.minecraftforge:forge:${minecraft_version}-${forge_version}")
@@ -119,23 +105,17 @@ dependencies {
     )
     include(modImplementation("gg.essential:elementa-${minecraft_version}-forge:642")!!)
     include(modImplementation("com.github.psambit9791:jdsp:2.0.0")!!)
-
-    modRuntimeOnly("me.djtheredstoner:DevAuth-forge-legacy:1.1.0")
-
-    // CallHandler
+    include(implementation(project(":policy-impl"))!!)
     include(
         implementation(
             "io.github.singlerr.semaphore.callhandler:callhandler:${semaphore_base_version}"
         )!!
-    )
-
-    // Datagateways
+    ) // Datagateways
     include(
         implementation(
             "io.github.singlerr.semaphore.datagateways:datagateways:${semaphore_base_version}"
         )!!
     )
-
     // Interactors
     include(
         implementation(
@@ -156,8 +136,7 @@ dependencies {
         )!!
     )
 
-    // Controllers
-
+    modRuntimeOnly("me.djtheredstoner:DevAuth-forge-legacy:1.1.0")
 }
 
 tasks.withType<JavaCompile> { options.encoding = "UTF-8" }
@@ -208,8 +187,6 @@ tasks.jar {
     destinationDirectory.set(layout.buildDirectory.dir("badjars"))
 }
 
-tasks.test { useJUnitPlatform() }
-
 tasks.shadowJar {
     destinationDirectory.set(layout.buildDirectory.dir("badjars"))
     archiveClassifier.set("all-dev")
@@ -227,6 +204,7 @@ tasks.shadowJar {
 
 allprojects {
     apply(plugin = "com.diffplug.spotless")
+    apply(plugin = "java")
 
     configure<SpotlessExtension> {
         java {
@@ -246,6 +224,44 @@ allprojects {
             ktfmt().kotlinlangStyle()
         }
     }
+
+    repositories {
+        mavenCentral()
+        maven {
+            name = "singlerr's repo"
+            url = uri("https://github.com/singlerr/mvn-repo/raw/maven2/")
+        }
+    }
+
+    dependencies {
+        testImplementation(platform("org.junit:junit-bom:5.10.0"))
+        testImplementation("org.junit.jupiter:junit-jupiter")
+        // CallHandler
+        implementation(
+            "io.github.singlerr.semaphore.callhandler:callhandler:${semaphore_base_version}"
+        )
+        // Datagateways
+        implementation(
+            "io.github.singlerr.semaphore.datagateways:datagateways:${semaphore_base_version}"
+        )
+
+        // Interactors
+        implementation(
+            "io.github.singlerr.semaphore.interactors:accessor:${semaphore_base_version}"
+        )
+        implementation("io.github.singlerr.semaphore.interactors:admin:${semaphore_base_version}")
+        implementation("io.github.singlerr.semaphore.interactors:callee:${semaphore_base_version}")
+        implementation("io.github.singlerr.semaphore.interactors:caller:${semaphore_base_version}")
+    }
+
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(8))
+            vendor.set(JvmVendorSpec.AZUL)
+        }
+    }
+
+    tasks.test { useJUnitPlatform() }
 }
 
 publishing {

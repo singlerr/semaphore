@@ -2,11 +2,11 @@
 package io.github.singlerr.semaphore.proxy;
 
 import de.maxhenkel.voicechat.api.events.VoicechatServerStartedEvent;
+import io.github.singlerr.semaphore.compat.VoicechatCallConnectionHandler;
 import io.github.singlerr.semaphore.instances.CallConnectionHandlerAccess;
 import io.github.singlerr.semaphore.instances.DatabaseAccess;
 import io.github.singlerr.semaphore.interactors.access.call.CallConnectionHandler;
 import io.github.singlerr.semaphore.policy.callhandler.CallConnectionHandlerAdapter;
-import io.github.singlerr.semaphore.policy.callhandler.VoicechatCallConnectionHandler;
 
 public final class ServerProxy extends CommonProxy {
 
@@ -26,7 +26,9 @@ public final class ServerProxy extends CommonProxy {
     }
 
     public void serverStarted(VoicechatServerStartedEvent event) {
-        // InMemory database
+        // On server side, call connection handler hooks Voicechat api so that it can get full control of call
+        // connection
+        // On the other hand, on client side, call connection handler is just stub, which has no operations
         CallConnectionHandler voicechatBasedHandler =
                 new VoicechatCallConnectionHandler(DatabaseAccess.getInstance(), event.getVoicechat());
         if (CallConnectionHandlerAccess.getInstance() instanceof CallConnectionHandlerAdapter) {

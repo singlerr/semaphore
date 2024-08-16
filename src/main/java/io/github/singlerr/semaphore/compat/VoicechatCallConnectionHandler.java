@@ -1,5 +1,5 @@
 /* (C) 2024 singlerr */
-package io.github.singlerr.semaphore.policy.callhandler;
+package io.github.singlerr.semaphore.compat;
 
 import de.maxhenkel.voicechat.api.Group;
 import de.maxhenkel.voicechat.api.VoicechatConnection;

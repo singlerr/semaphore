@@ -3,14 +3,12 @@ package io.github.singlerr.semaphore.policy.caller.presenters;
 
 import io.github.singlerr.semaphore.interactors.caller.presenter.ErrorPresenter;
 import io.github.singlerr.semaphore.interactors.caller.presenter.data.Error;
-import io.github.singlerr.semaphore.policy.admin.presenters.EntityPresenterAdapter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import net.minecraft.client.gui.GuiScreen;
 import org.jetbrains.annotations.NotNull;
-import scala.actors.threadpool.Arrays;
 
 public final class ErrorPresenterAdapter implements ErrorPresenter {
 
@@ -28,7 +26,7 @@ public final class ErrorPresenterAdapter implements ErrorPresenter {
         this.registeredPresenters = new ArrayList<>();
     }
 
-    public void initialize(EntityPresenterAdapter.PredicatePresenter... presenters) {
+    public void initialize(ErrorPresenterAdapter.PredicatePresenter... presenters) {
         registeredPresenters = Arrays.asList(presenters);
     }
 
@@ -46,18 +44,7 @@ public final class ErrorPresenterAdapter implements ErrorPresenter {
         invoke(context, entity);
     }
 
-    public static class ErrorContext {
-
-        private final GuiScreen currentScreen;
-
-        public ErrorContext(GuiScreen currentScreen) {
-            this.currentScreen = currentScreen;
-        }
-
-        public GuiScreen getCurrentScreen() {
-            return currentScreen;
-        }
-    }
+    public static class ErrorContext {}
 
     public static class PredicatePresenter {
 

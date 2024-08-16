@@ -9,6 +9,8 @@ import io.github.singlerr.semaphore.network.admin.packet.PacketGetAllEntities;
 import io.github.singlerr.semaphore.network.admin.packet.PacketGetEntity;
 import io.github.singlerr.semaphore.network.admin.server.ServerboundEntityController;
 
+import java.util.UUID;
+
 public final class EntityHandlers {
 
     private EntityHandlers() {}
@@ -27,7 +29,9 @@ public final class EntityHandlers {
 
         @Override
         public PacketGetAllEntities handleServer(PacketGetAllEntities packet, ServerboundPacketContext context) {
-            this.entityController.getAllEntities();
+            EntityQuery.GetAllEntities query = new EntityQuery.GetAllEntities();
+            query.setContext(context.getServerHandler().player);
+            this.entityController.getAllEntities(query);
             return null;
         }
     }
@@ -47,9 +51,12 @@ public final class EntityHandlers {
 
         @Override
         public PacketGetEntity handleServer(PacketGetEntity packet, ServerboundPacketContext context) {
-            this.entityController.getEntity(new EntityQuery.GetEntity(packet.getId()));
+            EntityQuery.GetEntity query = new EntityQuery.GetEntity(packet.getId());
+            query.setContext(context.getServerHandler().player);
+            this.entityController.getEntity(query);
             return null;
         }
+
     }
 
     public static class CreateEntityHandler extends ServerboundPacketHandler<PacketCreateEntity, PacketCreateEntity> {

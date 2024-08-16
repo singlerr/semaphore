@@ -61,6 +61,7 @@ public final class ServerProxy extends CommonProxy {
     private void initAdmin(NetworkManager networkManager) {
         AdminInteractor adminInteractor = AdminInteractorAccess.getInstance();
 
+        // Use ctx to send packet to exact player on presenter
         callConnectionPresenter.initialize(new CallConnectionPresenterAdapter.PredicatePresenter(
                 (ctx) -> true, (ctx) -> true, new ServerboundCallConnectionPresenter(networkManager)));
         entityPresenter.initialize(new EntityPresenterAdapter.PredicatePresenter(
@@ -95,6 +96,8 @@ public final class ServerProxy extends CommonProxy {
         networkManager.registerServerboundPacket(
                 PacketGetEntity.class, new EntityHandlers.GetEntityHandler(entityController));
         networkManager.registerServerboundPacket(PacketGetAllEntities.class, new EntityHandlers.GetAllEntitiesHandler(entityController));
+        networkManager.registerServerboundPacket(PacketPresentableEntity.class);
+        networkManager.registerServerboundPacket(PacketPresentableEntities.class);
     }
 
     // Register call response

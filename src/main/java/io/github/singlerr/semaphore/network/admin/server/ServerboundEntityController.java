@@ -28,7 +28,7 @@ public final class ServerboundEntityController implements EntityController {
     }
 
     @Override
-    public void getAllEntities() {
-        this.source.getAllEntities();
+    public void getAllEntities(EntityQuery.GetAllEntities query) {
+        this.source.getAllEntities(query);
     }
 }

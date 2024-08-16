@@ -4,6 +4,7 @@ package io.github.singlerr.semaphore.client.gui;
 import io.github.singlerr.semaphore.interactors.admin.controller.CallConnectionController;
 import io.github.singlerr.semaphore.interactors.admin.controller.CallStateController;
 import io.github.singlerr.semaphore.interactors.admin.controller.EntityController;
+import io.github.singlerr.semaphore.interactors.admin.controller.data.EntityQuery;
 import io.github.singlerr.semaphore.interactors.admin.presenter.CallConnectionPresenter;
 import io.github.singlerr.semaphore.interactors.admin.presenter.EntityPresenter;
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.ErrorEntity;
@@ -11,6 +12,7 @@ import io.github.singlerr.semaphore.interactors.admin.presenter.data.Presentable
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.PresentableEntity;
 import io.github.singlerr.semaphore.policy.admin.presenters.CallConnectionPresenterAdapter;
 import io.github.singlerr.semaphore.policy.admin.presenters.EntityPresenterAdapter;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 
 import java.util.List;
@@ -36,12 +38,12 @@ public final class GuiControlPanel extends GuiScreen implements CallConnectionPr
     }
 
     public void onGuiOpened(){
-        entityController.getAllEntities();
+        entityController.getAllEntities(new EntityQuery.GetAllEntities());
     }
 
     @Override
     public void present(List<PresentableEntity> entities) {
-        System.out.println(entities);
+
     }
 
     @Override

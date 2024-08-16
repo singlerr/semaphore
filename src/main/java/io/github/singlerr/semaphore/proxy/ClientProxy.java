@@ -6,11 +6,9 @@ import io.github.singlerr.semaphore.client.gui.GuiPhone;
 import io.github.singlerr.semaphore.client.listener.ItemEventListener;
 import io.github.singlerr.semaphore.instances.client.ClientResources;
 import io.github.singlerr.semaphore.network.NetworkManager;
-import io.github.singlerr.semaphore.network.admin.client.ClientboundCallConnectionController;
-import io.github.singlerr.semaphore.network.admin.client.ClientboundCallConnectionPresenter;
-import io.github.singlerr.semaphore.network.admin.client.ClientboundCallStateController;
-import io.github.singlerr.semaphore.network.admin.client.ClientboundEntityController;
+import io.github.singlerr.semaphore.network.admin.client.*;
 import io.github.singlerr.semaphore.network.admin.client.handler.CallConnectionHandlers;
+import io.github.singlerr.semaphore.network.admin.client.handler.EntityHandlers;
 import io.github.singlerr.semaphore.network.admin.packet.*;
 import io.github.singlerr.semaphore.network.callee.client.ClientboundCallResponseController;
 import io.github.singlerr.semaphore.network.callee.packet.PacketCallResponse;
@@ -87,6 +85,8 @@ public final class ClientProxy extends CommonProxy {
 
         // Init gui based presenter
         ClientboundCallConnectionPresenter presenter = new ClientboundCallConnectionPresenter(callConnectionPresenter);
+        ClientboundEntityPresenter clientEntityPresenter = new ClientboundEntityPresenter(entityPresenter);
+
         networkManager.registerClientboundPacket(
                 PacketPresentableCallConnection.class,
                 new CallConnectionHandlers.PresentableCallConnectionHandler(presenter));
@@ -105,6 +105,8 @@ public final class ClientProxy extends CommonProxy {
         networkManager.registerClientboundPacket(PacketDeleteEntity.class);
         networkManager.registerClientboundPacket(PacketGetEntity.class);
         networkManager.registerClientboundPacket(PacketGetAllEntities.class);
+        networkManager.registerClientboundPacket(PacketPresentableEntity.class, new EntityHandlers.PresentableEntityHandler(clientEntityPresenter));
+        networkManager.registerClientboundPacket(PacketPresentableEntities.class, new EntityHandlers.PresentableEntitiesHandler(clientEntityPresenter));
     }
 
     private void initCalleeAndCaller(

@@ -33,7 +33,7 @@ public final class ClientboundEntityController implements EntityController {
     }
 
     @Override
-    public void getAllEntities() {
+    public void getAllEntities(EntityQuery.GetAllEntities entities) {
         this.networkManager.sendToServer(new PacketGetAllEntities());
     }
 }

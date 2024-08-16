@@ -11,6 +11,10 @@ public final class PacketErrorEntity implements IMessage {
 
     public PacketErrorEntity() {}
 
+    public PacketErrorEntity(String message) {
+        this.message = message;
+    }
+
     public String getMessage() {
         return message;
     }

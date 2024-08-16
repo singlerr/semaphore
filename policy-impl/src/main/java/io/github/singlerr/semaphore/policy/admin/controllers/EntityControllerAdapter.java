@@ -44,7 +44,12 @@ public final class EntityControllerAdapter implements EntityController {
     }
 
     @Override
-    public void getAllEntities() {
-        this.entityPresenter.present(this.database.getAll().stream().map(e -> new PresentableEntity(e.id(), e.stateId())).collect(Collectors.toList()));
+    public void getAllEntities(EntityQuery.GetAllEntities query) {
+        this.entityPresenter.present(this.database.getAll().stream().map(e -> {
+            PresentableEntity entity = new PresentableEntity(e.id(), e.stateId());
+            if(query.getContext() != null)
+                entity.setContext(query.getContext());
+            return entity;
+        }).collect(Collectors.toList()));
     }
 }

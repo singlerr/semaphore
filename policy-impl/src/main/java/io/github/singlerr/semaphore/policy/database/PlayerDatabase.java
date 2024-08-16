@@ -26,7 +26,9 @@ public final class PlayerDatabase implements DatabaseGateway {
 
     @Override
     public Entity create(UUID id) {
-        return new Entity(id, 0);
+        Entity entity = new Entity(id, 0);
+        entities.put(id, entity);
+        return entity;
     }
 
     @Override

@@ -4,6 +4,7 @@ package io.github.singlerr.semaphore.compat;
 import de.maxhenkel.voicechat.api.Group;
 import de.maxhenkel.voicechat.api.VoicechatConnection;
 import de.maxhenkel.voicechat.api.VoicechatServerApi;
+import io.github.singlerr.semaphore.Constants;
 import io.github.singlerr.semaphore.callhandler.BaseCallConnectionHandler;
 import io.github.singlerr.semaphore.interactors.access.call.CallConnection;
 import io.github.singlerr.semaphore.interactors.access.call.CallState;
@@ -34,7 +35,7 @@ public final class VoicechatCallConnectionHandler extends BaseCallConnectionHand
         Group group = voicechatServerApi
                 .groupBuilder()
                 .setHidden(true)
-                .setName("p2pGroup")
+                .setName(Constants.P2P_GROUP)
                 .setType(Group.Type.ISOLATED)
                 .build();
         caller.setGroup(group);

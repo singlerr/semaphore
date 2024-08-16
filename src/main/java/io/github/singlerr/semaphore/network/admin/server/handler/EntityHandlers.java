@@ -5,12 +5,33 @@ import io.github.singlerr.semaphore.interactors.admin.controller.data.EntityQuer
 import io.github.singlerr.semaphore.network.ServerboundPacketHandler;
 import io.github.singlerr.semaphore.network.admin.packet.PacketCreateEntity;
 import io.github.singlerr.semaphore.network.admin.packet.PacketDeleteEntity;
+import io.github.singlerr.semaphore.network.admin.packet.PacketGetAllEntities;
 import io.github.singlerr.semaphore.network.admin.packet.PacketGetEntity;
 import io.github.singlerr.semaphore.network.admin.server.ServerboundEntityController;
 
 public final class EntityHandlers {
 
     private EntityHandlers() {}
+
+    public static class GetAllEntitiesHandler extends ServerboundPacketHandler<PacketGetAllEntities, PacketGetAllEntities> {
+
+        private ServerboundEntityController entityController;
+
+        public GetAllEntitiesHandler() {
+            throw new IllegalStateException();
+        }
+
+        public GetAllEntitiesHandler(ServerboundEntityController entityController) {
+            this.entityController = entityController;
+        }
+
+        @Override
+        public PacketGetAllEntities handleServer(PacketGetAllEntities packet, ServerboundPacketContext context) {
+            this.entityController.getAllEntities();
+            return null;
+        }
+    }
+
 
     public static class GetEntityHandler extends ServerboundPacketHandler<PacketGetEntity, PacketGetEntity> {
 
@@ -45,7 +66,7 @@ public final class EntityHandlers {
 
         @Override
         public PacketCreateEntity handleServer(PacketCreateEntity packet, ServerboundPacketContext context) {
-            this.entityController.createEntity(new EntityQuery.CreateEntity());
+            this.entityController.createEntity(new EntityQuery.CreateEntity(packet.getId()));
             return null;
         }
     }

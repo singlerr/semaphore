@@ -3,9 +3,8 @@ package io.github.singlerr.semaphore.policy.database;
 
 import io.github.singlerr.semaphore.interactors.access.database.DatabaseGateway;
 import io.github.singlerr.semaphore.interactors.access.database.Entity;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+
+import java.util.*;
 
 public final class PlayerDatabase implements DatabaseGateway {
 
@@ -26,8 +25,13 @@ public final class PlayerDatabase implements DatabaseGateway {
     }
 
     @Override
-    public Entity create() {
-        return new Entity(UUID.randomUUID(), 0);
+    public Entity create(UUID id) {
+        return new Entity(id, 0);
+    }
+
+    @Override
+    public List<Entity> getAll() {
+        return new ArrayList<>(entities.values());
     }
 
     @Override

@@ -46,21 +46,22 @@ loom {
         named("client") {
             property("mixin.debug", "true")
             property("asmhelper.verbose", "true")
-            vmArgs("--tweakClass", "org.spongepowered.asm.launch.MixinTweaker")
-            vmArgs("--mixin", "${mod_id}.mixins.json")
+            programArgs("--tweakClass", "org.spongepowered.asm.launch.MixinTweaker")
+            programArgs("--mixin", "${mod_id}.mixins.json")
             vmArgs(
                 "-Ddevauth.enabled=true",
                 "-Ddevauth.configDir=./.devauth",
                 "-Ddevauth.account=alt"
             )
+            programArgs("--username", "Dev")
             runDir = "run-client"
         }
 
         named("server") {
             property("mixin.debug", "true")
             property("asmhelper.verbose", "true")
-            vmArgs("--tweakClass", "org.spongepowered.asm.launch.MixinTweaker")
-            vmArgs("--mixin", "${mod_id}.mixins.json")
+            programArgs("--tweakClass", "org.spongepowered.asm.launch.MixinTweaker")
+            programArgs("--mixin", "${mod_id}.mixins.json")
             runDir = "run-server"
         }
     }
@@ -117,7 +118,7 @@ dependencies {
     shadowImpl("io.github.singlerr.semaphore.interactors:callee:${semaphore_base_version}")
     shadowImpl("io.github.singlerr.semaphore.interactors:caller:${semaphore_base_version}")
 
-    modRuntimeOnly("me.djtheredstoner:DevAuth-forge-legacy:1.1.0")
+//    modRuntimeOnly("me.djtheredstoner:DevAuth-forge-legacy:1.1.0")
 }
 
 tasks.withType<JavaCompile> { options.encoding = "UTF-8" }

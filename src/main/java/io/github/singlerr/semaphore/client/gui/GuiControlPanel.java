@@ -13,19 +13,35 @@ import io.github.singlerr.semaphore.policy.admin.presenters.CallConnectionPresen
 import io.github.singlerr.semaphore.policy.admin.presenters.EntityPresenterAdapter;
 import net.minecraft.client.gui.GuiScreen;
 
-public final class GuiAdminPanel extends GuiScreen implements CallConnectionPresenter, EntityPresenter {
+import java.util.List;
+
+public final class GuiControlPanel extends GuiScreen implements CallConnectionPresenter, EntityPresenter {
 
     private final EntityController entityController;
     private final CallConnectionController callConnectionController;
     private final CallStateController callStateController;
 
-    public GuiAdminPanel(
+    public GuiControlPanel(
             EntityController entityController,
             CallConnectionController callConnectionController,
             CallStateController callStateController) {
         this.entityController = entityController;
         this.callConnectionController = callConnectionController;
         this.callStateController = callStateController;
+    }
+
+    @Override
+    public void initGui() {
+        super.initGui();
+    }
+
+    public void onGuiOpened(){
+        entityController.getAllEntities();
+    }
+
+    @Override
+    public void present(List<PresentableEntity> entities) {
+        System.out.println(entities);
     }
 
     @Override

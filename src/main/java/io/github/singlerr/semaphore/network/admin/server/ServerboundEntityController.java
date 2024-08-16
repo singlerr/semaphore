@@ -26,4 +26,9 @@ public final class ServerboundEntityController implements EntityController {
     public void deleteEntity(EntityQuery.DeleteEntity query) {
         this.source.deleteEntity(query);
     }
+
+    @Override
+    public void getAllEntities() {
+        this.source.getAllEntities();
+    }
 }

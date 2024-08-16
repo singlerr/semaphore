@@ -3,11 +3,14 @@ package io.github.singlerr.semaphore.proxy;
 
 import io.github.singlerr.semaphore.Semaphore;
 import io.github.singlerr.semaphore.instances.*;
+import io.github.singlerr.semaphore.instances.common.CommonResources;
 import io.github.singlerr.semaphore.interactors.access.call.CallConnectionHandler;
 import io.github.singlerr.semaphore.interactors.access.database.DatabaseGateway;
 import io.github.singlerr.semaphore.interactors.admin.AdminInteractor;
 import io.github.singlerr.semaphore.interactors.callee.CalleeInteractor;
 import io.github.singlerr.semaphore.interactors.caller.CallerInteractor;
+import io.github.singlerr.semaphore.item.ItemControlPanel;
+import io.github.singlerr.semaphore.item.ItemPhone;
 import io.github.singlerr.semaphore.network.NetworkManager;
 import io.github.singlerr.semaphore.policy.admin.SimpleAdminInteractor;
 import io.github.singlerr.semaphore.policy.admin.presenters.CallConnectionPresenterAdapter;
@@ -20,6 +23,16 @@ import io.github.singlerr.semaphore.policy.caller.presenters.CallRequestPresente
 import io.github.singlerr.semaphore.policy.caller.presenters.ErrorPresenterAdapter;
 import io.github.singlerr.semaphore.policy.callhandler.CallConnectionHandlerAdapter;
 import io.github.singlerr.semaphore.policy.database.PlayerDatabase;
+import net.minecraft.block.Block;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public abstract class CommonProxy {
 
@@ -37,6 +50,8 @@ public abstract class CommonProxy {
         NetworkManagerAccess.setInstance(networkManager);
         initPolicy();
         initRemotePolicy(networkManager);
+        MinecraftForge.EVENT_BUS.register(new BlockRegistries());
+        MinecraftForge.EVENT_BUS.register(new ItemRegistries());
     }
 
     public void init() {}
@@ -78,5 +93,41 @@ public abstract class CommonProxy {
         AdminInteractorAccess.setInstance(adminInteractor);
         CallerInteractorAccess.setInstance(callerInteractor);
         CalleeInteractorAccess.setInstance(calleeInteractor);
+    }
+
+    private static class BlockRegistries {
+
+        public void registerBlock(RegistryEvent.Register<Block> registry) {
+
+        }
+    }
+
+    private static class ItemRegistries{
+
+        private ItemPhone phone = new ItemPhone();
+        private ItemControlPanel controlPanel = new ItemControlPanel();
+
+        @SubscribeEvent
+        public void registerItem(RegistryEvent.Register<Item> registry){
+            CreativeTabs tab = new CreativeTabs(Semaphore.MOD_ID) {
+                @Override
+                public ItemStack createIcon() {
+                    return new ItemStack(phone);
+                }
+            };
+            phone.setCreativeTab(tab);
+            controlPanel.setCreativeTab(tab);
+
+            registry.getRegistry().register(phone);
+            registry.getRegistry().register(controlPanel);
+            CommonResources.setInstance(ItemPhone.class, phone);
+            CommonResources.setInstance(ItemControlPanel.class, controlPanel);
+        }
+
+        @SubscribeEvent
+        public void registerItemModel(ModelRegistryEvent registry){
+            ModelLoader.setCustomModelResourceLocation(phone, 0, new ModelResourceLocation(phone.getRegistryName(), "inventory"));
+            ModelLoader.setCustomModelResourceLocation(controlPanel, 0, new ModelResourceLocation(phone.getRegistryName(), "inventory"));
+        }
     }
 }

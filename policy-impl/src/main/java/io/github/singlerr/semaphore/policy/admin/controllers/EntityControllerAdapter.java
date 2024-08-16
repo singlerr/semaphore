@@ -9,6 +9,9 @@ import io.github.singlerr.semaphore.interactors.admin.presenter.EntityPresenter;
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.ErrorEntity;
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.PresentableEntity;
 
+import java.util.ArrayList;
+import java.util.stream.Collectors;
+
 public final class EntityControllerAdapter implements EntityController {
 
     private final DatabaseGateway database;
@@ -32,11 +35,16 @@ public final class EntityControllerAdapter implements EntityController {
 
     @Override
     public void createEntity(EntityQuery.CreateEntity query) {
-        this.database.create();
+        this.database.create(query.id());
     }
 
     @Override
     public void deleteEntity(EntityQuery.DeleteEntity query) {
         this.database.delete(query.id());
+    }
+
+    @Override
+    public void getAllEntities() {
+        this.entityPresenter.present(this.database.getAll().stream().map(e -> new PresentableEntity(e.id(), e.stateId())).collect(Collectors.toList()));
     }
 }

@@ -7,6 +7,7 @@ import io.github.singlerr.semaphore.interactors.admin.presenter.data.Presentable
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
@@ -41,6 +42,19 @@ public final class EntityPresenterAdapter implements EntityPresenter {
         for (PredicatePresenter presenter : registeredPresenters) {
             if (presenter.shouldPresentError(context)) presenter.getPresenter().presentError(entity);
         }
+    }
+
+    private void invoke(PresenterContext context, List<PresentableEntity> entities) {
+        for (PredicatePresenter presenter : registeredPresenters) {
+            if (presenter.shouldPresentError(context)) presenter.getPresenter().present(entities);
+        }
+    }
+
+    @Override
+    public void present(List<PresentableEntity> entities) {
+        PresenterContext context = contextSupplier.get();
+        if (context == null) return;
+        invoke(context, entities);
     }
 
     @Override

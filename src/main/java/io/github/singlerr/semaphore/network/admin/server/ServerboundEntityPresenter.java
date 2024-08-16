@@ -6,6 +6,8 @@ import io.github.singlerr.semaphore.interactors.admin.presenter.data.ErrorEntity
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.PresentableEntity;
 import io.github.singlerr.semaphore.network.NetworkManager;
 
+import java.util.List;
+
 public final class ServerboundEntityPresenter implements EntityPresenter {
 
     private final NetworkManager networkManager;
@@ -19,4 +21,9 @@ public final class ServerboundEntityPresenter implements EntityPresenter {
 
     @Override
     public void presentError(ErrorEntity error) {}
+
+    @Override
+    public void present(List<PresentableEntity> entities) {
+        
+    }
 }

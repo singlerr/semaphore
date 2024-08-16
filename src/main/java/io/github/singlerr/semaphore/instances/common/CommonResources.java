@@ -1,27 +1,20 @@
 /* (C) 2024 singlerr */
-package io.github.singlerr.semaphore.instances.client;
-
-import io.github.singlerr.semaphore.utils.SideUtils;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+package io.github.singlerr.semaphore.instances.common;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public final class ClientResources {
+public final class CommonResources {
 
     private static final Map<Class<?>, Object> beans = new HashMap<>();
 
-    private ClientResources() {}
+    private CommonResources() {}
 
     public static <T> void setInstance(Class<T> beanCls, T bean) {
-        SideUtils.validateSide(beanCls, Side.CLIENT);
         if (beans.containsKey(beanCls))
             throw new IllegalStateException("Cannot assign twice of " + beanCls.getSimpleName());
         beans.put(beanCls, bean);
     }
-
-
 
     public static <T> T getInstance(Class<T> beanCls) {
         return (T) beans.get(beanCls);

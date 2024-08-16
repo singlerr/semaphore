@@ -1,8 +1,9 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.proxy;
 
-import io.github.singlerr.semaphore.client.gui.GuiAdminPanel;
+import io.github.singlerr.semaphore.client.gui.GuiControlPanel;
 import io.github.singlerr.semaphore.client.gui.GuiPhone;
+import io.github.singlerr.semaphore.client.listener.ItemEventListener;
 import io.github.singlerr.semaphore.instances.client.ClientResources;
 import io.github.singlerr.semaphore.network.NetworkManager;
 import io.github.singlerr.semaphore.network.admin.client.ClientboundCallConnectionController;
@@ -23,16 +24,18 @@ import io.github.singlerr.semaphore.policy.admin.presenters.EntityPresenterAdapt
 import io.github.singlerr.semaphore.policy.callee.presenters.CallPresenterAdapter;
 import io.github.singlerr.semaphore.policy.callee.presenters.ErrorHandlerAdapter;
 import io.github.singlerr.semaphore.policy.caller.presenters.CallRequestPresenterAdapter;
+import net.minecraft.client.Minecraft;
+import net.minecraftforge.common.MinecraftForge;
+
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.block.Block;
-import net.minecraftforge.event.RegistryEvent;
 
 public final class ClientProxy extends CommonProxy {
 
     @Override
     public void preInit() {
         super.preInit();
+        MinecraftForge.EVENT_BUS.register(new ItemEventListener());
     }
 
     @Override
@@ -74,13 +77,13 @@ public final class ClientProxy extends CommonProxy {
         ClientboundEntityController entityController = new ClientboundEntityController(networkManager);
 
         // Init gui based presenter & controller
-        GuiAdminPanel guiAdminPanel = new GuiAdminPanel(entityController, connectionController, stateController);
-        ClientResources.setInstance(GuiAdminPanel.class, guiAdminPanel);
+        GuiControlPanel guiControlPanel = new GuiControlPanel(entityController, connectionController, stateController);
+        ClientResources.setInstance(GuiControlPanel.class, guiControlPanel);
         // Presenter
         entityPresenters.add(new EntityPresenterAdapter.PredicatePresenter(
-                guiAdminPanel::shouldPresent, guiAdminPanel::shouldPresent, guiAdminPanel));
+                guiControlPanel::shouldPresent, guiControlPanel::shouldPresent, guiControlPanel));
         connectionPresenters.add(new CallConnectionPresenterAdapter.PredicatePresenter(
-                guiAdminPanel::shouldPresent, guiAdminPanel::shouldPresent, guiAdminPanel));
+                guiControlPanel::shouldPresent, guiControlPanel::shouldPresent, guiControlPanel));
 
         // Init gui based presenter
         ClientboundCallConnectionPresenter presenter = new ClientboundCallConnectionPresenter(callConnectionPresenter);
@@ -101,6 +104,7 @@ public final class ClientProxy extends CommonProxy {
         networkManager.registerClientboundPacket(PacketCreateEntity.class);
         networkManager.registerClientboundPacket(PacketDeleteEntity.class);
         networkManager.registerClientboundPacket(PacketGetEntity.class);
+        networkManager.registerClientboundPacket(PacketGetAllEntities.class);
     }
 
     private void initCalleeAndCaller(
@@ -114,6 +118,8 @@ public final class ClientProxy extends CommonProxy {
         ClientboundCallRequestPresenter requestPresenter = new ClientboundCallRequestPresenter(callRequestPresenter);
 
         GuiPhone guiPhone = new GuiPhone(callRequestController, callResponseController);
+        ClientResources.setInstance(GuiPhone.class, guiPhone);
+
         responsePresenters.add(new CallPresenterAdapter.PredicatePresenter(guiPhone::shouldPresent, guiPhone));
         errorPresenters.add(new ErrorHandlerAdapter.PredicatePresenter(guiPhone::shouldPresent, guiPhone));
         requestPresenters.add(new CallRequestPresenterAdapter.PredicatePresenter(guiPhone::shouldPresent, guiPhone));
@@ -126,8 +132,6 @@ public final class ClientProxy extends CommonProxy {
                 PacketInverseCallRequest.class, new CallRequestHandlers.InverseCallRequestHandler(requestPresenter));
     }
 
-    private static class BlockRegistries {
 
-        public void registerBlock(RegistryEvent<Block> registry) {}
-    }
+
 }

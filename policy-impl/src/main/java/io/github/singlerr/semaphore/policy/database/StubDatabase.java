@@ -3,6 +3,9 @@ package io.github.singlerr.semaphore.policy.database;
 
 import io.github.singlerr.semaphore.interactors.access.database.DatabaseGateway;
 import io.github.singlerr.semaphore.interactors.access.database.Entity;
+
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 public final class StubDatabase implements DatabaseGateway {
@@ -13,8 +16,13 @@ public final class StubDatabase implements DatabaseGateway {
     public void create(UUID id, Entity newState) {}
 
     @Override
-    public Entity create() {
+    public Entity create(UUID id) {
         return null;
+    }
+
+    @Override
+    public List<Entity> getAll() {
+        return Collections.emptyList();
     }
 
     @Override

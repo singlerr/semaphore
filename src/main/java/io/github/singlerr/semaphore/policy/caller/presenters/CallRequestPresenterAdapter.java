@@ -1,10 +1,7 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.policy.caller.presenters;
 
-import io.github.singlerr.semaphore.interactors.caller.controller.data.CallRequest;
 import io.github.singlerr.semaphore.interactors.caller.presenter.CallRequestPresenter;
-import io.github.singlerr.semaphore.interactors.caller.presenter.ErrorPresenter;
-import io.github.singlerr.semaphore.interactors.caller.presenter.data.Error;
 import io.github.singlerr.semaphore.interactors.caller.presenter.data.InverseCallRequest;
 import io.github.singlerr.semaphore.policy.admin.presenters.EntityPresenterAdapter;
 import java.util.ArrayList;
@@ -71,7 +68,8 @@ public final class CallRequestPresenterAdapter implements CallRequestPresenter {
         private final Predicate<PresenterContext> condition;
         private final CallRequestPresenter presenter;
 
-        public PredicatePresenter(@NotNull Predicate<PresenterContext> condition, @NotNull CallRequestPresenter presenter) {
+        public PredicatePresenter(
+                @NotNull Predicate<PresenterContext> condition, @NotNull CallRequestPresenter presenter) {
             this.condition = condition;
             this.presenter = presenter;
         }

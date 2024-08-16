@@ -1,6 +1,7 @@
+/* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.proxy;
 
-public final class ClientProxy extends CommonProxy{
+public final class ClientProxy extends CommonProxy {
 
     @Override
     public void preInit() {

@@ -1,10 +1,7 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.proxy;
 
-import io.github.singlerr.semaphore.instances.AdminInteractorAccess;
-import io.github.singlerr.semaphore.instances.CalleeInteractorAccess;
-import io.github.singlerr.semaphore.instances.CallerInteractorAccess;
-import io.github.singlerr.semaphore.instances.DatabaseAccess;
+import io.github.singlerr.semaphore.instances.*;
 import io.github.singlerr.semaphore.interactors.access.call.CallConnectionHandler;
 import io.github.singlerr.semaphore.interactors.access.database.DatabaseGateway;
 import io.github.singlerr.semaphore.interactors.admin.AdminInteractor;
@@ -25,7 +22,6 @@ import io.github.singlerr.semaphore.policy.caller.SimpleCallerInteractor;
 import io.github.singlerr.semaphore.policy.caller.presenters.CallRequestPresenterAdapter;
 import io.github.singlerr.semaphore.policy.caller.presenters.ErrorPresenterAdapter;
 import io.github.singlerr.semaphore.policy.callhandler.CallConnectionHandlerAdapter;
-import io.github.singlerr.semaphore.policy.callhandler.VoicechatCallConnectionHandler;
 import io.github.singlerr.semaphore.policy.database.PlayerDatabase;
 
 public abstract class CommonProxy {
@@ -38,19 +34,19 @@ public abstract class CommonProxy {
 
     public void postInit() {}
 
-    private void initPolicy(){
+    private void initPolicy() {
         DatabaseGateway database = new PlayerDatabase();
 
         // Due to different binding point of Minecraft and Voicechat, leave it to adapter
-        CallConnectionHandler callConnectionHandler =
-                new CallConnectionHandlerAdapter();
+        CallConnectionHandler callConnectionHandler = new CallConnectionHandlerAdapter();
 
         // Lazy init
         // Register adapter and context supplier after all Minecraft components loaded
         CallConnectionPresenter callConnectionPresenter = new CallConnectionPresenterAdapter();
         EntityPresenterAdapter entityPresenterAdapter = new EntityPresenterAdapter();
 
-        AdminInteractor adminInteractor = new SimpleAdminInteractor(database, callConnectionHandler, callConnectionPresenter, entityPresenterAdapter);
+        AdminInteractor adminInteractor = new SimpleAdminInteractor(
+                database, callConnectionHandler, callConnectionPresenter, entityPresenterAdapter);
 
         // Lazy init
         CallRequestPresenter callRequestPresenter = new CallRequestPresenterAdapter();
@@ -61,11 +57,12 @@ public abstract class CommonProxy {
         ErrorHandler errorHandler = new ErrorHandlerAdapter();
         CallResponsePresenter callResponsePresenter = new CallPresenterAdapter();
 
-        CalleeInteractor calleeInteractor = new SimpleCalleeInteractor(database, callConnectionHandler, errorHandler, callResponsePresenter);
-
+        CalleeInteractor calleeInteractor =
+                new SimpleCalleeInteractor(database, callConnectionHandler, errorHandler, callResponsePresenter);
 
         // Make Accessor store
         DatabaseAccess.setInstance(database);
+        CallConnectionHandlerAccess.setInstance(callConnectionHandler);
         AdminInteractorAccess.setInstance(adminInteractor);
         CallerInteractorAccess.setInstance(callerInteractor);
         CalleeInteractorAccess.setInstance(calleeInteractor);

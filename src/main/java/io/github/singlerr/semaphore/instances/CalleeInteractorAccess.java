@@ -10,8 +10,7 @@ public final class CalleeInteractorAccess {
     private static CalleeInteractor instance;
 
     public static void setInstance(CalleeInteractor instance) {
-        if (CalleeInteractorAccess.instance != null)
-            throw new IllegalStateException("Cannot assign twice");
+        if (CalleeInteractorAccess.instance != null) throw new IllegalStateException("Cannot assign twice");
 
         CalleeInteractorAccess.instance = instance;
     }

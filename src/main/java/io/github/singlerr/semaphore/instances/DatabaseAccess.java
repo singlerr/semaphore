@@ -1,7 +1,7 @@
+/* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.instances;
 
 import io.github.singlerr.semaphore.interactors.access.database.DatabaseGateway;
-import io.github.singlerr.semaphore.interactors.admin.AdminInteractor;
 
 public final class DatabaseAccess {
 

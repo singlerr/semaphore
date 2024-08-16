@@ -2,7 +2,6 @@
 package io.github.singlerr.semaphore.policy.callee.presenters;
 
 import io.github.singlerr.semaphore.interactors.callee.presenter.CallResponsePresenter;
-import io.github.singlerr.semaphore.interactors.callee.presenter.ErrorHandler;
 import io.github.singlerr.semaphore.interactors.callee.presenter.data.CallResponse;
 import io.github.singlerr.semaphore.interactors.callee.presenter.data.Error;
 import io.github.singlerr.semaphore.policy.admin.presenters.EntityPresenterAdapter;
@@ -84,7 +83,8 @@ public final class CallPresenterAdapter implements CallResponsePresenter {
         private final Predicate<PresenterContext> condition;
         private final CallResponsePresenter presenter;
 
-        public PredicatePresenter(@NotNull Predicate<PresenterContext> condition, @NotNull CallResponsePresenter presenter) {
+        public PredicatePresenter(
+                @NotNull Predicate<PresenterContext> condition, @NotNull CallResponsePresenter presenter) {
             this.condition = condition;
             this.presenter = presenter;
         }

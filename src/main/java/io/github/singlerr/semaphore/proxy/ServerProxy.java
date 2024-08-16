@@ -2,16 +2,11 @@
 package io.github.singlerr.semaphore.proxy;
 
 import de.maxhenkel.voicechat.api.events.VoicechatServerStartedEvent;
-import io.github.singlerr.semaphore.instances.AdminInteractorAccess;
 import io.github.singlerr.semaphore.instances.CallConnectionHandlerAccess;
 import io.github.singlerr.semaphore.instances.DatabaseAccess;
 import io.github.singlerr.semaphore.interactors.access.call.CallConnectionHandler;
-import io.github.singlerr.semaphore.interactors.access.database.DatabaseGateway;
-import io.github.singlerr.semaphore.interactors.admin.AdminInteractor;
-import io.github.singlerr.semaphore.policy.admin.SimpleAdminInteractor;
 import io.github.singlerr.semaphore.policy.callhandler.CallConnectionHandlerAdapter;
 import io.github.singlerr.semaphore.policy.callhandler.VoicechatCallConnectionHandler;
-import io.github.singlerr.semaphore.policy.database.PlayerDatabase;
 
 public final class ServerProxy extends CommonProxy {
 
@@ -32,9 +27,11 @@ public final class ServerProxy extends CommonProxy {
 
     public void serverStarted(VoicechatServerStartedEvent event) {
         // InMemory database
-        CallConnectionHandler voicechatBasedHandler = new VoicechatCallConnectionHandler(DatabaseAccess.getInstance(), event.getVoicechat());
-        if(CallConnectionHandlerAccess.getInstance() instanceof CallConnectionHandlerAdapter){
-            ((CallConnectionHandlerAdapter) CallConnectionHandlerAccess.getInstance()).setAdapter(voicechatBasedHandler);
+        CallConnectionHandler voicechatBasedHandler =
+                new VoicechatCallConnectionHandler(DatabaseAccess.getInstance(), event.getVoicechat());
+        if (CallConnectionHandlerAccess.getInstance() instanceof CallConnectionHandlerAdapter) {
+            ((CallConnectionHandlerAdapter) CallConnectionHandlerAccess.getInstance())
+                    .setAdapter(voicechatBasedHandler);
         }
     }
 }

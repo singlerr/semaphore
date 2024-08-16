@@ -10,8 +10,7 @@ public final class CallerInteractorAccess {
     private static CallerInteractor instance;
 
     public static void setInstance(CallerInteractor instance) {
-        if (CallerInteractorAccess.instance != null)
-            throw new IllegalStateException("Cannot assign twice");
+        if (CallerInteractorAccess.instance != null) throw new IllegalStateException("Cannot assign twice");
 
         CallerInteractorAccess.instance = instance;
     }

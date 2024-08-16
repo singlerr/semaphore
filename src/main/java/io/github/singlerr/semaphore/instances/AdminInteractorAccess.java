@@ -10,8 +10,7 @@ public final class AdminInteractorAccess {
     private static AdminInteractor instance;
 
     public static void setInstance(AdminInteractor instance) {
-        if (AdminInteractorAccess.instance != null)
-            throw new IllegalStateException("Cannot assign twice");
+        if (AdminInteractorAccess.instance != null) throw new IllegalStateException("Cannot assign twice");
 
         AdminInteractorAccess.instance = instance;
     }

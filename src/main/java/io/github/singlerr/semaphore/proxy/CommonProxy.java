@@ -1,17 +1,14 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.proxy;
 
+import io.github.singlerr.semaphore.Semaphore;
 import io.github.singlerr.semaphore.instances.*;
 import io.github.singlerr.semaphore.interactors.access.call.CallConnectionHandler;
 import io.github.singlerr.semaphore.interactors.access.database.DatabaseGateway;
 import io.github.singlerr.semaphore.interactors.admin.AdminInteractor;
-import io.github.singlerr.semaphore.interactors.admin.presenter.CallConnectionPresenter;
 import io.github.singlerr.semaphore.interactors.callee.CalleeInteractor;
-import io.github.singlerr.semaphore.interactors.callee.presenter.CallResponsePresenter;
-import io.github.singlerr.semaphore.interactors.callee.presenter.ErrorHandler;
 import io.github.singlerr.semaphore.interactors.caller.CallerInteractor;
-import io.github.singlerr.semaphore.interactors.caller.presenter.CallRequestPresenter;
-import io.github.singlerr.semaphore.interactors.caller.presenter.ErrorPresenter;
+import io.github.singlerr.semaphore.network.NetworkManager;
 import io.github.singlerr.semaphore.policy.admin.SimpleAdminInteractor;
 import io.github.singlerr.semaphore.policy.admin.presenters.CallConnectionPresenterAdapter;
 import io.github.singlerr.semaphore.policy.admin.presenters.EntityPresenterAdapter;
@@ -26,13 +23,27 @@ import io.github.singlerr.semaphore.policy.database.PlayerDatabase;
 
 public abstract class CommonProxy {
 
+    protected CallConnectionPresenterAdapter callConnectionPresenter;
+    protected EntityPresenterAdapter entityPresenter;
+
+    protected CallRequestPresenterAdapter callRequestPresenter;
+    protected ErrorPresenterAdapter errorPresenter;
+
+    protected ErrorHandlerAdapter errorHandler;
+    protected CallPresenterAdapter responsePresenter;
+
     public void preInit() {
+        NetworkManager networkManager = new NetworkManager(Semaphore.MOD_ID);
+        NetworkManagerAccess.setInstance(networkManager);
         initPolicy();
+        initRemotePolicy(networkManager);
     }
 
     public void init() {}
 
     public void postInit() {}
+
+    protected void initRemotePolicy(NetworkManager networkManager) {}
 
     private void initPolicy() {
         DatabaseGateway database = new PlayerDatabase();
@@ -42,23 +53,24 @@ public abstract class CommonProxy {
 
         // Lazy init
         // Register adapter and context supplier after all Minecraft components loaded
-        CallConnectionPresenter callConnectionPresenter = new CallConnectionPresenterAdapter();
-        EntityPresenterAdapter entityPresenterAdapter = new EntityPresenterAdapter();
+        callConnectionPresenter =
+                new CallConnectionPresenterAdapter(CallConnectionPresenterAdapter.PresenterContext::new);
+        entityPresenter = new EntityPresenterAdapter(EntityPresenterAdapter.PresenterContext::new);
 
-        AdminInteractor adminInteractor = new SimpleAdminInteractor(
-                database, callConnectionHandler, callConnectionPresenter, entityPresenterAdapter);
+        AdminInteractor adminInteractor =
+                new SimpleAdminInteractor(database, callConnectionHandler, callConnectionPresenter, entityPresenter);
 
         // Lazy init
-        CallRequestPresenter callRequestPresenter = new CallRequestPresenterAdapter();
-        ErrorPresenter errorPresenter = new ErrorPresenterAdapter();
+        callRequestPresenter = new CallRequestPresenterAdapter(CallRequestPresenterAdapter.PresenterContext::new);
+        errorPresenter = new ErrorPresenterAdapter(ErrorPresenterAdapter.ErrorContext::new);
         CallerInteractor callerInteractor = new SimpleCallerInteractor(database, errorPresenter, callRequestPresenter);
 
         // Lazy init
-        ErrorHandler errorHandler = new ErrorHandlerAdapter();
-        CallResponsePresenter callResponsePresenter = new CallPresenterAdapter();
+        errorHandler = new ErrorHandlerAdapter(ErrorHandlerAdapter.ErrorContext::new);
+        responsePresenter = new CallPresenterAdapter(CallPresenterAdapter.PresenterContext::new);
 
         CalleeInteractor calleeInteractor =
-                new SimpleCalleeInteractor(database, callConnectionHandler, errorHandler, callResponsePresenter);
+                new SimpleCalleeInteractor(database, callConnectionHandler, errorHandler, responsePresenter);
 
         // Make Accessor store
         DatabaseAccess.setInstance(database);

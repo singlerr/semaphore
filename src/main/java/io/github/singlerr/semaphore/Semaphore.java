@@ -12,7 +12,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 
 @Mod(modid = Semaphore.MOD_ID, dependencies = Semaphore.MOD_DEPENDENCIES)
-public final class Semaphore {
+public class Semaphore {
 
     public static final String MOD_DEPENDENCIES = "required-after:voicechat";
 

@@ -7,6 +7,7 @@ plugins {
     id("dev.architectury.architectury-pack200") version "0.1.3"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("com.diffplug.spotless") version "6.11.0" apply false
+    id("io.freefair.lombok") version "8.2.2"
     `maven-publish`
     kotlin("jvm") version "2.0.0"
 }

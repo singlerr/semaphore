@@ -3,7 +3,6 @@ gui.phonescreen.title=Phone
 gui.phonescreen.misscall=Opponent missed call
 gui.notification.accept=Press %1$s
 gui.notification.deny=Press %1$s
-
 #Gui - SoundSettings
 gui.settings.sound.open=Open Extra Sound Settings
 gui.settings.sound.title=Sound settings

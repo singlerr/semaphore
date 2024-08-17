@@ -48,12 +48,13 @@ loom {
             property("asmhelper.verbose", "true")
             programArgs("--tweakClass", "org.spongepowered.asm.launch.MixinTweaker")
             programArgs("--mixin", "${mod_id}.mixins.json")
-            vmArgs(
-                "-Ddevauth.enabled=true",
-                "-Ddevauth.configDir=./.devauth",
-                "-Ddevauth.account=alt"
-            )
             programArgs("--username", "Dev")
+            //            vmArgs(
+            //                "-Ddevauth.enabled=true",
+            //                "-Ddevauth.configDir=./.devauth",
+            //                "-Ddevauth.account=alt"
+            //            )
+            name
             runDir = "run-client"
         }
 

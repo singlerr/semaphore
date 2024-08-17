@@ -28,6 +28,8 @@ import net.minecraftforge.common.MinecraftForge;
 
 public final class ClientProxy extends CommonProxy {
 
+    private ClientboundCallRequestController requestController;
+
     @Override
     public void preInit() {
         super.preInit();
@@ -71,9 +73,10 @@ public final class ClientProxy extends CommonProxy {
                 new ClientboundCallConnectionController(networkManager);
         ClientboundCallStateController stateController = new ClientboundCallStateController(networkManager);
         ClientboundEntityController entityController = new ClientboundEntityController(networkManager);
-
+        requestController = new ClientboundCallRequestController(networkManager);
         // Init gui based presenter & controller
-        GuiControlPanel guiControlPanel = new GuiControlPanel(entityController, connectionController, stateController);
+        GuiControlPanel guiControlPanel =
+                new GuiControlPanel(entityController, connectionController, stateController, requestController);
         ClientResources.setInstance(GuiControlPanel.class, guiControlPanel);
         // Presenter
         entityPresenters.add(new EntityPresenterAdapter.PredicatePresenter(
@@ -114,12 +117,12 @@ public final class ClientProxy extends CommonProxy {
             List<CallPresenterAdapter.PredicatePresenter> responsePresenters,
             List<CallRequestPresenterAdapter.PredicatePresenter> requestPresenters,
             List<ErrorHandlerAdapter.PredicatePresenter> errorPresenters) {
-        ClientboundCallRequestController callRequestController = new ClientboundCallRequestController(networkManager);
+
         ClientboundCallResponseController callResponseController =
                 new ClientboundCallResponseController(networkManager);
         ClientboundCallRequestPresenter requestPresenter = new ClientboundCallRequestPresenter(callRequestPresenter);
 
-        GuiPhone guiPhone = new GuiPhone(callRequestController, callResponseController);
+        GuiPhone guiPhone = new GuiPhone(requestController, callResponseController);
         ClientResources.setInstance(GuiPhone.class, guiPhone);
 
         responsePresenters.add(new CallPresenterAdapter.PredicatePresenter(guiPhone::shouldPresent, guiPhone));

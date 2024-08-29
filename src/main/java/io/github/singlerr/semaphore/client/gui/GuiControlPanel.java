@@ -146,15 +146,16 @@ public final class GuiControlPanel extends GuiScreen implements CallConnectionPr
     }
 
     @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        if (mouseButton == this.btnOpenPhoneBoxControlPanel.id) {
+    protected void actionPerformed(GuiButton button) throws IOException {
+        if (button.id == this.btnOpenPhoneBoxControlPanel.id) {
             Minecraft.getMinecraft().displayGuiScreen(this.phoneBoxControlPanel);
             return;
         }
 
-        if (mouseButton == this.btnOpenUserControlPanel.id) {
+        if (button.id == this.btnOpenUserControlPanel.id) {
             Minecraft.getMinecraft().displayGuiScreen(this.userControlPanel);
             return;
         }
     }
+
 }

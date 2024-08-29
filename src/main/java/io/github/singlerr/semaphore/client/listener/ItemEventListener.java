@@ -24,6 +24,7 @@ public final class ItemEventListener {
 
         if (item instanceof ItemPhone) {
             // Open phone
+
             return;
         }
     }

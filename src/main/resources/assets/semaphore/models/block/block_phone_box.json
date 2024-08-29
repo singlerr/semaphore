@@ -1,0 +1,6 @@
+{
+  "parent": "block/stone",
+  "textures": {
+    "stone": "blocks/stone"
+  }
+}

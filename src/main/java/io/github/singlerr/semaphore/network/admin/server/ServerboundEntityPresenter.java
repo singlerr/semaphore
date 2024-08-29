@@ -23,7 +23,11 @@ public final class ServerboundEntityPresenter implements EntityPresenter {
     public void present(PresentableEntity entity) {
         if (entity.getContext() instanceof EntityPlayerMP) {
             this.networkManager.sendTo(
-                    new PacketPresentableEntity(entity.id(), entity.state()), (EntityPlayerMP) entity.getContext());
+                    new PacketPresentableEntity(
+                            entity.id(),
+                            entity.state().stateId(),
+                            entity.state().missCallCount()),
+                    (EntityPlayerMP) entity.getContext());
         }
     }
 

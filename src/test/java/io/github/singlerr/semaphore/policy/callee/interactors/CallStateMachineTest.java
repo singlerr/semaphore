@@ -28,16 +28,16 @@ class CallStateMachineTest {
         CalleeInteractor stubInteractor = new SimpleCalleeInteractor(
                 stubDatabase, stubCallConnectionHandler, new StubErrorHandler(), new StubResponsePresenter());
 
-        Entity stubCaller = new Entity(UUID.randomUUID(), 1);
-        Entity stubCallee = new Entity(UUID.randomUUID(), 2);
+        Entity stubCaller = new Entity(UUID.randomUUID(), new Entity.State(1, 0));
+        Entity stubCallee = new Entity(UUID.randomUUID(), new Entity.State(2, 0));
 
         stubDatabase.create(stubCaller.id(), stubCaller);
         stubDatabase.create(stubCallee.id(), stubCallee);
 
         stubInteractor.getResponseManager().reply(stubCaller.id(), stubCallee.id(), ResponseType.ACCEPT);
 
-        assertEquals(3, stubDatabase.getById(stubCaller.id()).stateId());
-        assertEquals(3, stubDatabase.getById(stubCallee.id()).stateId());
+        assertEquals(3, stubDatabase.getById(stubCaller.id()).state().stateId());
+        assertEquals(3, stubDatabase.getById(stubCallee.id()).state().stateId());
     }
 
     @Test
@@ -47,16 +47,16 @@ class CallStateMachineTest {
         CalleeInteractor stubInteractor = new SimpleCalleeInteractor(
                 stubDatabase, stubCallConnectionHandler, new StubErrorHandler(), new StubResponsePresenter());
 
-        Entity stubCaller = new Entity(UUID.randomUUID(), 1);
-        Entity stubCallee = new Entity(UUID.randomUUID(), 2);
+        Entity stubCaller = new Entity(UUID.randomUUID(), new Entity.State(1, 0));
+        Entity stubCallee = new Entity(UUID.randomUUID(), new Entity.State(2, 0));
 
         stubDatabase.create(stubCaller.id(), stubCaller);
         stubDatabase.create(stubCallee.id(), stubCallee);
 
         stubInteractor.getResponseManager().reply(stubCaller.id(), stubCallee.id(), ResponseType.REJECT);
 
-        assertEquals(0, stubDatabase.getById(stubCaller.id()).stateId());
-        assertEquals(0, stubDatabase.getById(stubCallee.id()).stateId());
+        assertEquals(0, stubDatabase.getById(stubCaller.id()).state().stateId());
+        assertEquals(0, stubDatabase.getById(stubCallee.id()).state().stateId());
     }
 
     @Test
@@ -66,14 +66,14 @@ class CallStateMachineTest {
         CalleeInteractor stubInteractor = new SimpleCalleeInteractor(
                 stubDatabase, stubCallConnectionHandler, new StubErrorHandler(), new StubResponsePresenter());
 
-        Entity stubCaller = new Entity(UUID.randomUUID(), 1);
-        Entity stubCallee = new Entity(UUID.randomUUID(), 2);
+        Entity stubCaller = new Entity(UUID.randomUUID(), new Entity.State(1, 0));
+        Entity stubCallee = new Entity(UUID.randomUUID(), new Entity.State(2, 0));
 
         stubDatabase.create(stubCaller.id(), stubCaller);
 
         stubInteractor.getResponseManager().reply(stubCaller.id(), stubCallee.id(), ResponseType.REJECT);
 
-        assertEquals(0, stubDatabase.getById(stubCaller.id()).stateId());
+        assertEquals(0, stubDatabase.getById(stubCaller.id()).state().stateId());
     }
 
     private static class StubResponsePresenter implements CallResponsePresenter {

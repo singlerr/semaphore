@@ -15,7 +15,9 @@ public final class PlayerManager extends BaseEntityManager {
     @Override
     public List<CallableEntity> getAll() {
         return database.getAll().stream()
-                .map(e -> new CallableEntity(e.id(), e.stateId()))
+                .map(e -> new CallableEntity(
+                        e.id(),
+                        new CallableEntity.State(e.state().stateId(), e.state().missCallCount())))
                 .collect(Collectors.toList());
     }
 }

@@ -1,20 +1,20 @@
 {
-  "call_no": {
+  "sound_call_accept": {
     "category": "block",
     "sounds": [
-      "semaphore:call_no"
+      "semaphore:sound_call_accept"
     ]
   },
-  "call_off": {
+  "sound_call_close": {
     "category": "block",
     "sounds": [
-      "semaphore:call_off"
+      "semaphore:sound_call_close"
     ]
   },
-  "call_yes": {
+  "sound_call_reject": {
     "category": "block",
     "sounds": [
-      "semaphore:call_yes"
+      "semaphore:sound_call_reject"
     ]
   },
   "calling": {

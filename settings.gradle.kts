@@ -19,4 +19,6 @@ pluginManagement {
     }
 }
 
+rootProject.name = "semaphore"
+
 include("policy-impl")

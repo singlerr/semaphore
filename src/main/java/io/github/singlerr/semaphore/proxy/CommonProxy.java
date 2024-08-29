@@ -2,13 +2,18 @@
 package io.github.singlerr.semaphore.proxy;
 
 import io.github.singlerr.semaphore.Semaphore;
+import io.github.singlerr.semaphore.block.BlockPhoneBox;
+import io.github.singlerr.semaphore.client.ClientWorldAwareInverseCallPresenter;
 import io.github.singlerr.semaphore.instances.*;
+import io.github.singlerr.semaphore.instances.client.ClientResources;
 import io.github.singlerr.semaphore.instances.common.CommonResources;
 import io.github.singlerr.semaphore.interactors.access.call.CallConnectionHandler;
 import io.github.singlerr.semaphore.interactors.access.database.DatabaseGateway;
 import io.github.singlerr.semaphore.interactors.admin.AdminInteractor;
+import io.github.singlerr.semaphore.interactors.admin.controller.EntityController;
 import io.github.singlerr.semaphore.interactors.callee.CalleeInteractor;
 import io.github.singlerr.semaphore.interactors.caller.CallerInteractor;
+import io.github.singlerr.semaphore.item.ItemBoxSelector;
 import io.github.singlerr.semaphore.item.ItemControlPanel;
 import io.github.singlerr.semaphore.item.ItemPhone;
 import io.github.singlerr.semaphore.network.NetworkManager;
@@ -45,13 +50,15 @@ public abstract class CommonProxy {
     protected ErrorHandlerAdapter errorHandler;
     protected CallPresenterAdapter responsePresenter;
 
+    protected EntityController entityController;
+
     public void preInit() {
         NetworkManager networkManager = new NetworkManager(Semaphore.MOD_ID);
         NetworkManagerAccess.setInstance(networkManager);
         initPolicy();
         initRemotePolicy(networkManager);
         MinecraftForge.EVENT_BUS.register(new BlockRegistries());
-        MinecraftForge.EVENT_BUS.register(new ItemRegistries());
+        MinecraftForge.EVENT_BUS.register(new ItemRegistries(entityController));
     }
 
     public void init() {}
@@ -97,13 +104,28 @@ public abstract class CommonProxy {
 
     private static class BlockRegistries {
 
-        public void registerBlock(RegistryEvent.Register<Block> registry) {}
+        private BlockPhoneBox phoneBox = new BlockPhoneBox();
+
+        @SubscribeEvent
+        public void registerBlock(RegistryEvent.Register<Block> registry) {
+            registry.getRegistry().register(phoneBox);
+            CommonResources.setInstance(BlockPhoneBox.class, phoneBox);
+
+            ClientWorldAwareInverseCallPresenter clientTileEntityNotifier =
+                    ClientResources.getInstance(ClientWorldAwareInverseCallPresenter.class);
+            if (clientTileEntityNotifier != null) phoneBox.setTracker(clientTileEntityNotifier);
+        }
     }
 
     private static class ItemRegistries {
 
         private ItemPhone phone = new ItemPhone();
         private ItemControlPanel controlPanel = new ItemControlPanel();
+        private ItemBoxSelector phoneBoxSelector;
+
+        public ItemRegistries(EntityController entityController) {
+            this.phoneBoxSelector = new ItemBoxSelector(entityController);
+        }
 
         @SubscribeEvent
         public void registerItem(RegistryEvent.Register<Item> registry) {
@@ -115,11 +137,15 @@ public abstract class CommonProxy {
             };
             phone.setCreativeTab(tab);
             controlPanel.setCreativeTab(tab);
+            phoneBoxSelector.setCreativeTab(tab);
 
             registry.getRegistry().register(phone);
             registry.getRegistry().register(controlPanel);
+            registry.getRegistry().register(phoneBoxSelector);
+
             CommonResources.setInstance(ItemPhone.class, phone);
             CommonResources.setInstance(ItemControlPanel.class, controlPanel);
+            CommonResources.setInstance(ItemBoxSelector.class, phoneBoxSelector);
         }
 
         @SubscribeEvent
@@ -127,7 +153,9 @@ public abstract class CommonProxy {
             ModelLoader.setCustomModelResourceLocation(
                     phone, 0, new ModelResourceLocation(phone.getRegistryName(), "inventory"));
             ModelLoader.setCustomModelResourceLocation(
-                    controlPanel, 0, new ModelResourceLocation(phone.getRegistryName(), "inventory"));
+                    controlPanel, 0, new ModelResourceLocation(controlPanel.getRegistryName(), "inventory"));
+            ModelLoader.setCustomModelResourceLocation(
+                    phoneBoxSelector, 0, new ModelResourceLocation(phoneBoxSelector.getRegistryName(), "inventory"));
         }
     }
 }

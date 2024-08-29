@@ -9,32 +9,40 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 public final class PacketSetCallState implements IMessage {
 
     private UUID id;
-    private int state;
+    private int stateId;
+    private int missCallCount;
 
     public PacketSetCallState() {}
 
-    public PacketSetCallState(UUID id, int state) {
+    public PacketSetCallState(UUID id, int stateId, int missCallCount) {
         this.id = id;
-        this.state = state;
+        this.stateId = stateId;
+        this.missCallCount = missCallCount;
     }
 
     public UUID getId() {
         return id;
     }
 
-    public int getState() {
-        return state;
+    public int getStateId() {
+        return stateId;
+    }
+
+    public int getMissCallCount() {
+        return missCallCount;
     }
 
     @Override
     public void fromBytes(ByteBuf byteBuf) {
         this.id = SerializationUtils.readUUID(byteBuf);
-        this.state = byteBuf.readInt();
+        this.stateId = byteBuf.readInt();
+        this.missCallCount = byteBuf.readInt();
     }
 
     @Override
     public void toBytes(ByteBuf byteBuf) {
         SerializationUtils.writeUUID(byteBuf, this.id);
-        byteBuf.writeInt(this.state);
+        byteBuf.writeInt(this.stateId);
+        byteBuf.writeInt(this.missCallCount);
     }
 }

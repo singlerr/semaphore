@@ -34,7 +34,9 @@ key.call.accept=전화 수락
 key.call.deny=전화 거절
 
 #Item
-item.semaphore.itemphone.name=휴대폰
+item.semaphore.item_phone.name=Phone
+item.semaphore.control_panel.name=Control Panel
+item.semaphore.box_selector.name=Phone Box Selector
 #CreativeTab
 
 itemGroup.semaphore=Semaphore

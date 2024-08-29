@@ -40,16 +40,20 @@ public final class CallStateMachine implements CallRequestManager {
 
         if (caller == null || callee == null) {
             if (caller != null) {
-                database.update(callerId, new Entity(callerId, 0));
+                database.update(
+                        callerId,
+                        new Entity(callerId, new Entity.State(0, caller.state().missCallCount())));
             }
             if (callee != null) {
-                database.update(calleeId, new Entity(calleeId, 0));
+                database.update(
+                        calleeId,
+                        new Entity(calleeId, new Entity.State(0, callee.state().missCallCount())));
             }
             return;
         }
 
-        Optional<Integer> newCallerState = dfa.consume(caller.stateId(), PlayerInput.REQUEST_CALL);
-        Optional<Integer> newCalleeState = dfa.consume(callee.stateId(), PlayerInput.RECEIVE_CALL);
+        Optional<Integer> newCallerState = dfa.consume(caller.state().stateId(), PlayerInput.REQUEST_CALL);
+        Optional<Integer> newCalleeState = dfa.consume(callee.state().stateId(), PlayerInput.RECEIVE_CALL);
 
         if (!newCallerState.isPresent() || !newCalleeState.isPresent()) {
             resetState(callerId);
@@ -58,13 +62,21 @@ public final class CallStateMachine implements CallRequestManager {
             return;
         }
 
-        database.update(callerId, new Entity(callerId, newCallerState.get()));
-        database.update(calleeId, new Entity(calleeId, newCalleeState.get()));
+        database.update(
+                callerId,
+                new Entity(
+                        callerId,
+                        new Entity.State(newCallerState.get(), caller.state().missCallCount())));
+        database.update(
+                calleeId,
+                new Entity(
+                        calleeId,
+                        new Entity.State(newCalleeState.get(), callee.state().missCallCount())));
 
         requestPresenter.present(new InverseCallRequest(callerId, calleeId));
     }
 
     private void resetState(UUID id) {
-        database.update(id, new Entity(id, 0));
+        database.update(id, new Entity(id, new Entity.State(0, 0)));
     }
 }

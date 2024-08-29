@@ -1,8 +1,10 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.proxy;
 
+import io.github.singlerr.semaphore.client.ClientWorldAwareInverseCallPresenter;
 import io.github.singlerr.semaphore.client.gui.GuiControlPanel;
 import io.github.singlerr.semaphore.client.gui.GuiPhone;
+import io.github.singlerr.semaphore.client.listener.GuiEventListener;
 import io.github.singlerr.semaphore.client.listener.ItemEventListener;
 import io.github.singlerr.semaphore.instances.client.ClientResources;
 import io.github.singlerr.semaphore.network.NetworkManager;
@@ -39,6 +41,7 @@ public final class ClientProxy extends CommonProxy {
     @Override
     public void init() {
         super.init();
+        MinecraftForge.EVENT_BUS.register(new GuiEventListener(entityController));
     }
 
     @Override
@@ -73,6 +76,7 @@ public final class ClientProxy extends CommonProxy {
                 new ClientboundCallConnectionController(networkManager);
         ClientboundCallStateController stateController = new ClientboundCallStateController(networkManager);
         ClientboundEntityController entityController = new ClientboundEntityController(networkManager);
+        this.entityController = entityController;
         requestController = new ClientboundCallRequestController(networkManager);
         // Init gui based presenter & controller
         GuiControlPanel guiControlPanel =
@@ -125,9 +129,13 @@ public final class ClientProxy extends CommonProxy {
         GuiPhone guiPhone = new GuiPhone(requestController, callResponseController);
         ClientResources.setInstance(GuiPhone.class, guiPhone);
 
+        ClientWorldAwareInverseCallPresenter tileEntityNotifier = new ClientWorldAwareInverseCallPresenter();
+        ClientResources.setInstance(ClientWorldAwareInverseCallPresenter.class, tileEntityNotifier);
+
         responsePresenters.add(new CallPresenterAdapter.PredicatePresenter(guiPhone::shouldPresent, guiPhone));
         errorPresenters.add(new ErrorHandlerAdapter.PredicatePresenter(guiPhone::shouldPresent, guiPhone));
         requestPresenters.add(new CallRequestPresenterAdapter.PredicatePresenter(guiPhone::shouldPresent, guiPhone));
+        requestPresenters.add(new CallRequestPresenterAdapter.PredicatePresenter((ctx) -> true, tileEntityNotifier));
 
         // User is both callee and caller, there's no need to split callee and caller
         // Must keep packet register order same with client and server

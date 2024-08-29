@@ -22,6 +22,7 @@ public final class ClientboundCallStateController implements CallStateController
 
     @Override
     public void setCallState(CallStateQuery.SetCallState query) {
-        this.networkManager.sendToServer(new PacketSetCallState(query.id(), query.state()));
+        this.networkManager.sendToServer(new PacketSetCallState(
+                query.id(), query.state().stateId(), query.state().missCallCount()));
     }
 }

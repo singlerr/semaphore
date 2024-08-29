@@ -36,8 +36,8 @@ class CallActionTest {
         CallerInteractor stubCallerInteractor =
                 new SimpleCallerInteractor(stubDatabase, new StubErrorPresenter(), new StubRequestPresenter());
 
-        Entity stubCaller = new Entity(UUID.randomUUID(), 0);
-        Entity stubCallee = new Entity(UUID.randomUUID(), 0);
+        Entity stubCaller = new Entity(UUID.randomUUID(), new Entity.State(0, 0));
+        Entity stubCallee = new Entity(UUID.randomUUID(), new Entity.State(0, 0));
 
         stubDatabase.create(stubCaller.id(), stubCaller);
         stubDatabase.create(stubCallee.id(), stubCallee);
@@ -45,25 +45,25 @@ class CallActionTest {
         // 1. Request call
         stubCallerInteractor.getCallRequestManager().request(new CallRequest(stubCaller.id(), stubCallee.id()));
 
-        assertEquals(1, stubDatabase.getById(stubCaller.id()).stateId());
-        assertEquals(2, stubDatabase.getById(stubCallee.id()).stateId());
+        assertEquals(1, stubDatabase.getById(stubCaller.id()).state().stateId());
+        assertEquals(2, stubDatabase.getById(stubCallee.id()).state().stateId());
 
         // 2. Accept call
         stubCalleeInteractor.getResponseManager().reply(stubCaller.id(), stubCallee.id(), ResponseType.ACCEPT);
 
-        assertEquals(3, stubDatabase.getById(stubCaller.id()).stateId());
-        assertEquals(3, stubDatabase.getById(stubCallee.id()).stateId());
+        assertEquals(3, stubDatabase.getById(stubCaller.id()).state().stateId());
+        assertEquals(3, stubDatabase.getById(stubCallee.id()).state().stateId());
 
         // 3. Reset and reject call
-        stubDatabase.update(stubCaller.id(), new Entity(stubCaller.id(), 0));
-        stubDatabase.update(stubCallee.id(), new Entity(stubCallee.id(), 0));
+        stubDatabase.update(stubCaller.id(), new Entity(stubCaller.id(), new Entity.State(0, 0)));
+        stubDatabase.update(stubCallee.id(), new Entity(stubCallee.id(), new Entity.State(0, 0)));
 
         stubCallerInteractor.getCallRequestManager().request(new CallRequest(stubCaller.id(), stubCallee.id()));
 
         stubCalleeInteractor.getResponseManager().reply(stubCaller.id(), stubCallee.id(), ResponseType.REJECT);
 
-        assertEquals(0, stubDatabase.getById(stubCaller.id()).stateId());
-        assertEquals(0, stubDatabase.getById(stubCallee.id()).stateId());
+        assertEquals(0, stubDatabase.getById(stubCaller.id()).state().stateId());
+        assertEquals(0, stubDatabase.getById(stubCallee.id()).state().stateId());
     }
 
     private static class StubRequestPresenter implements CallRequestPresenter {

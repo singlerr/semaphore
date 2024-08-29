@@ -23,16 +23,16 @@ class CallStateMachineTest {
         CallerInteractor stubInteractor =
                 new SimpleCallerInteractor(stubDatabase, new StubErrorHandler(), new StubResponsePresenter());
 
-        Entity stubCaller = new Entity(UUID.randomUUID(), 0);
-        Entity stubCallee = new Entity(UUID.randomUUID(), 0);
+        Entity stubCaller = new Entity(UUID.randomUUID(), new Entity.State(0, 0));
+        Entity stubCallee = new Entity(UUID.randomUUID(), new Entity.State(0, 0));
 
         stubDatabase.create(stubCaller.id(), stubCaller);
         stubDatabase.create(stubCallee.id(), stubCallee);
 
         stubInteractor.getCallRequestManager().request(new CallRequest(stubCaller.id(), stubCallee.id()));
 
-        assertEquals(1, stubDatabase.getById(stubCaller.id()).stateId());
-        assertEquals(2, stubDatabase.getById(stubCallee.id()).stateId());
+        assertEquals(1, stubDatabase.getById(stubCaller.id()).state().stateId());
+        assertEquals(2, stubDatabase.getById(stubCallee.id()).state().stateId());
     }
 
     private static class StubResponsePresenter implements CallRequestPresenter {

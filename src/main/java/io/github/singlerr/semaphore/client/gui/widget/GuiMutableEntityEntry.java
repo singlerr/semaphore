@@ -94,7 +94,7 @@ public final class GuiMutableEntityEntry implements GuiListExtended.IGuiListEntr
 
         this.drawHead(entity.id(), x + 5, y + 3, slotHeight - 5, slotHeight - 5, partialTicks);
 
-        PlayerState state = PolicyConstants.STATE_DFA.encode(entity.state());
+        PlayerState state = PolicyConstants.STATE_DFA.encode(entity.state().stateId());
 
         fontRenderer.drawStringWithShadow(
                 info.getDisplayName().getFormattedText(), x + slotHeight + 5, y + 5, Color.WHITE.getRGB());
@@ -145,7 +145,7 @@ public final class GuiMutableEntityEntry implements GuiListExtended.IGuiListEntr
     }
 
     private void resetEntityState() {
-        stateController.setCallState(new CallStateQuery.SetCallState(entity.id(), 0));
+        stateController.setCallState(new CallStateQuery.SetCallState(entity.id(), new CallStateQuery.State(0, 0)));
         if (currentConnection != null)
             callConnectionController.closeConnection(new CallConnectionQuery.CloseConnection(currentConnection.id()));
     }

@@ -26,6 +26,7 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.input.Keyboard;
 
 public final class GuiUserControlPanel extends GuiScreen implements EntityPresenter, CallConnectionPresenter {
     private static final ResourceLocation TEXTURE_WINDOW = new ResourceLocation("textures/gui/advancements/window.png");
@@ -120,6 +121,10 @@ public final class GuiUserControlPanel extends GuiScreen implements EntityPresen
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
+        if(keyCode == Keyboard.KEY_ESCAPE){
+            super.keyTyped(typedChar, keyCode);
+            return;
+        }
         entityList.getEntries().stream()
                 .filter(GuiMutableEntityEntry::isSelected)
                 .findAny()

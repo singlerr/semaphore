@@ -30,7 +30,8 @@ public final class PacketPresentableEntities implements IMessage {
         for (int i = 0; i < size; i++) {
             UUID id = SerializationUtils.readUUID(byteBuf);
             int state = byteBuf.readInt();
-            this.entities.add(new PresentableEntity(id, state));
+            int missCallCount = byteBuf.readInt();
+            this.entities.add(new PresentableEntity(id, new PresentableEntity.State(state, missCallCount)));
         }
     }
 
@@ -40,7 +41,8 @@ public final class PacketPresentableEntities implements IMessage {
 
         for (PresentableEntity entity : entities) {
             SerializationUtils.writeUUID(byteBuf, entity.id());
-            byteBuf.writeInt(entity.state());
+            byteBuf.writeInt(entity.state().stateId());
+            byteBuf.writeInt(entity.state().missCallCount());
         }
     }
 }

@@ -47,14 +47,12 @@ loom {
             property("mixin.debug", "true")
             property("asmhelper.verbose", "true")
             programArgs("--tweakClass", "org.spongepowered.asm.launch.MixinTweaker")
-            programArgs("--mixin", "${mod_id}.mixins.json")
             programArgs("--username", "Dev")
             //            vmArgs(
             //                "-Ddevauth.enabled=true",
             //                "-Ddevauth.configDir=./.devauth",
             //                "-Ddevauth.account=alt"
             //            )
-            name
             runDir = "run-client"
         }
 
@@ -92,6 +90,7 @@ repositories {
     }
     maven("https://repo.spongepowered.org/maven/")
     maven("https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1")
+    flatDir { dir("libs") }
 }
 
 dependencies {
@@ -107,7 +106,7 @@ dependencies {
         "maven.modrinth:simple-voice-chat:forge-${minecraft_version}-${voicechat_version}"
     )
     implementation(project(":policy-impl"))
-    shadowImpl("gg.essential:elementa-${minecraft_version}-forge:642")
+
     shadowImpl("com.github.psambit9791:jdsp:2.0.0")
 
     shadowImpl("io.github.singlerr.semaphore.callhandler:callhandler:${semaphore_base_version}")
@@ -118,8 +117,6 @@ dependencies {
     shadowImpl("io.github.singlerr.semaphore.interactors:admin:${semaphore_base_version}")
     shadowImpl("io.github.singlerr.semaphore.interactors:callee:${semaphore_base_version}")
     shadowImpl("io.github.singlerr.semaphore.interactors:caller:${semaphore_base_version}")
-
-    //    modRuntimeOnly("me.djtheredstoner:DevAuth-forge-legacy:1.1.0")
 }
 
 tasks.withType<JavaCompile> { options.encoding = "UTF-8" }

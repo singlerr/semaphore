@@ -73,6 +73,7 @@ public final class ServerProxy extends CommonProxy {
                 new CallStateControllerAdapter(adminInteractor.getStateManager(), entityPresenter));
         ServerboundEntityController entityController = new ServerboundEntityController(
                 new EntityControllerAdapter(DatabaseAccess.getInstance(), entityPresenter));
+        this.entityController = entityController;
         // Presenter
         networkManager.registerServerboundPacket(PacketPresentableCallConnection.class);
         networkManager.registerServerboundPacket(PacketErrorEntity.class);

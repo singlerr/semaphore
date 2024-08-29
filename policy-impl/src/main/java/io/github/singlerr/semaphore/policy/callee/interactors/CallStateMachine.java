@@ -33,10 +33,14 @@ public final class CallStateMachine extends BaseCallResponseManager {
 
         if (caller == null || callee == null) {
             if (caller != null) {
-                database.update(callerId, new Entity(callerId, 0));
+                database.update(
+                        callerId,
+                        new Entity(callerId, new Entity.State(0, caller.state().missCallCount())));
             }
             if (callee != null) {
-                database.update(calleeId, new Entity(calleeId, 0));
+                database.update(
+                        calleeId,
+                        new Entity(calleeId, new Entity.State(0, callee.state().missCallCount())));
             }
             return;
         }
@@ -44,8 +48,8 @@ public final class CallStateMachine extends BaseCallResponseManager {
         Optional<Integer> newCallerState;
         Optional<Integer> newCalleeState;
         if (type == ResponseType.ACCEPT) {
-            newCallerState = dfa.consume(caller.stateId(), PlayerInput.ACCEPT_CALL);
-            newCalleeState = dfa.consume(callee.stateId(), PlayerInput.ACCEPT_CALL);
+            newCallerState = dfa.consume(caller.state().stateId(), PlayerInput.ACCEPT_CALL);
+            newCalleeState = dfa.consume(callee.state().stateId(), PlayerInput.ACCEPT_CALL);
 
             if (!newCallerState.isPresent() || !newCalleeState.isPresent()) {
                 resetState(callerId);
@@ -63,8 +67,8 @@ public final class CallStateMachine extends BaseCallResponseManager {
             }
 
         } else {
-            newCallerState = dfa.consume(caller.stateId(), PlayerInput.REJECT_CALL);
-            newCalleeState = dfa.consume(callee.stateId(), PlayerInput.REJECT_CALL);
+            newCallerState = dfa.consume(caller.state().stateId(), PlayerInput.REJECT_CALL);
+            newCalleeState = dfa.consume(callee.state().stateId(), PlayerInput.REJECT_CALL);
 
             if (!newCallerState.isPresent() || !newCalleeState.isPresent()) {
                 resetState(callerId);
@@ -74,11 +78,19 @@ public final class CallStateMachine extends BaseCallResponseManager {
             }
         }
 
-        database.update(callerId, new Entity(callerId, newCallerState.get()));
-        database.update(calleeId, new Entity(calleeId, newCalleeState.get()));
+        database.update(
+                callerId,
+                new Entity(
+                        callerId,
+                        new Entity.State(newCallerState.get(), caller.state().missCallCount())));
+        database.update(
+                calleeId,
+                new Entity(
+                        calleeId,
+                        new Entity.State(newCalleeState.get(), callee.state().missCallCount())));
     }
 
     private void resetState(UUID id) {
-        database.update(id, new Entity(id, 0));
+        database.update(id, new Entity(id, new Entity.State(0, 0)));
     }
 }

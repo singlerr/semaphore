@@ -25,7 +25,7 @@ public final class PlayerDatabase implements DatabaseGateway {
 
     @Override
     public Entity create(UUID id) {
-        Entity entity = new Entity(id, 0);
+        Entity entity = new Entity(id, new Entity.State(0, 0));
         entities.put(id, entity);
         return entity;
     }

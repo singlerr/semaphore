@@ -1,6 +1,7 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.policy.admin.controllers;
 
+import io.github.singlerr.semaphore.interactors.access.database.Entity;
 import io.github.singlerr.semaphore.interactors.admin.controller.CallStateController;
 import io.github.singlerr.semaphore.interactors.admin.controller.data.CallStateQuery;
 import io.github.singlerr.semaphore.interactors.admin.manager.CallStateManager;
@@ -20,17 +21,20 @@ public final class CallStateControllerAdapter implements CallStateController {
 
     @Override
     public void getCallState(CallStateQuery.GetCallState query) {
-        int state = this.callStateManager.getById(query.id());
-        if (state == -1) {
+        Entity.State state = this.callStateManager.getById(query.id());
+        if (state == null) {
             this.entityPresenter.presentError(new ErrorEntity("call.state.not.found"));
             return;
         }
 
-        this.entityPresenter.present(new PresentableEntity(query.id(), state));
+        this.entityPresenter.present(
+                new PresentableEntity(query.id(), new PresentableEntity.State(state.stateId(), state.missCallCount())));
     }
 
     @Override
     public void setCallState(CallStateQuery.SetCallState query) {
-        this.callStateManager.updateById(query.id(), query.state());
+        this.callStateManager.updateById(
+                query.id(),
+                new Entity.State(query.state().stateId(), query.state().missCallCount()));
     }
 }

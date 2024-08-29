@@ -39,7 +39,8 @@ public final class CallStateHandlers {
 
         @Override
         public PacketSetCallState handleServer(PacketSetCallState packet, ServerboundPacketContext context) {
-            this.callStateController.setCallState(new CallStateQuery.SetCallState(packet.getId(), packet.getState()));
+            this.callStateController.setCallState(new CallStateQuery.SetCallState(
+                    packet.getId(), new CallStateQuery.State(packet.getStateId(), packet.getMissCallCount())));
             return null;
         }
     }

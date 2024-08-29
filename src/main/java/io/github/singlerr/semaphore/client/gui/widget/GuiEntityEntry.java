@@ -59,7 +59,7 @@ public final class GuiEntityEntry implements GuiListExtended.IGuiListEntry {
         this.entity = entity;
 
         this.btnDeleteEntity = new GuiButton(0, 0, 0, 50, 20, "Delete");
-        this.btnCallEntity = new GuiButton(1, 0, 0, 50, 20, "Call");
+        this.btnCallEntity = new GuiButton(1, 0, 0, 100, 20, "Call");
 
         this.mc = Minecraft.getMinecraft();
     }
@@ -101,7 +101,7 @@ public final class GuiEntityEntry implements GuiListExtended.IGuiListEntry {
 
         if (!isPhoneBox) this.drawHead(entity.id(), x + 5, y + 3, slotHeight - 5, slotHeight - 5, partialTicks);
 
-        PlayerState state = PolicyConstants.STATE_DFA.encode(entity.state());
+        PlayerState state = PolicyConstants.STATE_DFA.encode(entity.state().stateId());
 
         String text;
         if (isPhoneBox) {
@@ -136,13 +136,16 @@ public final class GuiEntityEntry implements GuiListExtended.IGuiListEntry {
 
     @Override
     public boolean mousePressed(int slotIndex, int mouseX, int mouseY, int mouseEvent, int relativeX, int relativeY) {
+
         if (btnDeleteEntity.mousePressed(mc, mouseX, mouseY)) {
             deleteEntity();
+            btnCallEntity.playPressSound(Minecraft.getMinecraft().getSoundHandler());
             return false;
         }
 
         if (btnCallEntity.mousePressed(mc, mouseX, mouseY)) {
             callEntity();
+            btnCallEntity.playPressSound(Minecraft.getMinecraft().getSoundHandler());
         }
 
         return false;
@@ -159,7 +162,7 @@ public final class GuiEntityEntry implements GuiListExtended.IGuiListEntry {
     private void closeCall() {
         if (currentConnection != null) {
             callConnectionController.closeConnection(new CallConnectionQuery.CloseConnection(currentConnection.id()));
-            stateController.setCallState(new CallStateQuery.SetCallState(entity.id(), 0));
+            stateController.setCallState(new CallStateQuery.SetCallState(entity.id(), new CallStateQuery.State(0, 0)));
         }
     }
 

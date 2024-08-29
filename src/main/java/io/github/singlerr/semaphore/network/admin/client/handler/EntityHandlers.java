@@ -43,7 +43,8 @@ public final class EntityHandlers {
 
         @Override
         public PacketPresentableEntity handleClient(PacketPresentableEntity packet, ClientboundPacketContext context) {
-            this.entityController.present(new PresentableEntity(packet.getId(), packet.getState()));
+            this.entityController.present(new PresentableEntity(
+                    packet.getId(), new PresentableEntity.State(packet.getStateId(), packet.getMissCallCount())));
             return null;
         }
     }

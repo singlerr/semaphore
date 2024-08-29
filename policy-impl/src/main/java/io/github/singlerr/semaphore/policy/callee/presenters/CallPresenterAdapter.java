@@ -35,6 +35,12 @@ public final class CallPresenterAdapter implements CallResponsePresenter {
         registeredPresenters = Arrays.asList(presenters);
     }
 
+    public void add(PredicatePresenter presenter) {
+        synchronized (registeredPresenters) {
+            registeredPresenters.add(presenter);
+        }
+    }
+
     private void invoke(PresenterContext context, Error entity) {
         for (PredicatePresenter presenter : registeredPresenters) {
             if (presenter.shouldPresent(context)) presenter.getPresenter().error(entity);

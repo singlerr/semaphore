@@ -28,7 +28,10 @@ public final class EntityControllerAdapter implements EntityController {
             return;
         }
 
-        this.entityPresenter.present(new PresentableEntity(entity.id(), entity.stateId()));
+        this.entityPresenter.present(new PresentableEntity(
+                entity.id(),
+                new PresentableEntity.State(
+                        entity.state().stateId(), entity.state().missCallCount())));
     }
 
     @Override
@@ -45,7 +48,10 @@ public final class EntityControllerAdapter implements EntityController {
     public void getAllEntities(EntityQuery.GetAllEntities query) {
         this.entityPresenter.present(this.database.getAll().stream()
                 .map(e -> {
-                    PresentableEntity entity = new PresentableEntity(e.id(), e.stateId());
+                    PresentableEntity entity = new PresentableEntity(
+                            e.id(),
+                            new PresentableEntity.State(
+                                    e.state().stateId(), e.state().missCallCount()));
                     if (query.getContext() != null) entity.setContext(query.getContext());
                     return entity;
                 })

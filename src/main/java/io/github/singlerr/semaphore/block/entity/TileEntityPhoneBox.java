@@ -2,6 +2,7 @@
 package io.github.singlerr.semaphore.block.entity;
 
 import io.github.singlerr.semaphore.client.ClientWorldAwareInverseCallPresenter;
+import io.github.singlerr.semaphore.instances.client.ClientResources;
 import io.github.singlerr.semaphore.interactors.caller.presenter.CallRequestPresenter;
 import io.github.singlerr.semaphore.interactors.caller.presenter.data.InverseCallRequest;
 import net.minecraft.tileentity.TileEntity;
@@ -21,7 +22,9 @@ public class TileEntityPhoneBox extends TileEntity implements ITickable, CallReq
     @Override
     public void present(InverseCallRequest request) {
         // Receiving call
-
+        if (world != null) {
+            world.playRecord(pos, ClientResources.StaticResources.SOUND_RECEIVING_CALL);
+        }
     }
 
     @Override

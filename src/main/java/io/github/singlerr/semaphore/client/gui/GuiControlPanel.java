@@ -157,5 +157,4 @@ public final class GuiControlPanel extends GuiScreen implements CallConnectionPr
             return;
         }
     }
-
 }

@@ -4,9 +4,7 @@ package io.github.singlerr.semaphore.network.admin.packet;
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.PresentableEntity;
 import io.github.singlerr.semaphore.network.utils.SerializationUtils;
 import io.netty.buffer.ByteBuf;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 public final class PacketPresentableEntities implements IMessage {
@@ -30,7 +28,11 @@ public final class PacketPresentableEntities implements IMessage {
         for (int i = 0; i < size; i++) {
             UUID id = SerializationUtils.readUUID(byteBuf);
             int state = byteBuf.readInt();
-            int missCallCount = byteBuf.readInt();
+            Map<UUID, Integer> missCallCount = SerializationUtils.readMap(byteBuf, buf -> {
+                UUID key = SerializationUtils.readUUID(buf);
+                int val = buf.readInt();
+                return new AbstractMap.SimpleImmutableEntry<>(key, val);
+            });
             this.entities.add(new PresentableEntity(id, new PresentableEntity.State(state, missCallCount)));
         }
     }
@@ -42,7 +44,10 @@ public final class PacketPresentableEntities implements IMessage {
         for (PresentableEntity entity : entities) {
             SerializationUtils.writeUUID(byteBuf, entity.id());
             byteBuf.writeInt(entity.state().stateId());
-            byteBuf.writeInt(entity.state().missCallCount());
+            SerializationUtils.writeMap(entity.state().missCallCount(), byteBuf, (entry, buf) -> {
+                SerializationUtils.writeUUID(buf, entry.getKey());
+                buf.writeInt(entry.getValue());
+            });
         }
     }
 }

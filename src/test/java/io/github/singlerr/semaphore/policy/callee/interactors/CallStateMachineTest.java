@@ -16,6 +16,7 @@ import io.github.singlerr.semaphore.interactors.callee.presenter.data.CallRespon
 import io.github.singlerr.semaphore.interactors.callee.presenter.data.Error;
 import io.github.singlerr.semaphore.policy.callee.SimpleCalleeInteractor;
 import io.github.singlerr.semaphore.policy.database.PlayerDatabase;
+import java.util.HashMap;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
@@ -28,8 +29,8 @@ class CallStateMachineTest {
         CalleeInteractor stubInteractor = new SimpleCalleeInteractor(
                 stubDatabase, stubCallConnectionHandler, new StubErrorHandler(), new StubResponsePresenter());
 
-        Entity stubCaller = new Entity(UUID.randomUUID(), new Entity.State(1, 0));
-        Entity stubCallee = new Entity(UUID.randomUUID(), new Entity.State(2, 0));
+        Entity stubCaller = new Entity(UUID.randomUUID(), new Entity.State(1, new HashMap<>()));
+        Entity stubCallee = new Entity(UUID.randomUUID(), new Entity.State(2, new HashMap<>()));
 
         stubDatabase.create(stubCaller.id(), stubCaller);
         stubDatabase.create(stubCallee.id(), stubCallee);
@@ -47,8 +48,8 @@ class CallStateMachineTest {
         CalleeInteractor stubInteractor = new SimpleCalleeInteractor(
                 stubDatabase, stubCallConnectionHandler, new StubErrorHandler(), new StubResponsePresenter());
 
-        Entity stubCaller = new Entity(UUID.randomUUID(), new Entity.State(1, 0));
-        Entity stubCallee = new Entity(UUID.randomUUID(), new Entity.State(2, 0));
+        Entity stubCaller = new Entity(UUID.randomUUID(), new Entity.State(1, new HashMap<>()));
+        Entity stubCallee = new Entity(UUID.randomUUID(), new Entity.State(2, new HashMap<>()));
 
         stubDatabase.create(stubCaller.id(), stubCaller);
         stubDatabase.create(stubCallee.id(), stubCallee);
@@ -66,8 +67,8 @@ class CallStateMachineTest {
         CalleeInteractor stubInteractor = new SimpleCalleeInteractor(
                 stubDatabase, stubCallConnectionHandler, new StubErrorHandler(), new StubResponsePresenter());
 
-        Entity stubCaller = new Entity(UUID.randomUUID(), new Entity.State(1, 0));
-        Entity stubCallee = new Entity(UUID.randomUUID(), new Entity.State(2, 0));
+        Entity stubCaller = new Entity(UUID.randomUUID(), new Entity.State(1, new HashMap<>()));
+        Entity stubCallee = new Entity(UUID.randomUUID(), new Entity.State(2, new HashMap<>()));
 
         stubDatabase.create(stubCaller.id(), stubCaller);
 

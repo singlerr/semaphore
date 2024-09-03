@@ -8,7 +8,12 @@ import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -20,12 +25,27 @@ public class BlockPhoneBox extends Block implements ITileEntityProvider {
 
     public BlockPhoneBox() {
         super(Material.ROCK);
-        setRegistryName("block_phone_box");
+        setRegistryName(new ResourceLocation(Semaphore.MOD_ID, "block_phone_box"));
         setTranslationKey(Semaphore.MOD_ID + ".block_phone_box");
     }
 
     public void setTracker(ClientWorldAwareInverseCallPresenter tracker) {
         this.tracker = tracker;
+    }
+
+    @Override
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+        return new AxisAlignedBB(new BlockPos(0, 0, 0));
+    }
+
+    @Override
+    public @Nullable AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
+        return null;
+    }
+
+    @Override
+    public boolean hasTileEntity(IBlockState state) {
+        return true;
     }
 
     @Override

@@ -10,6 +10,7 @@ import io.github.singlerr.semaphore.utils.Utils;
 import java.util.UUID;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
@@ -46,6 +47,7 @@ public class ItemBoxSelector extends Item {
         if (clicked.getBlock() instanceof BlockPhoneBox) {
             // Remove Phone Box
             entityController.deleteEntity(new EntityQuery.DeleteEntity(id));
+            worldIn.setBlockState(pos, Blocks.AIR.getDefaultState());
         } else {
             BlockPhoneBox block = CommonResources.getInstance(BlockPhoneBox.class);
             worldIn.setBlockState(pos, block.getDefaultState());

@@ -76,7 +76,8 @@ public final class GuiPhoneBoxControlPanel extends GuiScreen implements EntityPr
         this.yOffset = (resolution.getScaledHeight() - this.height) / 2;
 
         int listHeight = this.height - 40;
-        this.entityList = new GuiEntityList(width, listHeight, yOffset + 30, yOffset + 30 + listHeight, 60);
+        this.entityList = new GuiEntityList(width - 30, listHeight, yOffset + 30, yOffset + 30 + listHeight, 60);
+        this.entityList.setSlotXBoundsFromLeft(this.xOffset + 15);
     }
 
     @Override
@@ -135,6 +136,8 @@ public final class GuiPhoneBoxControlPanel extends GuiScreen implements EntityPr
 
     @Override
     public void present(List<PresentableEntity> entities) {
+        if (this.entityList == null) return;
+
         this.entityList.getEntries().clear();
         this.entityList
                 .getEntries()

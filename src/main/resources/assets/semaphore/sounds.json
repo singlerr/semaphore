@@ -17,28 +17,28 @@
       "semaphore:sound_call_reject"
     ]
   },
-  "calling": {
+  "sound_requesting_call": {
     "category": "block",
     "sounds": [
-      "semaphore:calling"
+      "semaphore:sound_requesting_call"
     ]
   },
-  "phone_bell": {
+  "sound_receiving_call": {
     "category": "block",
     "sounds": [
-      "semaphore:phone_bell"
+      "semaphore:sound_receiving_call"
     ]
   },
-  "phone_touch": {
+  "sound_interaction": {
     "category": "block",
     "sounds": [
-      "semaphore:phone_touch"
+      "semaphore:sound_interaction"
     ]
   },
-  "phone_vibrate": {
+  "sound_vibration": {
     "category": "block",
     "sounds": [
-      "semaphore:phone_vibrate"
+      "semaphore:sound_vibration"
     ]
   }
 }

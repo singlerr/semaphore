@@ -35,6 +35,10 @@ public final class CallConnectionPresenterAdapter implements CallConnectionPrese
         registeredPresenters = Arrays.asList(presenters);
     }
 
+    public void add(PredicatePresenter presenter) {
+        registeredPresenters.add(presenter);
+    }
+
     private void invoke(PresenterContext context, PresentableCallConnection entity) {
         for (PredicatePresenter presenter : registeredPresenters) {
             if (presenter.shouldPresent(context)) presenter.getPresenter().present(entity);

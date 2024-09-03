@@ -1,7 +1,7 @@
 {
   "variants": {
-    "*": {
-      "model": "stone"
+    "normal": {
+      "model": "semaphore:block_phone_box"
     }
   }
 }

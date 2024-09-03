@@ -9,6 +9,7 @@ import io.github.singlerr.semaphore.interactors.caller.presenter.CallRequestPres
 import io.github.singlerr.semaphore.interactors.caller.presenter.ErrorPresenter;
 import io.github.singlerr.semaphore.interactors.caller.presenter.data.Error;
 import io.github.singlerr.semaphore.interactors.caller.presenter.data.InverseCallRequest;
+import io.github.singlerr.semaphore.policy.CallTimeoutHandler;
 import io.github.singlerr.semaphore.policy.PolicyConstants;
 import io.github.singlerr.semaphore.policy.dfa.PlayerInput;
 import io.github.singlerr.semaphore.policy.dfa.PlayerStateDFA;
@@ -56,11 +57,15 @@ public final class CallStateMachine implements CallRequestManager {
         Optional<Integer> newCalleeState = dfa.consume(callee.state().stateId(), PlayerInput.RECEIVE_CALL);
 
         if (!newCallerState.isPresent() || !newCalleeState.isPresent()) {
-            resetState(callerId);
-            resetState(calleeId);
-            errorPresenter.present(new Error(calleeId, callerId, "상대방이 통화 가능한 상태가 아닙니다."));
+            resetState(callee);
+            resetState(caller);
+            errorPresenter.present(new Error(calleeId, callerId, "error.call.closed.from.caller"));
             return;
         }
+
+        CallTimeoutHandler.getInstance().startTimeout(new CallTimeoutHandler.Key(callerId, calleeId), () -> {
+            callTimeout(callerId, calleeId);
+        });
 
         database.update(
                 callerId,
@@ -76,7 +81,30 @@ public final class CallStateMachine implements CallRequestManager {
         requestPresenter.present(new InverseCallRequest(callerId, calleeId));
     }
 
-    private void resetState(UUID id) {
-        database.update(id, new Entity(id, new Entity.State(0, 0)));
+    private void callTimeout(UUID callerId, UUID calleeId) {
+        Entity caller = database.getById(callerId);
+        Entity callee = database.getById(calleeId);
+
+        if (caller != null) {
+            database.update(
+                    callerId,
+                    new Entity(callerId, new Entity.State(0, caller.state().missCallCount())));
+            errorPresenter.present(new Error(calleeId, callerId, "error.call.timeout"));
+        }
+
+        if (callee != null) {
+            callee.state()
+                    .missCallCount()
+                    .put(callerId, callee.state().missCallCount().getOrDefault(callerId, 0) + 1);
+            database.update(
+                    callerId,
+                    new Entity(callerId, new Entity.State(0, callee.state().missCallCount())));
+        }
+    }
+
+    private void resetState(Entity entity) {
+        database.update(
+                entity.id(),
+                new Entity(entity.id(), new Entity.State(0, entity.state().missCallCount())));
     }
 }

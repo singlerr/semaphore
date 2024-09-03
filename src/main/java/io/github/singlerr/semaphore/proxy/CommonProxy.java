@@ -3,6 +3,7 @@ package io.github.singlerr.semaphore.proxy;
 
 import io.github.singlerr.semaphore.Semaphore;
 import io.github.singlerr.semaphore.block.BlockPhoneBox;
+import io.github.singlerr.semaphore.block.entity.TileEntityPhoneBox;
 import io.github.singlerr.semaphore.client.ClientWorldAwareInverseCallPresenter;
 import io.github.singlerr.semaphore.instances.*;
 import io.github.singlerr.semaphore.instances.client.ClientResources;
@@ -33,11 +34,13 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public abstract class CommonProxy {
 
@@ -109,6 +112,8 @@ public abstract class CommonProxy {
         @SubscribeEvent
         public void registerBlock(RegistryEvent.Register<Block> registry) {
             registry.getRegistry().register(phoneBox);
+            GameRegistry.registerTileEntity(
+                    TileEntityPhoneBox.class, new ResourceLocation(Semaphore.MOD_ID, "phone_box"));
             CommonResources.setInstance(BlockPhoneBox.class, phoneBox);
 
             ClientWorldAwareInverseCallPresenter clientTileEntityNotifier =

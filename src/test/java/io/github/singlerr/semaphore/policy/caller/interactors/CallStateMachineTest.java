@@ -13,6 +13,7 @@ import io.github.singlerr.semaphore.interactors.caller.presenter.data.Error;
 import io.github.singlerr.semaphore.interactors.caller.presenter.data.InverseCallRequest;
 import io.github.singlerr.semaphore.policy.caller.SimpleCallerInteractor;
 import io.github.singlerr.semaphore.policy.database.PlayerDatabase;
+import java.util.HashMap;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
@@ -23,8 +24,8 @@ class CallStateMachineTest {
         CallerInteractor stubInteractor =
                 new SimpleCallerInteractor(stubDatabase, new StubErrorHandler(), new StubResponsePresenter());
 
-        Entity stubCaller = new Entity(UUID.randomUUID(), new Entity.State(0, 0));
-        Entity stubCallee = new Entity(UUID.randomUUID(), new Entity.State(0, 0));
+        Entity stubCaller = new Entity(UUID.randomUUID(), new Entity.State(0, new HashMap<>()));
+        Entity stubCallee = new Entity(UUID.randomUUID(), new Entity.State(0, new HashMap<>()));
 
         stubDatabase.create(stubCaller.id(), stubCaller);
         stubDatabase.create(stubCallee.id(), stubCallee);

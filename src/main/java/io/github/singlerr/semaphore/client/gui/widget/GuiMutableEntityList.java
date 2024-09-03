@@ -20,6 +20,11 @@ public class GuiMutableEntityList extends GuiListExtended {
         this.entries = Collections.synchronizedList(new ArrayList<>());
     }
 
+    @Override
+    public int getListWidth() {
+        return this.width - 15;
+    }
+
     public void addEntry(GuiMutableEntityEntry entry) {
         this.entries.add(entry);
     }

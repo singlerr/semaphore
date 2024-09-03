@@ -34,6 +34,10 @@ public final class CallRequestPresenterAdapter implements CallRequestPresenter {
         registeredPresenters = Arrays.asList(presenters);
     }
 
+    public void add(CallRequestPresenterAdapter.PredicatePresenter presenter) {
+        registeredPresenters.add(presenter);
+    }
+
     private void invoke(PresenterContext context, InverseCallRequest entity) {
         for (PredicatePresenter presenter : registeredPresenters) {
             if (presenter.shouldPresent(context)) presenter.getPresenter().present(entity);

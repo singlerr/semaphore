@@ -47,6 +47,8 @@ public final class GuiUserControlPanel extends GuiScreen implements EntityPresen
     private int xOffset;
     private int yOffset;
 
+    private boolean initialized;
+
     private GuiMutableEntityList entityList;
 
     public GuiUserControlPanel(
@@ -56,6 +58,7 @@ public final class GuiUserControlPanel extends GuiScreen implements EntityPresen
             CallStateController callStateController,
             CallRequestController requestController) {
         super();
+        this.initialized = false;
         this.parent = parent;
         this.entityController = entityController;
         this.callConnectionController = callConnectionController;
@@ -77,7 +80,10 @@ public final class GuiUserControlPanel extends GuiScreen implements EntityPresen
         this.yOffset = (resolution.getScaledHeight() - this.height) / 2;
 
         int listHeight = this.height - 40;
-        this.entityList = new GuiMutableEntityList(width, listHeight, yOffset + 30, yOffset + 30 + listHeight, 60);
+        this.entityList = new GuiMutableEntityList(width - 30, listHeight, yOffset + 30, yOffset + 30 + listHeight, 60);
+        this.entityList.setSlotXBoundsFromLeft(this.xOffset + 15);
+
+        this.initialized = true;
     }
 
     @Override
@@ -121,7 +127,7 @@ public final class GuiUserControlPanel extends GuiScreen implements EntityPresen
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        if(keyCode == Keyboard.KEY_ESCAPE){
+        if (keyCode == Keyboard.KEY_ESCAPE) {
             super.keyTyped(typedChar, keyCode);
             return;
         }
@@ -149,6 +155,7 @@ public final class GuiUserControlPanel extends GuiScreen implements EntityPresen
 
     @Override
     public void present(List<PresentableEntity> entities) {
+        if (this.entityList == null) return;
         this.entityList.getEntries().clear();
         this.entityList
                 .getEntries()
@@ -172,10 +179,10 @@ public final class GuiUserControlPanel extends GuiScreen implements EntityPresen
     }
 
     public boolean shouldPresent(CallConnectionPresenterAdapter.PresenterContext context) {
-        return true;
+        return initialized;
     }
 
     public boolean shouldPresent(EntityPresenterAdapter.PresenterContext context) {
-        return true;
+        return initialized;
     }
 }

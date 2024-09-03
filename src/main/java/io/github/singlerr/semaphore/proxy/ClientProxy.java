@@ -1,12 +1,16 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.proxy;
 
+import io.github.singlerr.access.semaphore.client.gui.NonVanillaScreen;
 import io.github.singlerr.semaphore.client.ClientWorldAwareInverseCallPresenter;
 import io.github.singlerr.semaphore.client.gui.GuiControlPanel;
 import io.github.singlerr.semaphore.client.gui.GuiPhone;
 import io.github.singlerr.semaphore.client.listener.GuiEventListener;
 import io.github.singlerr.semaphore.client.listener.ItemEventListener;
+import io.github.singlerr.semaphore.instances.DatabaseAccess;
 import io.github.singlerr.semaphore.instances.client.ClientResources;
+import io.github.singlerr.semaphore.interactors.admin.controller.CallConnectionController;
+import io.github.singlerr.semaphore.interactors.admin.controller.CallStateController;
 import io.github.singlerr.semaphore.network.NetworkManager;
 import io.github.singlerr.semaphore.network.admin.client.*;
 import io.github.singlerr.semaphore.network.admin.client.handler.CallConnectionHandlers;
@@ -31,17 +35,19 @@ import net.minecraftforge.common.MinecraftForge;
 public final class ClientProxy extends CommonProxy {
 
     private ClientboundCallRequestController requestController;
+    private CallConnectionController connectionController;
+    private CallStateController stateController;
 
     @Override
     public void preInit() {
         super.preInit();
-        MinecraftForge.EVENT_BUS.register(new ItemEventListener());
     }
 
     @Override
     public void init() {
         super.init();
         MinecraftForge.EVENT_BUS.register(new GuiEventListener(entityController));
+        MinecraftForge.EVENT_BUS.register(new ItemEventListener(entityController));
     }
 
     @Override
@@ -72,11 +78,9 @@ public final class ClientProxy extends CommonProxy {
             NetworkManager networkManager,
             List<EntityPresenterAdapter.PredicatePresenter> entityPresenters,
             List<CallConnectionPresenterAdapter.PredicatePresenter> connectionPresenters) {
-        ClientboundCallConnectionController connectionController =
-                new ClientboundCallConnectionController(networkManager);
-        ClientboundCallStateController stateController = new ClientboundCallStateController(networkManager);
-        ClientboundEntityController entityController = new ClientboundEntityController(networkManager);
-        this.entityController = entityController;
+        connectionController = new ClientboundCallConnectionController(networkManager);
+        stateController = new ClientboundCallStateController(networkManager);
+        entityController = new ClientboundEntityController(networkManager);
         requestController = new ClientboundCallRequestController(networkManager);
         // Init gui based presenter & controller
         GuiControlPanel guiControlPanel =
@@ -143,5 +147,20 @@ public final class ClientProxy extends CommonProxy {
         networkManager.registerClientboundPacket(PacketCallRequest.class);
         networkManager.registerClientboundPacket(
                 PacketInverseCallRequest.class, new CallRequestHandlers.InverseCallRequestHandler(requestPresenter));
+
+        NonVanillaScreen.FactoryParams params = new NonVanillaScreen.FactoryParams(
+                DatabaseAccess.getInstance(),
+                entityController,
+                connectionController,
+                stateController,
+                requestController,
+                callResponseController,
+                (p) -> entityPresenter.add(
+                        new EntityPresenterAdapter.PredicatePresenter((ctx) -> true, (ctx) -> true, p)),
+                (p) -> callConnectionPresenter.add(
+                        new CallConnectionPresenterAdapter.PredicatePresenter((ctx) -> true, (ctx) -> true, p)),
+                (p) -> responsePresenter.add(new CallPresenterAdapter.PredicatePresenter((ctx) -> true, p)),
+                (p) -> callRequestPresenter.add(new CallRequestPresenterAdapter.PredicatePresenter((ctx) -> true, p)));
+        ClientResources.setInstance(NonVanillaScreen.FactoryParams.class, params);
     }
 }

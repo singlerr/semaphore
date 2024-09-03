@@ -32,6 +32,10 @@ public final class EntityPresenterAdapter implements EntityPresenter {
         registeredPresenters = Arrays.asList(presenters);
     }
 
+    public void add(PredicatePresenter presenter) {
+        registeredPresenters.add(presenter);
+    }
+
     private void invoke(PresenterContext context, PresentableEntity entity) {
         for (PredicatePresenter presenter : registeredPresenters) {
             if (presenter.shouldPresent(context)) presenter.getPresenter().present(entity);

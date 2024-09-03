@@ -52,17 +52,17 @@ public final class CallStateMachine extends BaseCallResponseManager {
             newCalleeState = dfa.consume(callee.state().stateId(), PlayerInput.ACCEPT_CALL);
 
             if (!newCallerState.isPresent() || !newCalleeState.isPresent()) {
-                resetState(callerId);
-                resetState(calleeId);
-                errorPresenter.error(new Error(calleeId, callerId, "상대방이 통화 가능한 상태가 아닙니다."));
+                resetState(callee);
+                resetState(callee);
+                errorPresenter.error(new Error(calleeId, callerId, "error.player.not.found"));
                 return;
             }
 
             CallConnection con = callConnectionHandler.open(callerId, calleeId);
             if (con == null || con.state() != CallState.ALIVE) {
-                resetState(calleeId);
-                resetState(callerId);
-                errorPresenter.error(new Error(calleeId, callerId, "통화 가능한 상태가 아닙니다."));
+                resetState(callee);
+                resetState(callee);
+                errorPresenter.error(new Error(calleeId, callerId, "error.connection.unavailable"));
                 return;
             }
 
@@ -71,9 +71,9 @@ public final class CallStateMachine extends BaseCallResponseManager {
             newCalleeState = dfa.consume(callee.state().stateId(), PlayerInput.REJECT_CALL);
 
             if (!newCallerState.isPresent() || !newCalleeState.isPresent()) {
-                resetState(callerId);
-                resetState(calleeId);
-                errorPresenter.error(new Error(calleeId, callerId, "상대방이 통화 가능한 상태가 아닙니다."));
+                resetState(callee);
+                resetState(callee);
+                errorPresenter.error(new Error(calleeId, callerId, "error.player.not.found"));
                 return;
             }
         }
@@ -90,7 +90,9 @@ public final class CallStateMachine extends BaseCallResponseManager {
                         new Entity.State(newCalleeState.get(), callee.state().missCallCount())));
     }
 
-    private void resetState(UUID id) {
-        database.update(id, new Entity(id, new Entity.State(0, 0)));
+    private void resetState(Entity entity) {
+        database.update(
+                entity.id(),
+                new Entity(entity.id(), new Entity.State(0, entity.state().missCallCount())));
     }
 }

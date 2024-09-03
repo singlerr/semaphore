@@ -77,7 +77,7 @@ loom {
 sourceSets.main { output.setResourcesDir(file("$buildDir/classes/java/main")) }
 
 val shadowImpl: Configuration by
-    configurations.creating { configurations.modImplementation.get().extendsFrom(this) }
+    configurations.creating { configurations.implementation.get().extendsFrom(this) }
 
 repositories {
     mavenCentral()
@@ -106,6 +106,7 @@ dependencies {
         "maven.modrinth:simple-voice-chat:forge-${minecraft_version}-${voicechat_version}"
     )
     implementation(project(":policy-impl"))
+    implementation(project(":screen-adapter"))
 
     shadowImpl("com.github.psambit9791:jdsp:2.0.0")
 

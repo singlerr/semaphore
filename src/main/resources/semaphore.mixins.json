@@ -1,12 +1,14 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "io.github.singlerr.semaphore.mixin",
+  "package": "io.github.singlerr.semaphore.mixin.voicechat",
   "compatibilityLevel": "JAVA_8",
   "refmap": "semaphore.refmap.json",
+  "plugin": "io.github.singlerr.semaphore.CompatAwareMixinPlugin",
   "mixins": [
   ],
   "client": [
+    "client.AudioChannelMixin"
   ],
   "server": [
   ],

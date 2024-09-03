@@ -22,6 +22,7 @@ import io.github.singlerr.semaphore.interactors.caller.presenter.data.InverseCal
 import io.github.singlerr.semaphore.policy.callee.SimpleCalleeInteractor;
 import io.github.singlerr.semaphore.policy.caller.SimpleCallerInteractor;
 import io.github.singlerr.semaphore.policy.database.PlayerDatabase;
+import java.util.HashMap;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
@@ -36,8 +37,8 @@ class CallActionTest {
         CallerInteractor stubCallerInteractor =
                 new SimpleCallerInteractor(stubDatabase, new StubErrorPresenter(), new StubRequestPresenter());
 
-        Entity stubCaller = new Entity(UUID.randomUUID(), new Entity.State(0, 0));
-        Entity stubCallee = new Entity(UUID.randomUUID(), new Entity.State(0, 0));
+        Entity stubCaller = new Entity(UUID.randomUUID(), new Entity.State(0, new HashMap<>()));
+        Entity stubCallee = new Entity(UUID.randomUUID(), new Entity.State(0, new HashMap<>()));
 
         stubDatabase.create(stubCaller.id(), stubCaller);
         stubDatabase.create(stubCallee.id(), stubCallee);
@@ -55,8 +56,8 @@ class CallActionTest {
         assertEquals(3, stubDatabase.getById(stubCallee.id()).state().stateId());
 
         // 3. Reset and reject call
-        stubDatabase.update(stubCaller.id(), new Entity(stubCaller.id(), new Entity.State(0, 0)));
-        stubDatabase.update(stubCallee.id(), new Entity(stubCallee.id(), new Entity.State(0, 0)));
+        stubDatabase.update(stubCaller.id(), new Entity(stubCaller.id(), new Entity.State(0, new HashMap<>())));
+        stubDatabase.update(stubCallee.id(), new Entity(stubCallee.id(), new Entity.State(0, new HashMap<>())));
 
         stubCallerInteractor.getCallRequestManager().request(new CallRequest(stubCaller.id(), stubCallee.id()));
 

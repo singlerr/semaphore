@@ -1,9 +1,13 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.instances.client;
 
+import de.maxhenkel.voicechat.api.VoicechatClientApi;
+import io.github.singlerr.semaphore.Semaphore;
 import io.github.singlerr.semaphore.utils.SideUtils;
 import java.util.HashMap;
 import java.util.Map;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 public final class ClientResources {
@@ -21,5 +25,15 @@ public final class ClientResources {
 
     public static <T> T getInstance(Class<T> beanCls) {
         return (T) beans.get(beanCls);
+    }
+
+    public static final class StaticResources {
+
+        private StaticResources() {}
+
+        public static final SoundEvent SOUND_RECEIVING_CALL =
+                new SoundEvent(new ResourceLocation(Semaphore.MOD_ID, "sound_requesting_call"));
+
+        public static VoicechatClientApi VOICECHAT_CLIENT_API;
     }
 }

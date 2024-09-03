@@ -162,7 +162,8 @@ public final class GuiEntityEntry implements GuiListExtended.IGuiListEntry {
     private void closeCall() {
         if (currentConnection != null) {
             callConnectionController.closeConnection(new CallConnectionQuery.CloseConnection(currentConnection.id()));
-            stateController.setCallState(new CallStateQuery.SetCallState(entity.id(), new CallStateQuery.State(0, 0)));
+            stateController.setCallState(new CallStateQuery.SetCallState(
+                    entity.id(), new CallStateQuery.State(0, entity.state().missCallCount())));
         }
     }
 

@@ -107,6 +107,7 @@ dependencies {
     )
     implementation(project(":policy-impl"))
     implementation(project(":screen-adapter"))
+    implementation(project(":config"))
 
     shadowImpl("com.github.psambit9791:jdsp:2.0.0")
 
@@ -240,7 +241,12 @@ allprojects {
             languageVersion.set(JavaLanguageVersion.of(8))
             vendor.set(JvmVendorSpec.AZUL)
         }
+
+        withSourcesJar()
+        withJavadocJar()
     }
+
+    tasks.withType<Javadoc> { isFailOnError = false }
 
     tasks.test { useJUnitPlatform() }
 }

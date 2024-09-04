@@ -24,3 +24,5 @@ rootProject.name = "semaphore"
 include("policy-impl")
 
 include("screen-adapter")
+
+include("config")

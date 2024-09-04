@@ -1,10 +1,12 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.proxy;
 
+import io.github.singlerr.semaphore.ModConfig;
 import io.github.singlerr.semaphore.Semaphore;
 import io.github.singlerr.semaphore.block.BlockPhoneBox;
 import io.github.singlerr.semaphore.block.entity.TileEntityPhoneBox;
 import io.github.singlerr.semaphore.client.ClientWorldAwareInverseCallPresenter;
+import io.github.singlerr.semaphore.config.ConfigurationManager;
 import io.github.singlerr.semaphore.instances.*;
 import io.github.singlerr.semaphore.instances.client.ClientResources;
 import io.github.singlerr.semaphore.instances.common.CommonResources;
@@ -29,6 +31,7 @@ import io.github.singlerr.semaphore.policy.caller.presenters.CallRequestPresente
 import io.github.singlerr.semaphore.policy.caller.presenters.ErrorPresenterAdapter;
 import io.github.singlerr.semaphore.policy.callhandler.CallConnectionHandlerAdapter;
 import io.github.singlerr.semaphore.policy.database.PlayerDatabase;
+import java.util.HashMap;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
@@ -64,9 +67,17 @@ public abstract class CommonProxy {
         MinecraftForge.EVENT_BUS.register(new ItemRegistries(entityController));
     }
 
-    public void init() {}
+    public void init() {
+        ConfigurationManager.getInstance().register(this::registerConfig, true);
+    }
 
-    public void postInit() {}
+    public void postInit() {
+        ConfigurationManager.getInstance().invokeRegistration();
+    }
+
+    private void registerConfig(ConfigurationManager.Registry registry) {
+        registry.getConfig().getVolumes().observe((map) -> ModConfig.volumes = new HashMap<>(map));
+    }
 
     protected void initRemotePolicy(NetworkManager networkManager) {}
 

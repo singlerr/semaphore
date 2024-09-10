@@ -30,7 +30,7 @@ public final class SimpleAdminInteractor implements AdminInteractor {
             EntityPresenterAdapter entityPresenter) {
         this.callConnectionManager =
                 new VoicechatCallConnectionManager(database, callConnectionHandler, callConnectionPresenter);
-        this.callStateManager = new PrivilegedCallStateManager(database);
+        this.callStateManager = new PrivilegedCallStateManager(database, callConnectionManager, entityPresenter);
         this.entityManager = new PlayerManager(database);
         this.callConnectionPresenter = callConnectionPresenter;
         this.entityPresenter = entityPresenter;

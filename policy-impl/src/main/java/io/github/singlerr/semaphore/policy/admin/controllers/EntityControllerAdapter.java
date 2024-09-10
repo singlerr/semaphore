@@ -57,4 +57,19 @@ public final class EntityControllerAdapter implements EntityController {
                 })
                 .collect(Collectors.toList()));
     }
+
+    @Override
+    public void updateEntity(EntityQuery.UpdateEntity query) {
+        Entity entity = this.database.getById(query.id());
+        if (entity == null) {
+            this.entityPresenter.presentError(new ErrorEntity("entity.not.found"));
+            return;
+        }
+
+        database.update(
+                query.id(),
+                new Entity(
+                        query.id(),
+                        new Entity.State(query.state().stateId(), query.state().missCallCount())));
+    }
 }

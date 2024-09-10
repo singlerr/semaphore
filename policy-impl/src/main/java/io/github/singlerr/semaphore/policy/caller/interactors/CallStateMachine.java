@@ -11,8 +11,8 @@ import io.github.singlerr.semaphore.interactors.caller.presenter.data.Error;
 import io.github.singlerr.semaphore.interactors.caller.presenter.data.InverseCallRequest;
 import io.github.singlerr.semaphore.policy.CallTimeoutHandler;
 import io.github.singlerr.semaphore.policy.PolicyConstants;
-import io.github.singlerr.semaphore.policy.dfa.PlayerInput;
 import io.github.singlerr.semaphore.policy.dfa.NFA;
+import io.github.singlerr.semaphore.policy.dfa.PlayerInput;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -60,6 +60,7 @@ public final class CallStateMachine implements CallRequestManager {
             resetState(callee);
             resetState(caller);
             errorPresenter.present(new Error(calleeId, callerId, "error.call.closed.from.caller"));
+            CallTimeoutHandler.getInstance().cancelTimeout(new CallTimeoutHandler.Key(callerId, calleeId));
             return;
         }
 

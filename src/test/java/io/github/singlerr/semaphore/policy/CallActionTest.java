@@ -8,6 +8,9 @@ import io.github.singlerr.semaphore.interactors.access.call.CallConnectionHandle
 import io.github.singlerr.semaphore.interactors.access.call.CallState;
 import io.github.singlerr.semaphore.interactors.access.database.DatabaseGateway;
 import io.github.singlerr.semaphore.interactors.access.database.Entity;
+import io.github.singlerr.semaphore.interactors.admin.manager.CallStateManager;
+import io.github.singlerr.semaphore.interactors.admin.manager.data.Call;
+import io.github.singlerr.semaphore.interactors.admin.manager.data.ConnectionState;
 import io.github.singlerr.semaphore.interactors.admin.presenter.EntityPresenter;
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.ErrorEntity;
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.PresentableEntity;
@@ -37,7 +40,7 @@ class CallActionTest {
         DatabaseGateway stubDatabase = new PlayerDatabase();
         CallConnectionHandler stubCallConnectionHandler = new StubCallConnectionHandler();
         CalleeInteractor stubCalleeInteractor = new SimpleCalleeInteractor(
-                stubDatabase, stubCallConnectionHandler, new StubErrorHandler(), new StubResponsePresenter());
+                stubDatabase, new StubCallStateManager(), new StubErrorHandler(), new StubResponsePresenter());
         CallerInteractor stubCallerInteractor =
                 new SimpleCallerInteractor(stubDatabase, new StubErrorPresenter(), new StubRequestPresenter());
 
@@ -71,6 +74,29 @@ class CallActionTest {
         assertEquals(0, stubDatabase.getById(stubCallee.id()).state().stateId());
     }
 
+    private static class StubCallStateManager implements CallStateManager {
+
+        private UUID callerId;
+        private UUID calleeId;
+
+        @Override
+        public Call openCall(UUID callerId, UUID calleeId) {
+            this.callerId = callerId;
+            this.calleeId = calleeId;
+            return new Call(UUID.randomUUID(), callerId, calleeId, ConnectionState.ALIVE);
+        }
+
+        @Override
+        public Call closeCall(UUID id) {
+            return new Call(id, callerId, calleeId, ConnectionState.DEAD);
+        }
+
+        @Override
+        public Call closeCall(UUID callerId, UUID calleeId) {
+            return new Call(UUID.randomUUID(), callerId, calleeId, ConnectionState.DEAD);
+        }
+    }
+
     private static class StubEntityPresenter implements EntityPresenter {
 
         @Override
@@ -87,7 +113,7 @@ class CallActionTest {
 
         @Override
         public void present(InverseCallRequest request) {
-            System.out.println(request);
+            System.out.println("Requesting calls : " + request);
         }
     }
 
@@ -95,7 +121,7 @@ class CallActionTest {
 
         @Override
         public void present(io.github.singlerr.semaphore.interactors.caller.presenter.data.Error error) {
-            System.out.println(error);
+            System.out.println("Error Presenter : " + error);
         }
     }
 
@@ -103,12 +129,12 @@ class CallActionTest {
 
         @Override
         public void error(Error entity) {
-            System.out.println(entity.reason());
+            System.out.println("Response Error : " + entity);
         }
 
         @Override
         public void present(CallResponse entity) {
-            System.out.println(entity.responseType());
+            System.out.println("Call Response : " + entity);
         }
     }
 
@@ -116,7 +142,7 @@ class CallActionTest {
 
         @Override
         public void error(Error entity) {
-            System.out.println(entity.reason());
+            System.out.println("Error Handler :  " + entity);
         }
     }
 

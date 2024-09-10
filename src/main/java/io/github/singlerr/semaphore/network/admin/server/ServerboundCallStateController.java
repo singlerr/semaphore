@@ -13,12 +13,17 @@ public final class ServerboundCallStateController implements CallStateController
     }
 
     @Override
-    public void getCallState(CallStateQuery.GetCallState query) {
-        this.source.getCallState(query);
+    public void openCall(CallStateQuery.OpenCall query) {
+        this.source.openCall(query);
     }
 
     @Override
-    public void setCallState(CallStateQuery.SetCallState query) {
-        this.source.setCallState(query);
+    public void closeCall(CallStateQuery.CloseCall query) {
+        this.source.closeCall(query);
+    }
+
+    @Override
+    public void closeCall(CallStateQuery.CloseCallById query) {
+        this.source.closeCall(query);
     }
 }

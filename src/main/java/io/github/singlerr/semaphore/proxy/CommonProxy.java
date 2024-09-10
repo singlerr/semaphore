@@ -105,8 +105,8 @@ public abstract class CommonProxy {
         errorHandler = new ErrorHandlerAdapter(ErrorHandlerAdapter.ErrorContext::new);
         responsePresenter = new CallPresenterAdapter(CallPresenterAdapter.PresenterContext::new);
 
-        CalleeInteractor calleeInteractor =
-                new SimpleCalleeInteractor(database, callConnectionHandler, errorHandler, responsePresenter);
+        CalleeInteractor calleeInteractor = new SimpleCalleeInteractor(
+                database, adminInteractor.getStateManager(), errorHandler, responsePresenter);
 
         // Make Accessor store
         DatabaseAccess.setInstance(database);

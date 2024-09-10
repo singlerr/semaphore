@@ -30,6 +30,10 @@ public final class ErrorPresenterAdapter implements ErrorPresenter {
         registeredPresenters.addAll(Arrays.asList(presenters));
     }
 
+    public void add(ErrorPresenterAdapter.PredicatePresenter presenter) {
+        registeredPresenters.add(presenter);
+    }
+
     private void invoke(ErrorContext context, Error entity) {
         for (PredicatePresenter presenter : registeredPresenters) {
             if (presenter.shouldPresent(context)) presenter.getPresenter().present(entity);

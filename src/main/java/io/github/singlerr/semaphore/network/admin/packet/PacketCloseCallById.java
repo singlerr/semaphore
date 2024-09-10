@@ -6,13 +6,13 @@ import io.netty.buffer.ByteBuf;
 import java.util.UUID;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
-public final class PacketGetCallState implements IMessage {
+public final class PacketCloseCallById implements IMessage {
 
     private UUID id;
 
-    public PacketGetCallState() {}
+    public PacketCloseCallById() {}
 
-    public PacketGetCallState(UUID id) {
+    public PacketCloseCallById(UUID id) {
         this.id = id;
     }
 

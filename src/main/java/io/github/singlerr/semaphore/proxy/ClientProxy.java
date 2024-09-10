@@ -21,15 +21,19 @@ import io.github.singlerr.semaphore.network.callee.packet.PacketCallResponse;
 import io.github.singlerr.semaphore.network.caller.client.ClientboundCallRequestController;
 import io.github.singlerr.semaphore.network.caller.client.ClientboundCallRequestPresenter;
 import io.github.singlerr.semaphore.network.caller.client.ClientboundCallResponsePresenter;
+import io.github.singlerr.semaphore.network.caller.client.ClientboundErrorPresenter;
 import io.github.singlerr.semaphore.network.caller.client.handlers.CallRequestHandlers;
 import io.github.singlerr.semaphore.network.caller.client.handlers.CallResponseHandlers;
+import io.github.singlerr.semaphore.network.caller.client.handlers.ErrorHandlers;
 import io.github.singlerr.semaphore.network.caller.packet.PacketCallRequest;
+import io.github.singlerr.semaphore.network.caller.packet.PacketError;
 import io.github.singlerr.semaphore.network.caller.packet.PacketInverseCallRequest;
 import io.github.singlerr.semaphore.policy.admin.presenters.CallConnectionPresenterAdapter;
 import io.github.singlerr.semaphore.policy.admin.presenters.EntityPresenterAdapter;
 import io.github.singlerr.semaphore.policy.callee.presenters.CallPresenterAdapter;
 import io.github.singlerr.semaphore.policy.callee.presenters.ErrorHandlerAdapter;
 import io.github.singlerr.semaphore.policy.caller.presenters.CallRequestPresenterAdapter;
+import io.github.singlerr.semaphore.policy.caller.presenters.ErrorPresenterAdapter;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraftforge.common.MinecraftForge;
@@ -109,13 +113,16 @@ public final class ClientProxy extends CommonProxy {
         networkManager.registerClientboundPacket(PacketCloseConnection.class);
         networkManager.registerClientboundPacket(PacketGetConnection.class);
 
-        networkManager.registerClientboundPacket(PacketSetCallState.class);
-        networkManager.registerClientboundPacket(PacketGetCallState.class);
+        networkManager.registerClientboundPacket(PacketOpenCall.class);
+        networkManager.registerClientboundPacket(PacketCloseCall.class);
+        networkManager.registerClientboundPacket(PacketCloseCallById.class);
 
         networkManager.registerClientboundPacket(PacketCreateEntity.class);
         networkManager.registerClientboundPacket(PacketDeleteEntity.class);
         networkManager.registerClientboundPacket(PacketGetEntity.class);
         networkManager.registerClientboundPacket(PacketGetAllEntities.class);
+        networkManager.registerClientboundPacket(PacketUpdateEntity.class);
+
         networkManager.registerClientboundPacket(
                 PacketPresentableEntity.class, new EntityHandlers.PresentableEntityHandler(clientEntityPresenter));
         networkManager.registerClientboundPacket(
@@ -134,6 +141,7 @@ public final class ClientProxy extends CommonProxy {
         ClientboundCallResponseController callResponseController =
                 new ClientboundCallResponseController(networkManager);
         ClientboundCallRequestPresenter requestPresenter = new ClientboundCallRequestPresenter(callRequestPresenter);
+        ClientboundErrorPresenter clientboundErrorPresenter = new ClientboundErrorPresenter(errorPresenter);
 
         GuiPhone guiPhone = new GuiPhone(requestController, callResponseController);
         ClientResources.setInstance(GuiPhone.class, guiPhone);
@@ -154,6 +162,8 @@ public final class ClientProxy extends CommonProxy {
         networkManager.registerClientboundPacket(PacketCallRequest.class);
         networkManager.registerClientboundPacket(
                 PacketInverseCallRequest.class, new CallRequestHandlers.InverseCallRequestHandler(requestPresenter));
+        networkManager.registerClientboundPacket(
+                PacketError.class, new ErrorHandlers.ErrorHandler(clientboundErrorPresenter));
 
         NonVanillaScreen.FactoryParams params = new NonVanillaScreen.FactoryParams(
                 DatabaseAccess.getInstance(),
@@ -167,7 +177,8 @@ public final class ClientProxy extends CommonProxy {
                 (p) -> callConnectionPresenter.add(
                         new CallConnectionPresenterAdapter.PredicatePresenter((ctx) -> true, (ctx) -> true, p)),
                 (p) -> responsePresenter.add(new CallPresenterAdapter.PredicatePresenter((ctx) -> true, p)),
-                (p) -> callRequestPresenter.add(new CallRequestPresenterAdapter.PredicatePresenter((ctx) -> true, p)));
+                (p) -> callRequestPresenter.add(new CallRequestPresenterAdapter.PredicatePresenter((ctx) -> true, p)),
+                (p) -> errorPresenter.add(new ErrorPresenterAdapter.PredicatePresenter((ctx) -> true, p)));
         ClientResources.setInstance(NonVanillaScreen.FactoryParams.class, params);
     }
 }

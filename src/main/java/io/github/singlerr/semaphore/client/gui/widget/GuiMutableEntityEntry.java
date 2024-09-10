@@ -5,7 +5,6 @@ import de.maxhenkel.voicechat.gui.GameProfileUtils;
 import io.github.singlerr.semaphore.interactors.admin.controller.CallConnectionController;
 import io.github.singlerr.semaphore.interactors.admin.controller.CallStateController;
 import io.github.singlerr.semaphore.interactors.admin.controller.EntityController;
-import io.github.singlerr.semaphore.interactors.admin.controller.data.CallConnectionQuery;
 import io.github.singlerr.semaphore.interactors.admin.controller.data.CallStateQuery;
 import io.github.singlerr.semaphore.interactors.admin.controller.data.EntityQuery;
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.PresentableCallConnection;
@@ -148,10 +147,11 @@ public final class GuiMutableEntityEntry implements GuiListExtended.IGuiListEntr
     }
 
     private void resetEntityState() {
-        stateController.setCallState(new CallStateQuery.SetCallState(
-                entity.id(), new CallStateQuery.State(0, entity.state().missCallCount())));
+        entityController.updateEntity(new EntityQuery.UpdateEntity(
+                entity.id(),
+                new EntityQuery.State(entity.state().stateId(), entity.state().missCallCount())));
         if (currentConnection != null)
-            callConnectionController.closeConnection(new CallConnectionQuery.CloseConnection(currentConnection.id()));
+            stateController.closeCall(new CallStateQuery.CloseCallById(currentConnection.id()));
     }
 
     public boolean isSelected() {

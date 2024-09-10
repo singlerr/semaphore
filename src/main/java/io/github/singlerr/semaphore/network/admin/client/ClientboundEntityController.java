@@ -4,10 +4,7 @@ package io.github.singlerr.semaphore.network.admin.client;
 import io.github.singlerr.semaphore.interactors.admin.controller.EntityController;
 import io.github.singlerr.semaphore.interactors.admin.controller.data.EntityQuery;
 import io.github.singlerr.semaphore.network.NetworkManager;
-import io.github.singlerr.semaphore.network.admin.packet.PacketCreateEntity;
-import io.github.singlerr.semaphore.network.admin.packet.PacketDeleteEntity;
-import io.github.singlerr.semaphore.network.admin.packet.PacketGetAllEntities;
-import io.github.singlerr.semaphore.network.admin.packet.PacketGetEntity;
+import io.github.singlerr.semaphore.network.admin.packet.*;
 
 public final class ClientboundEntityController implements EntityController {
 
@@ -30,6 +27,12 @@ public final class ClientboundEntityController implements EntityController {
     @Override
     public void deleteEntity(EntityQuery.DeleteEntity query) {
         this.networkManager.sendToServer(new PacketDeleteEntity(query.id()));
+    }
+
+    @Override
+    public void updateEntity(EntityQuery.UpdateEntity query) {
+        this.networkManager.sendToServer(new PacketUpdateEntity(
+                query.id(), query.state().stateId(), query.state().missCallCount()));
     }
 
     @Override

@@ -36,11 +36,35 @@ class CallStateMachineTest {
         assertEquals(2, stubDatabase.getById(stubCallee.id()).state().stateId());
     }
 
+    @Test
+    void testCancelCall() {
+        DatabaseGateway stubDatabase = new PlayerDatabase();
+        CallerInteractor stubInteractor =
+                new SimpleCallerInteractor(stubDatabase, new StubErrorHandler(), new StubResponsePresenter());
+
+        Entity stubCaller = new Entity(UUID.randomUUID(), new Entity.State(0, new HashMap<>()));
+        Entity stubCallee = new Entity(UUID.randomUUID(), new Entity.State(0, new HashMap<>()));
+
+        stubDatabase.create(stubCaller.id(), stubCaller);
+        stubDatabase.create(stubCallee.id(), stubCallee);
+
+        stubInteractor.getCallRequestManager().request(new CallRequest(stubCaller.id(), stubCallee.id()));
+
+        assertEquals(1, stubDatabase.getById(stubCaller.id()).state().stateId());
+        assertEquals(2, stubDatabase.getById(stubCallee.id()).state().stateId());
+
+        // Then cancel calls - request twice
+        stubInteractor.getCallRequestManager().request(new CallRequest(stubCaller.id(), stubCallee.id()));
+
+        assertEquals(0, stubDatabase.getById(stubCaller.id()).state().stateId());
+        assertEquals(0, stubDatabase.getById(stubCallee.id()).state().stateId());
+    }
+
     private static class StubResponsePresenter implements CallRequestPresenter {
 
         @Override
         public void present(InverseCallRequest request) {
-            System.out.println(request);
+            System.out.println("Requesting calls : " + request);
         }
     }
 
@@ -48,7 +72,7 @@ class CallStateMachineTest {
 
         @Override
         public void present(Error error) {
-            System.out.println(error);
+            System.out.println("Error Presenter : " + error);
         }
     }
 }

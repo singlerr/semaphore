@@ -10,41 +10,60 @@ public final class CallStateHandlers {
 
     private CallStateHandlers() {}
 
-    public static class GetCallStateHandler extends ServerboundPacketHandler<PacketGetCallState, PacketGetCallState> {
+    public static class CloseCallHandler extends ServerboundPacketHandler<PacketCloseCall, PacketCloseCall> {
 
         private ServerboundCallStateController callStateController;
 
-        public GetCallStateHandler() {}
+        public CloseCallHandler() {}
 
-        public GetCallStateHandler(ServerboundCallStateController callStateController) {
+        public CloseCallHandler(ServerboundCallStateController callStateController) {
             this.callStateController = callStateController;
         }
 
         @Override
-        public PacketGetCallState handleServer(PacketGetCallState packet, ServerboundPacketContext context) {
-            CallStateQuery.GetCallState query = new CallStateQuery.GetCallState(packet.getId());
+        public PacketCloseCall handleServer(PacketCloseCall packet, ServerboundPacketContext context) {
+            CallStateQuery.CloseCall query = new CallStateQuery.CloseCall(packet.callerId(), packet.calleeId());
             query.setContext(context.getServerHandler().player);
-            this.callStateController.getCallState(query);
+            this.callStateController.closeCall(query);
             return null;
         }
     }
 
-    public static class SetCallStateHandler extends ServerboundPacketHandler<PacketSetCallState, PacketSetCallState> {
+    public static class CloseCallByIdHandler
+            extends ServerboundPacketHandler<PacketCloseCallById, PacketCloseCallById> {
 
         private ServerboundCallStateController callStateController;
 
-        public SetCallStateHandler() {}
+        public CloseCallByIdHandler() {}
 
-        public SetCallStateHandler(ServerboundCallStateController callStateController) {
+        public CloseCallByIdHandler(ServerboundCallStateController callStateController) {
             this.callStateController = callStateController;
         }
 
         @Override
-        public PacketSetCallState handleServer(PacketSetCallState packet, ServerboundPacketContext context) {
-            CallStateQuery.SetCallState query = new CallStateQuery.SetCallState(
-                    packet.getId(), new CallStateQuery.State(packet.getStateId(), packet.getMissCallCount()));
+        public PacketCloseCallById handleServer(PacketCloseCallById packet, ServerboundPacketContext context) {
+            CallStateQuery.CloseCallById query = new CallStateQuery.CloseCallById(packet.getId());
             query.setContext(context.getServerHandler().player);
-            this.callStateController.setCallState(query);
+            this.callStateController.closeCall(query);
+            return null;
+        }
+    }
+
+    public static class OpenCallHandler extends ServerboundPacketHandler<PacketOpenCall, PacketOpenCall> {
+
+        private ServerboundCallStateController callStateController;
+
+        public OpenCallHandler() {}
+
+        public OpenCallHandler(ServerboundCallStateController callStateController) {
+            this.callStateController = callStateController;
+        }
+
+        @Override
+        public PacketOpenCall handleServer(PacketOpenCall packet, ServerboundPacketContext context) {
+            CallStateQuery.OpenCall query = new CallStateQuery.OpenCall(packet.getCallerId(), packet.getCalleeId());
+            query.setContext(context.getServerHandler().player);
+            this.callStateController.openCall(query);
             return null;
         }
     }

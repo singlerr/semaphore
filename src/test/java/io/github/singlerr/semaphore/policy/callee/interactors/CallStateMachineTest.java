@@ -8,6 +8,9 @@ import io.github.singlerr.semaphore.interactors.access.call.CallConnectionHandle
 import io.github.singlerr.semaphore.interactors.access.call.CallState;
 import io.github.singlerr.semaphore.interactors.access.database.DatabaseGateway;
 import io.github.singlerr.semaphore.interactors.access.database.Entity;
+import io.github.singlerr.semaphore.interactors.admin.manager.CallStateManager;
+import io.github.singlerr.semaphore.interactors.admin.manager.data.Call;
+import io.github.singlerr.semaphore.interactors.admin.manager.data.ConnectionState;
 import io.github.singlerr.semaphore.interactors.callee.CalleeInteractor;
 import io.github.singlerr.semaphore.interactors.callee.manager.data.ResponseType;
 import io.github.singlerr.semaphore.interactors.callee.presenter.CallResponsePresenter;
@@ -27,7 +30,7 @@ class CallStateMachineTest {
         DatabaseGateway stubDatabase = new PlayerDatabase();
         CallConnectionHandler stubCallConnectionHandler = new StubCallConnectionHandler();
         CalleeInteractor stubInteractor = new SimpleCalleeInteractor(
-                stubDatabase, stubCallConnectionHandler, new StubErrorHandler(), new StubResponsePresenter());
+                stubDatabase, new StubCallStateManager(), new StubErrorHandler(), new StubResponsePresenter());
 
         Entity stubCaller = new Entity(UUID.randomUUID(), new Entity.State(1, new HashMap<>()));
         Entity stubCallee = new Entity(UUID.randomUUID(), new Entity.State(2, new HashMap<>()));
@@ -46,7 +49,7 @@ class CallStateMachineTest {
         DatabaseGateway stubDatabase = new PlayerDatabase();
         CallConnectionHandler stubCallConnectionHandler = new StubCallConnectionHandler();
         CalleeInteractor stubInteractor = new SimpleCalleeInteractor(
-                stubDatabase, stubCallConnectionHandler, new StubErrorHandler(), new StubResponsePresenter());
+                stubDatabase, new StubCallStateManager(), new StubErrorHandler(), new StubResponsePresenter());
 
         Entity stubCaller = new Entity(UUID.randomUUID(), new Entity.State(1, new HashMap<>()));
         Entity stubCallee = new Entity(UUID.randomUUID(), new Entity.State(2, new HashMap<>()));
@@ -65,7 +68,7 @@ class CallStateMachineTest {
         DatabaseGateway stubDatabase = new PlayerDatabase();
         CallConnectionHandler stubCallConnectionHandler = new StubCallConnectionHandler();
         CalleeInteractor stubInteractor = new SimpleCalleeInteractor(
-                stubDatabase, stubCallConnectionHandler, new StubErrorHandler(), new StubResponsePresenter());
+                stubDatabase, new StubCallStateManager(), new StubErrorHandler(), new StubResponsePresenter());
 
         Entity stubCaller = new Entity(UUID.randomUUID(), new Entity.State(1, new HashMap<>()));
         Entity stubCallee = new Entity(UUID.randomUUID(), new Entity.State(2, new HashMap<>()));
@@ -77,16 +80,39 @@ class CallStateMachineTest {
         assertEquals(0, stubDatabase.getById(stubCaller.id()).state().stateId());
     }
 
+    private static class StubCallStateManager implements CallStateManager {
+
+        private UUID callerId;
+        private UUID calleeId;
+
+        @Override
+        public Call openCall(UUID callerId, UUID calleeId) {
+            this.callerId = callerId;
+            this.calleeId = calleeId;
+            return new Call(UUID.randomUUID(), callerId, calleeId, ConnectionState.ALIVE);
+        }
+
+        @Override
+        public Call closeCall(UUID id) {
+            return new Call(id, callerId, calleeId, ConnectionState.DEAD);
+        }
+
+        @Override
+        public Call closeCall(UUID callerId, UUID calleeId) {
+            return new Call(UUID.randomUUID(), callerId, calleeId, ConnectionState.DEAD);
+        }
+    }
+
     private static class StubResponsePresenter implements CallResponsePresenter {
 
         @Override
         public void error(Error entity) {
-            System.out.println(entity.reason());
+            System.out.println("Call Response Error : " + entity);
         }
 
         @Override
         public void present(CallResponse entity) {
-            System.out.println(entity.responseType());
+            System.out.println("Call Response : " + entity);
         }
     }
 
@@ -94,7 +120,7 @@ class CallStateMachineTest {
 
         @Override
         public void error(Error entity) {
-            System.out.println(entity.reason());
+            System.out.println("Error Handler : " + entity);
         }
     }
 

@@ -4,8 +4,9 @@ package io.github.singlerr.semaphore.network.admin.client;
 import io.github.singlerr.semaphore.interactors.admin.controller.CallStateController;
 import io.github.singlerr.semaphore.interactors.admin.controller.data.CallStateQuery;
 import io.github.singlerr.semaphore.network.NetworkManager;
-import io.github.singlerr.semaphore.network.admin.packet.PacketGetCallState;
-import io.github.singlerr.semaphore.network.admin.packet.PacketSetCallState;
+import io.github.singlerr.semaphore.network.admin.packet.PacketCloseCall;
+import io.github.singlerr.semaphore.network.admin.packet.PacketCloseCallById;
+import io.github.singlerr.semaphore.network.admin.packet.PacketOpenCall;
 
 public final class ClientboundCallStateController implements CallStateController {
 
@@ -16,13 +17,17 @@ public final class ClientboundCallStateController implements CallStateController
     }
 
     @Override
-    public void getCallState(CallStateQuery.GetCallState query) {
-        this.networkManager.sendToServer(new PacketGetCallState(query.id()));
+    public void openCall(CallStateQuery.OpenCall query) {
+        this.networkManager.sendToServer(new PacketOpenCall(query.callerId(), query.calleeId()));
     }
 
     @Override
-    public void setCallState(CallStateQuery.SetCallState query) {
-        this.networkManager.sendToServer(new PacketSetCallState(
-                query.id(), query.state().stateId(), query.state().missCallCount()));
+    public void closeCall(CallStateQuery.CloseCall query) {
+        this.networkManager.sendToServer(new PacketCloseCall(query.callerId(), query.calleeId()));
+    }
+
+    @Override
+    public void closeCall(CallStateQuery.CloseCallById query) {
+        this.networkManager.sendToServer(new PacketCloseCallById(query.id()));
     }
 }

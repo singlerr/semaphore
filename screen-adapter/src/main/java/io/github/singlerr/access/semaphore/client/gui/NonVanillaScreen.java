@@ -11,6 +11,7 @@ import io.github.singlerr.semaphore.interactors.callee.controller.CallResponseCo
 import io.github.singlerr.semaphore.interactors.callee.presenter.CallResponsePresenter;
 import io.github.singlerr.semaphore.interactors.caller.controller.CallRequestController;
 import io.github.singlerr.semaphore.interactors.caller.presenter.CallRequestPresenter;
+import io.github.singlerr.semaphore.interactors.caller.presenter.ErrorPresenter;
 import java.util.function.Consumer;
 
 public interface NonVanillaScreen {
@@ -38,6 +39,7 @@ public interface NonVanillaScreen {
         private final Consumer<CallConnectionPresenter> callConnectionPresenterRegistry;
         private final Consumer<CallResponsePresenter> callResponsePresenterRegistry;
         private final Consumer<CallRequestPresenter> callRequestPresenterRegistry;
+        private final Consumer<ErrorPresenter> errorPresenterRegistry;
 
         public FactoryParams(
                 DatabaseGateway database,
@@ -49,7 +51,8 @@ public interface NonVanillaScreen {
                 Consumer<EntityPresenter> entityPresenterRegistry,
                 Consumer<CallConnectionPresenter> callConnectionPresenterRegistry,
                 Consumer<CallResponsePresenter> callResponsePresenterRegistry,
-                Consumer<CallRequestPresenter> callRequestPresenterRegistry) {
+                Consumer<CallRequestPresenter> callRequestPresenterRegistry,
+                Consumer<ErrorPresenter> errorPresenterRegistry) {
             this.database = database;
             this.entityController = entityController;
             this.callConnectionController = callConnectionController;
@@ -60,6 +63,11 @@ public interface NonVanillaScreen {
             this.callConnectionPresenterRegistry = callConnectionPresenterRegistry;
             this.callResponsePresenterRegistry = callResponsePresenterRegistry;
             this.callRequestPresenterRegistry = callRequestPresenterRegistry;
+            this.errorPresenterRegistry = errorPresenterRegistry;
+        }
+
+        public Consumer<ErrorPresenter> getErrorPresenterRegistry() {
+            return errorPresenterRegistry;
         }
 
         public Consumer<CallRequestPresenter> getCallRequestPresenterRegistry() {

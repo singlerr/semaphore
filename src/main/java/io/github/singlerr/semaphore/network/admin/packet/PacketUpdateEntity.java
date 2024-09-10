@@ -8,15 +8,15 @@ import java.util.Map;
 import java.util.UUID;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
-public final class PacketSetCallState implements IMessage {
+public final class PacketUpdateEntity implements IMessage {
 
     private UUID id;
     private int stateId;
     private Map<UUID, Integer> missCallCount;
 
-    public PacketSetCallState() {}
+    public PacketUpdateEntity() {}
 
-    public PacketSetCallState(UUID id, int stateId, Map<UUID, Integer> missCallCount) {
+    public PacketUpdateEntity(UUID id, int stateId, Map<UUID, Integer> missCallCount) {
         this.id = id;
         this.stateId = stateId;
         this.missCallCount = missCallCount;
@@ -39,9 +39,9 @@ public final class PacketSetCallState implements IMessage {
         this.id = SerializationUtils.readUUID(byteBuf);
         this.stateId = byteBuf.readInt();
         this.missCallCount = SerializationUtils.readMap(byteBuf, (buf) -> {
-            UUID key = SerializationUtils.readUUID(buf);
-            int val = buf.readInt();
-            return new AbstractMap.SimpleImmutableEntry<>(key, val);
+            UUID id = SerializationUtils.readUUID(buf);
+            int count = buf.readInt();
+            return new AbstractMap.SimpleImmutableEntry<>(id, count);
         });
     }
 

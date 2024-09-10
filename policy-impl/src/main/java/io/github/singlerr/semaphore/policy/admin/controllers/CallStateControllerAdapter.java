@@ -1,13 +1,12 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.policy.admin.controllers;
 
-import io.github.singlerr.semaphore.interactors.access.database.Entity;
 import io.github.singlerr.semaphore.interactors.admin.controller.CallStateController;
 import io.github.singlerr.semaphore.interactors.admin.controller.data.CallStateQuery;
 import io.github.singlerr.semaphore.interactors.admin.manager.CallStateManager;
+import io.github.singlerr.semaphore.interactors.admin.manager.data.Call;
 import io.github.singlerr.semaphore.interactors.admin.presenter.EntityPresenter;
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.ErrorEntity;
-import io.github.singlerr.semaphore.interactors.admin.presenter.data.PresentableEntity;
 
 public final class CallStateControllerAdapter implements CallStateController {
 
@@ -20,21 +19,21 @@ public final class CallStateControllerAdapter implements CallStateController {
     }
 
     @Override
-    public void getCallState(CallStateQuery.GetCallState query) {
-        Entity.State state = this.callStateManager.getById(query.id());
-        if (state == null) {
-            this.entityPresenter.presentError(new ErrorEntity("call.state.not.found"));
+    public void openCall(CallStateQuery.OpenCall query) {
+        Call call = this.callStateManager.openCall(query.callerId(), query.calleeId());
+        if (call == null) {
+            entityPresenter.presentError(new ErrorEntity("error.open.call"));
             return;
         }
-
-        this.entityPresenter.present(
-                new PresentableEntity(query.id(), new PresentableEntity.State(state.stateId(), state.missCallCount())));
     }
 
     @Override
-    public void setCallState(CallStateQuery.SetCallState query) {
-        this.callStateManager.updateById(
-                query.id(),
-                new Entity.State(query.state().stateId(), query.state().missCallCount()));
+    public void closeCall(CallStateQuery.CloseCall query) {
+        this.callStateManager.closeCall(query.callerId(), query.calleeId());
+    }
+
+    @Override
+    public void closeCall(CallStateQuery.CloseCallById query) {
+        this.callStateManager.closeCall(query.id());
     }
 }

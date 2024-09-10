@@ -5,7 +5,6 @@ import de.maxhenkel.voicechat.gui.GameProfileUtils;
 import io.github.singlerr.semaphore.interactors.admin.controller.CallConnectionController;
 import io.github.singlerr.semaphore.interactors.admin.controller.CallStateController;
 import io.github.singlerr.semaphore.interactors.admin.controller.EntityController;
-import io.github.singlerr.semaphore.interactors.admin.controller.data.CallConnectionQuery;
 import io.github.singlerr.semaphore.interactors.admin.controller.data.CallStateQuery;
 import io.github.singlerr.semaphore.interactors.admin.controller.data.EntityQuery;
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.PresentableCallConnection;
@@ -161,9 +160,7 @@ public final class GuiEntityEntry implements GuiListExtended.IGuiListEntry {
 
     private void closeCall() {
         if (currentConnection != null) {
-            callConnectionController.closeConnection(new CallConnectionQuery.CloseConnection(currentConnection.id()));
-            stateController.setCallState(new CallStateQuery.SetCallState(
-                    entity.id(), new CallStateQuery.State(0, entity.state().missCallCount())));
+            stateController.closeCall(new CallStateQuery.CloseCallById(currentConnection.id()));
         }
     }
 

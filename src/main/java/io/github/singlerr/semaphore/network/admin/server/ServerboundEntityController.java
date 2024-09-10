@@ -28,6 +28,11 @@ public final class ServerboundEntityController implements EntityController {
     }
 
     @Override
+    public void updateEntity(EntityQuery.UpdateEntity query) {
+        this.source.updateEntity(query);
+    }
+
+    @Override
     public void getAllEntities(EntityQuery.GetAllEntities query) {
         this.source.getAllEntities(query);
     }

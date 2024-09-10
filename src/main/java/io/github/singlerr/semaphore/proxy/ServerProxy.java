@@ -20,9 +20,11 @@ import io.github.singlerr.semaphore.network.callee.server.ServerboundCallRespons
 import io.github.singlerr.semaphore.network.callee.server.ServerboundCallResponsePresenter;
 import io.github.singlerr.semaphore.network.callee.server.handler.CallResponseHandlers;
 import io.github.singlerr.semaphore.network.caller.packet.PacketCallRequest;
+import io.github.singlerr.semaphore.network.caller.packet.PacketError;
 import io.github.singlerr.semaphore.network.caller.packet.PacketInverseCallRequest;
 import io.github.singlerr.semaphore.network.caller.server.ServerboundCallRequestController;
 import io.github.singlerr.semaphore.network.caller.server.ServerboundCallRequestPresenter;
+import io.github.singlerr.semaphore.network.caller.server.ServerboundErrorPresenter;
 import io.github.singlerr.semaphore.network.caller.server.handlers.CallRequestHandlers;
 import io.github.singlerr.semaphore.policy.admin.controllers.CallConnectionControllerAdapter;
 import io.github.singlerr.semaphore.policy.admin.controllers.CallStateControllerAdapter;
@@ -33,6 +35,7 @@ import io.github.singlerr.semaphore.policy.callee.controller.RemoteCallResponseC
 import io.github.singlerr.semaphore.policy.callee.presenters.CallPresenterAdapter;
 import io.github.singlerr.semaphore.policy.caller.controllers.RemoteCallRequestController;
 import io.github.singlerr.semaphore.policy.caller.presenters.CallRequestPresenterAdapter;
+import io.github.singlerr.semaphore.policy.caller.presenters.ErrorPresenterAdapter;
 import io.github.singlerr.semaphore.policy.callhandler.CallConnectionHandlerAdapter;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -89,9 +92,11 @@ public final class ServerProxy extends CommonProxy {
                 PacketGetConnection.class, new CallConnectionHandlers.GetConnectionHandler(connectionController));
 
         networkManager.registerServerboundPacket(
-                PacketSetCallState.class, new CallStateHandlers.SetCallStateHandler(stateController));
+                PacketOpenCall.class, new CallStateHandlers.OpenCallHandler(stateController));
         networkManager.registerServerboundPacket(
-                PacketGetCallState.class, new CallStateHandlers.GetCallStateHandler(stateController));
+                PacketCloseCall.class, new CallStateHandlers.CloseCallHandler(stateController));
+        networkManager.registerServerboundPacket(
+                PacketCloseCallById.class, new CallStateHandlers.CloseCallByIdHandler(stateController));
 
         networkManager.registerServerboundPacket(
                 PacketCreateEntity.class, new EntityHandlers.CreateEntityHandler(entityController));
@@ -101,6 +106,9 @@ public final class ServerProxy extends CommonProxy {
                 PacketGetEntity.class, new EntityHandlers.GetEntityHandler(entityController));
         networkManager.registerServerboundPacket(
                 PacketGetAllEntities.class, new EntityHandlers.GetAllEntitiesHandler(entityController));
+        networkManager.registerServerboundPacket(
+                PacketUpdateEntity.class, new EntityHandlers.UpdateEntityHandler(entityController));
+
         networkManager.registerServerboundPacket(PacketPresentableEntity.class);
         networkManager.registerServerboundPacket(PacketPresentableEntities.class);
     }
@@ -123,10 +131,14 @@ public final class ServerProxy extends CommonProxy {
 
         ServerboundCallRequestController requestController = new ServerboundCallRequestController(
                 new RemoteCallRequestController(callerInteractor.getCallRequestManager()));
+        ServerboundErrorPresenter serverboundErrorPresenter = new ServerboundErrorPresenter(networkManager);
+
         networkManager.registerServerboundPacket(
                 PacketCallRequest.class, new CallRequestHandlers.CallRequestHandler(requestController));
         networkManager.registerServerboundPacket(PacketInverseCallRequest.class);
+        networkManager.registerServerboundPacket(PacketError.class);
 
+        errorPresenter.add(new ErrorPresenterAdapter.PredicatePresenter((ctx) -> true, serverboundErrorPresenter));
         callRequestPresenter.initialize(new CallRequestPresenterAdapter.PredicatePresenter(
                 (ctx) -> true, new ServerboundCallRequestPresenter(networkManager)));
     }

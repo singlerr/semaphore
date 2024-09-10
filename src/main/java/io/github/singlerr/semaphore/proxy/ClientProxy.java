@@ -20,7 +20,9 @@ import io.github.singlerr.semaphore.network.callee.client.ClientboundCallRespons
 import io.github.singlerr.semaphore.network.callee.packet.PacketCallResponse;
 import io.github.singlerr.semaphore.network.caller.client.ClientboundCallRequestController;
 import io.github.singlerr.semaphore.network.caller.client.ClientboundCallRequestPresenter;
+import io.github.singlerr.semaphore.network.caller.client.ClientboundCallResponsePresenter;
 import io.github.singlerr.semaphore.network.caller.client.handlers.CallRequestHandlers;
+import io.github.singlerr.semaphore.network.caller.client.handlers.CallResponseHandlers;
 import io.github.singlerr.semaphore.network.caller.packet.PacketCallRequest;
 import io.github.singlerr.semaphore.network.caller.packet.PacketInverseCallRequest;
 import io.github.singlerr.semaphore.policy.admin.presenters.CallConnectionPresenterAdapter;
@@ -126,6 +128,9 @@ public final class ClientProxy extends CommonProxy {
             List<CallRequestPresenterAdapter.PredicatePresenter> requestPresenters,
             List<ErrorHandlerAdapter.PredicatePresenter> errorPresenters) {
 
+        ClientboundCallResponsePresenter clientboundCallResponsePresenter =
+                new ClientboundCallResponsePresenter(responsePresenter);
+
         ClientboundCallResponseController callResponseController =
                 new ClientboundCallResponseController(networkManager);
         ClientboundCallRequestPresenter requestPresenter = new ClientboundCallRequestPresenter(callRequestPresenter);
@@ -143,7 +148,9 @@ public final class ClientProxy extends CommonProxy {
 
         // User is both callee and caller, there's no need to split callee and caller
         // Must keep packet register order same with client and server
-        networkManager.registerClientboundPacket(PacketCallResponse.class);
+        networkManager.registerClientboundPacket(
+                PacketCallResponse.class,
+                new CallResponseHandlers.CallResponseHandler(clientboundCallResponsePresenter));
         networkManager.registerClientboundPacket(PacketCallRequest.class);
         networkManager.registerClientboundPacket(
                 PacketInverseCallRequest.class, new CallRequestHandlers.InverseCallRequestHandler(requestPresenter));

@@ -27,7 +27,9 @@ public final class CallConnectionHandlers {
 
         @Override
         public PacketCloseConnection handleServer(PacketCloseConnection packet, ServerboundPacketContext context) {
-            this.connectionController.closeConnection(new CallConnectionQuery.CloseConnection(packet.getId()));
+            CallConnectionQuery.CloseConnection con = new CallConnectionQuery.CloseConnection(packet.getId());
+            con.setContext(context.getServerHandler().player);
+            this.connectionController.closeConnection(con);
             return null;
         }
     }
@@ -47,8 +49,10 @@ public final class CallConnectionHandlers {
 
         @Override
         public PacketOpenConnection handleServer(PacketOpenConnection packet, ServerboundPacketContext context) {
-            this.connectionController.openConnection(
-                    new CallConnectionQuery.OpenConnection(packet.getCallerId(), packet.getCalleeId()));
+            CallConnectionQuery.OpenConnection con =
+                    new CallConnectionQuery.OpenConnection(packet.getCallerId(), packet.getCalleeId());
+            con.setContext(context.getServerHandler().player);
+            this.connectionController.openConnection(con);
             return null;
         }
     }
@@ -68,7 +72,9 @@ public final class CallConnectionHandlers {
 
         @Override
         public PacketGetConnection handleServer(PacketGetConnection packet, ServerboundPacketContext context) {
-            this.connectionController.getConnection(new CallConnectionQuery.GetConnection(packet.getId()));
+            CallConnectionQuery.GetConnection con = new CallConnectionQuery.GetConnection(packet.getId());
+            con.setContext(context.getServerHandler().player);
+            this.connectionController.getConnection(con);
             return null;
         }
     }

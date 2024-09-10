@@ -31,7 +31,7 @@ public final class ErrorHandlerAdapter implements ErrorHandler {
     }
 
     public void initialize(ErrorHandlerAdapter.PredicatePresenter... presenters) {
-        registeredPresenters = Arrays.asList(presenters);
+        registeredPresenters.addAll(Arrays.asList(presenters));
     }
 
     private void invoke(ErrorContext context, Error entity) {

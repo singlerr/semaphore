@@ -27,7 +27,7 @@ public final class ErrorPresenterAdapter implements ErrorPresenter {
     }
 
     public void initialize(ErrorPresenterAdapter.PredicatePresenter... presenters) {
-        registeredPresenters = Arrays.asList(presenters);
+        registeredPresenters.addAll(Arrays.asList(presenters));
     }
 
     private void invoke(ErrorContext context, Error entity) {

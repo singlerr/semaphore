@@ -4,6 +4,9 @@ package io.github.singlerr.semaphore.network.caller.server;
 import io.github.singlerr.semaphore.interactors.caller.presenter.CallRequestPresenter;
 import io.github.singlerr.semaphore.interactors.caller.presenter.data.InverseCallRequest;
 import io.github.singlerr.semaphore.network.NetworkManager;
+import io.github.singlerr.semaphore.network.caller.packet.PacketInverseCallRequest;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraftforge.fml.server.FMLServerHandler;
 
 public final class ServerboundCallRequestPresenter implements CallRequestPresenter {
 
@@ -14,5 +17,11 @@ public final class ServerboundCallRequestPresenter implements CallRequestPresent
     }
 
     @Override
-    public void present(InverseCallRequest request) {}
+    public void present(InverseCallRequest request) {
+        EntityPlayerMP player =
+                FMLServerHandler.instance().getServer().getPlayerList().getPlayerByUUID(request.calleeId());
+        if (player != null) {
+            this.networkManager.sendTo(new PacketInverseCallRequest(request.callerId(), request.calleeId()), player);
+        }
+    }
 }

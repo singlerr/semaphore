@@ -20,7 +20,7 @@ public final class SimpleCalleeInteractor implements CalleeInteractor {
             CallConnectionHandler callConnectionHandler,
             ErrorHandler errorPresenter,
             CallResponsePresenter responsePresenter) {
-        this.callResponseManager = new CallStateMachine(database, this, callConnectionHandler);
+        this.callResponseManager = new CallStateMachine(database, this, callConnectionHandler, responsePresenter);
         this.errorPresenter = errorPresenter;
         this.responsePresenter = responsePresenter;
     }
@@ -37,6 +37,6 @@ public final class SimpleCalleeInteractor implements CalleeInteractor {
 
     @Override
     public CallResponsePresenter getResponsePresenter() {
-        return null;
+        return responsePresenter;
     }
 }

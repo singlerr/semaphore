@@ -29,7 +29,7 @@ public final class EntityPresenterAdapter implements EntityPresenter {
     }
 
     public void initialize(PredicatePresenter... presenters) {
-        registeredPresenters = Arrays.asList(presenters);
+        this.registeredPresenters.addAll(Arrays.asList(presenters));
     }
 
     public void add(PredicatePresenter presenter) {

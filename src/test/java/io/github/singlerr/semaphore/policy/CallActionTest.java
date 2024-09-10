@@ -8,6 +8,9 @@ import io.github.singlerr.semaphore.interactors.access.call.CallConnectionHandle
 import io.github.singlerr.semaphore.interactors.access.call.CallState;
 import io.github.singlerr.semaphore.interactors.access.database.DatabaseGateway;
 import io.github.singlerr.semaphore.interactors.access.database.Entity;
+import io.github.singlerr.semaphore.interactors.admin.presenter.EntityPresenter;
+import io.github.singlerr.semaphore.interactors.admin.presenter.data.ErrorEntity;
+import io.github.singlerr.semaphore.interactors.admin.presenter.data.PresentableEntity;
 import io.github.singlerr.semaphore.interactors.callee.CalleeInteractor;
 import io.github.singlerr.semaphore.interactors.callee.manager.data.ResponseType;
 import io.github.singlerr.semaphore.interactors.callee.presenter.CallResponsePresenter;
@@ -23,6 +26,7 @@ import io.github.singlerr.semaphore.policy.callee.SimpleCalleeInteractor;
 import io.github.singlerr.semaphore.policy.caller.SimpleCallerInteractor;
 import io.github.singlerr.semaphore.policy.database.PlayerDatabase;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
@@ -65,6 +69,18 @@ class CallActionTest {
 
         assertEquals(0, stubDatabase.getById(stubCaller.id()).state().stateId());
         assertEquals(0, stubDatabase.getById(stubCallee.id()).state().stateId());
+    }
+
+    private static class StubEntityPresenter implements EntityPresenter {
+
+        @Override
+        public void present(PresentableEntity entity) {}
+
+        @Override
+        public void present(List<PresentableEntity> entities) {}
+
+        @Override
+        public void presentError(ErrorEntity error) {}
     }
 
     private static class StubRequestPresenter implements CallRequestPresenter {

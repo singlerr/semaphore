@@ -22,7 +22,9 @@ public final class CallStateHandlers {
 
         @Override
         public PacketGetCallState handleServer(PacketGetCallState packet, ServerboundPacketContext context) {
-            this.callStateController.getCallState(new CallStateQuery.GetCallState(packet.getId()));
+            CallStateQuery.GetCallState query = new CallStateQuery.GetCallState(packet.getId());
+            query.setContext(context.getServerHandler().player);
+            this.callStateController.getCallState(query);
             return null;
         }
     }
@@ -39,8 +41,10 @@ public final class CallStateHandlers {
 
         @Override
         public PacketSetCallState handleServer(PacketSetCallState packet, ServerboundPacketContext context) {
-            this.callStateController.setCallState(new CallStateQuery.SetCallState(
-                    packet.getId(), new CallStateQuery.State(packet.getStateId(), packet.getMissCallCount())));
+            CallStateQuery.SetCallState query = new CallStateQuery.SetCallState(
+                    packet.getId(), new CallStateQuery.State(packet.getStateId(), packet.getMissCallCount()));
+            query.setContext(context.getServerHandler().player);
+            this.callStateController.setCallState(query);
             return null;
         }
     }

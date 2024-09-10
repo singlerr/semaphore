@@ -32,7 +32,7 @@ public final class CallPresenterAdapter implements CallResponsePresenter {
     }
 
     public void initialize(CallPresenterAdapter.PredicatePresenter... presenters) {
-        registeredPresenters = Arrays.asList(presenters);
+        registeredPresenters.addAll(Arrays.asList(presenters));
     }
 
     public void add(PredicatePresenter presenter) {

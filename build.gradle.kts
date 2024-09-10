@@ -102,9 +102,7 @@ dependencies {
     modImplementation(
         "maven.modrinth:simple-voice-chat:forge-${minecraft_version}-${voicechat_version}"
     )
-    modRuntimeOnly(
-        "maven.modrinth:simple-voice-chat:forge-${minecraft_version}-${voicechat_version}"
-    )
+
     implementation(project(":policy-impl"))
     implementation(project(":screen-adapter"))
     implementation(project(":config"))

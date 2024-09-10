@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public final class PlayerStateDFA implements Cloneable {
+public final class NFA implements Cloneable {
 
     // key: input for state machine, value: next state if machine can transit
     // key is packed by 32bit integer, key = currentState & 0xFF << 8 | responseType.ordinal() & 0xFF
@@ -13,12 +13,12 @@ public final class PlayerStateDFA implements Cloneable {
 
     private final Map<Integer, PlayerState> encoder;
 
-    public PlayerStateDFA() {
+    public NFA() {
         this.encodedStateFunction = new HashMap<>();
         this.encoder = new HashMap<>();
     }
 
-    public PlayerStateDFA(Map<Integer, Integer> encodedStateFunction, Map<Integer, PlayerState> encoder) {
+    public NFA(Map<Integer, Integer> encodedStateFunction, Map<Integer, PlayerState> encoder) {
         this.encodedStateFunction = encodedStateFunction;
         this.encoder = encoder;
     }
@@ -70,13 +70,13 @@ public final class PlayerStateDFA implements Cloneable {
             return this;
         }
 
-        public PlayerStateDFA build() {
-            return new PlayerStateDFA(encodedStateFunction, encoder);
+        public NFA build() {
+            return new NFA(encodedStateFunction, encoder);
         }
     }
 
     @Override
-    public PlayerStateDFA clone() {
-        return new PlayerStateDFA(new HashMap<>(encodedStateFunction), new HashMap<>(encoder));
+    public NFA clone() {
+        return new NFA(new HashMap<>(encodedStateFunction), new HashMap<>(encoder));
     }
 }

@@ -2,6 +2,7 @@
 package io.github.singlerr.semaphore.proxy;
 
 import de.maxhenkel.voicechat.api.events.VoicechatServerStartedEvent;
+import io.github.singlerr.semaphore.Debug;
 import io.github.singlerr.semaphore.compat.VoicechatCallConnectionHandler;
 import io.github.singlerr.semaphore.instances.*;
 import io.github.singlerr.semaphore.interactors.access.call.CallConnectionHandler;
@@ -33,6 +34,7 @@ import io.github.singlerr.semaphore.policy.callee.presenters.CallPresenterAdapte
 import io.github.singlerr.semaphore.policy.caller.controllers.RemoteCallRequestController;
 import io.github.singlerr.semaphore.policy.caller.presenters.CallRequestPresenterAdapter;
 import io.github.singlerr.semaphore.policy.callhandler.CallConnectionHandlerAdapter;
+import net.minecraftforge.common.MinecraftForge;
 
 public final class ServerProxy extends CommonProxy {
 
@@ -49,6 +51,7 @@ public final class ServerProxy extends CommonProxy {
     @Override
     public void postInit() {
         super.postInit();
+        MinecraftForge.EVENT_BUS.register(new Debug());
     }
 
     @Override

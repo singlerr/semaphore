@@ -12,13 +12,13 @@ import io.github.singlerr.semaphore.interactors.caller.presenter.data.InverseCal
 import io.github.singlerr.semaphore.policy.CallTimeoutHandler;
 import io.github.singlerr.semaphore.policy.PolicyConstants;
 import io.github.singlerr.semaphore.policy.dfa.PlayerInput;
-import io.github.singlerr.semaphore.policy.dfa.PlayerStateDFA;
+import io.github.singlerr.semaphore.policy.dfa.NFA;
 import java.util.Optional;
 import java.util.UUID;
 
 public final class CallStateMachine implements CallRequestManager {
 
-    private final PlayerStateDFA dfa;
+    private final NFA dfa;
     private final DatabaseGateway database;
     private final ErrorPresenter errorPresenter;
     private final CallRequestPresenter requestPresenter;

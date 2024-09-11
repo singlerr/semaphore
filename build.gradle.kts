@@ -106,6 +106,7 @@ dependencies {
     implementation(project(":policy-impl"))
     implementation(project(":screen-adapter"))
     implementation(project(":config"))
+    implementation(project(":sound-adapter"))
 
     shadowImpl("com.github.psambit9791:jdsp:2.0.0")
 

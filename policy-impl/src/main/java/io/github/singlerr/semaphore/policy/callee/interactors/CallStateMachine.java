@@ -12,6 +12,7 @@ import io.github.singlerr.semaphore.interactors.callee.presenter.CallResponsePre
 import io.github.singlerr.semaphore.interactors.callee.presenter.ErrorHandler;
 import io.github.singlerr.semaphore.interactors.callee.presenter.data.CallResponse;
 import io.github.singlerr.semaphore.interactors.callee.presenter.data.Error;
+import io.github.singlerr.semaphore.policy.CallTimeoutHandler;
 import io.github.singlerr.semaphore.policy.PolicyConstants;
 import io.github.singlerr.semaphore.policy.dfa.NFA;
 import io.github.singlerr.semaphore.policy.dfa.PlayerInput;
@@ -40,6 +41,8 @@ public final class CallStateMachine implements CallResponseManager {
     public void reply(UUID callerId, UUID calleeId, ResponseType type) {
         Entity caller = database.getById(callerId);
         Entity callee = database.getById(calleeId);
+
+        CallTimeoutHandler.getInstance().cancelTimeout(new CallTimeoutHandler.Key(callerId, calleeId));
 
         if (caller == null || callee == null) {
             if (caller != null) {

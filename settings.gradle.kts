@@ -26,3 +26,5 @@ include("policy-impl")
 include("screen-adapter")
 
 include("config")
+
+include("sound-adapter")

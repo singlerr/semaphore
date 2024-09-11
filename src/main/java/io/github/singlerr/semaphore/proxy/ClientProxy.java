@@ -7,6 +7,9 @@ import io.github.singlerr.semaphore.client.gui.GuiControlPanel;
 import io.github.singlerr.semaphore.client.gui.GuiPhone;
 import io.github.singlerr.semaphore.client.listener.GuiEventListener;
 import io.github.singlerr.semaphore.client.listener.ItemEventListener;
+import io.github.singlerr.semaphore.client.sound.InteractionSoundHandler;
+import io.github.singlerr.semaphore.client.sound.SoundPlayerImpl;
+import io.github.singlerr.semaphore.client.sounds.SoundPlayerAccess;
 import io.github.singlerr.semaphore.instances.DatabaseAccess;
 import io.github.singlerr.semaphore.instances.client.ClientResources;
 import io.github.singlerr.semaphore.interactors.admin.controller.CallConnectionController;
@@ -36,6 +39,7 @@ import io.github.singlerr.semaphore.policy.caller.presenters.CallRequestPresente
 import io.github.singlerr.semaphore.policy.caller.presenters.ErrorPresenterAdapter;
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 
 public final class ClientProxy extends CommonProxy {
@@ -43,6 +47,8 @@ public final class ClientProxy extends CommonProxy {
     private ClientboundCallRequestController requestController;
     private CallConnectionController connectionController;
     private CallStateController stateController;
+
+    private final InteractionSoundHandler soundHandler = new InteractionSoundHandler();
 
     @Override
     public void preInit() {
@@ -54,6 +60,8 @@ public final class ClientProxy extends CommonProxy {
         super.init();
         MinecraftForge.EVENT_BUS.register(new GuiEventListener(entityController));
         MinecraftForge.EVENT_BUS.register(new ItemEventListener(entityController));
+        SoundPlayerAccess.setInstance(
+                new SoundPlayerImpl(Minecraft.getMinecraft().getSoundHandler()));
     }
 
     @Override
@@ -155,7 +163,7 @@ public final class ClientProxy extends CommonProxy {
         errorPresenters.add(new ErrorHandlerAdapter.PredicatePresenter(guiPhone::shouldPresent, guiPhone));
         requestPresenters.add(new CallRequestPresenterAdapter.PredicatePresenter(guiPhone::shouldPresent, guiPhone));
         requestPresenters.add(new CallRequestPresenterAdapter.PredicatePresenter((ctx) -> true, tileEntityNotifier));
-
+        requestPresenters.add(new CallRequestPresenterAdapter.PredicatePresenter((ctx) -> true, soundHandler));
         // User is both callee and caller, there's no need to split callee and caller
         // Must keep packet register order same with client and server
         networkManager.registerClientboundPacket(
@@ -182,5 +190,6 @@ public final class ClientProxy extends CommonProxy {
                 (p) -> callRequestPresenter.add(new CallRequestPresenterAdapter.PredicatePresenter((ctx) -> true, p)),
                 (p) -> errorPresenter.add(new ErrorPresenterAdapter.PredicatePresenter((ctx) -> true, p)));
         ClientResources.setInstance(NonVanillaScreen.FactoryParams.class, params);
+        ClientResources.setInstance(InteractionSoundHandler.class, soundHandler);
     }
 }

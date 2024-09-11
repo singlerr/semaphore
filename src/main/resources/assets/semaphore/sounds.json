@@ -40,5 +40,17 @@
     "sounds": [
       "semaphore:sound_vibration"
     ]
+  },
+  "sound_target_unavailable": {
+    "category": "block",
+    "sounds": [
+      "semaphore:sound_target_unavailable"
+    ]
+  },
+  "sound_bell": {
+    "category": "block",
+    "sounds": [
+      "semaphore:sound_bell"
+    ]
   }
 }

@@ -127,6 +127,8 @@ public final class ClientProxy extends CommonProxy {
                 PacketPresentableEntity.class, new EntityHandlers.PresentableEntityHandler(clientEntityPresenter));
         networkManager.registerClientboundPacket(
                 PacketPresentableEntities.class, new EntityHandlers.PresentableEntitiesHandler(clientEntityPresenter));
+        networkManager.registerClientboundPacket(
+                PacketEntityErrorEntity.class, new EntityHandlers.ErrorEntityHandler(clientEntityPresenter));
     }
 
     private void initCalleeAndCaller(

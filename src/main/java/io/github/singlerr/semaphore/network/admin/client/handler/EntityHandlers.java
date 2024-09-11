@@ -1,9 +1,11 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.network.admin.client.handler;
 
+import io.github.singlerr.semaphore.interactors.admin.presenter.data.ErrorEntity;
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.PresentableEntity;
 import io.github.singlerr.semaphore.network.ClientboundPacketHandler;
 import io.github.singlerr.semaphore.network.admin.client.ClientboundEntityPresenter;
+import io.github.singlerr.semaphore.network.admin.packet.PacketEntityErrorEntity;
 import io.github.singlerr.semaphore.network.admin.packet.PacketPresentableEntities;
 import io.github.singlerr.semaphore.network.admin.packet.PacketPresentableEntity;
 
@@ -26,6 +28,24 @@ public final class EntityHandlers {
         public PacketPresentableEntities handleClient(
                 PacketPresentableEntities packet, ClientboundPacketContext context) {
             this.entityController.present(packet.getEntities());
+            return null;
+        }
+    }
+
+    public static final class ErrorEntityHandler
+            extends ClientboundPacketHandler<PacketEntityErrorEntity, PacketEntityErrorEntity> {
+
+        private ClientboundEntityPresenter entityPresenter;
+
+        public ErrorEntityHandler() {}
+
+        public ErrorEntityHandler(ClientboundEntityPresenter entityPresenter) {
+            this.entityPresenter = entityPresenter;
+        }
+
+        @Override
+        public PacketEntityErrorEntity handleClient(PacketEntityErrorEntity packet, ClientboundPacketContext context) {
+            this.entityPresenter.presentError(new ErrorEntity(packet.getMessage()));
             return null;
         }
     }

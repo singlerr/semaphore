@@ -5,11 +5,14 @@ import io.github.singlerr.semaphore.interactors.admin.presenter.EntityPresenter;
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.ErrorEntity;
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.PresentableEntity;
 import io.github.singlerr.semaphore.network.NetworkManager;
-import io.github.singlerr.semaphore.network.admin.packet.PacketErrorEntity;
+import io.github.singlerr.semaphore.network.admin.packet.PacketEntityErrorEntity;
 import io.github.singlerr.semaphore.network.admin.packet.PacketPresentableEntities;
 import io.github.singlerr.semaphore.network.admin.packet.PacketPresentableEntity;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraftforge.fml.server.FMLServerHandler;
 
 public final class ServerboundEntityPresenter implements EntityPresenter {
 
@@ -33,8 +36,25 @@ public final class ServerboundEntityPresenter implements EntityPresenter {
 
     @Override
     public void presentError(ErrorEntity error) {
+        if (error.getContext() instanceof Map.Entry) {
+            PacketEntityErrorEntity packet = new PacketEntityErrorEntity(error.message());
+
+            Map.Entry<UUID, UUID> peer = (Map.Entry<UUID, UUID>) error.getContext();
+
+            EntityPlayerMP player =
+                    FMLServerHandler.instance().getServer().getPlayerList().getPlayerByUUID(peer.getKey());
+            if (player != null) {
+                this.networkManager.sendTo(packet, player);
+            }
+
+            player = FMLServerHandler.instance().getServer().getPlayerList().getPlayerByUUID(peer.getValue());
+            if (player != null) {
+                this.networkManager.sendTo(packet, player);
+            }
+        }
         if (error.getContext() instanceof EntityPlayerMP) {
-            this.networkManager.sendTo(new PacketErrorEntity(error.message()), (EntityPlayerMP) error.getContext());
+            this.networkManager.sendTo(
+                    new PacketEntityErrorEntity(error.message()), (EntityPlayerMP) error.getContext());
         }
     }
 

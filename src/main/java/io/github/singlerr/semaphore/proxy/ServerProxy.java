@@ -111,6 +111,7 @@ public final class ServerProxy extends CommonProxy {
 
         networkManager.registerServerboundPacket(PacketPresentableEntity.class);
         networkManager.registerServerboundPacket(PacketPresentableEntities.class);
+        networkManager.registerServerboundPacket(PacketEntityErrorEntity.class);
     }
 
     // Register call response

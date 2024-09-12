@@ -6,6 +6,8 @@ import io.github.singlerr.semaphore.interactors.access.database.Entity;
 import io.github.singlerr.semaphore.interactors.admin.manager.CallStateManager;
 import io.github.singlerr.semaphore.interactors.admin.manager.data.Call;
 import io.github.singlerr.semaphore.interactors.admin.manager.data.ConnectionState;
+import io.github.singlerr.semaphore.interactors.admin.presenter.EntityPresenter;
+import io.github.singlerr.semaphore.interactors.admin.presenter.data.PresentableEntity;
 import io.github.singlerr.semaphore.interactors.callee.manager.CallResponseManager;
 import io.github.singlerr.semaphore.interactors.callee.manager.data.ResponseType;
 import io.github.singlerr.semaphore.interactors.callee.presenter.CallResponsePresenter;
@@ -28,13 +30,19 @@ public final class CallStateMachine implements CallResponseManager {
     private final NFA dfa;
     private final CallResponsePresenter responsePresenter;
 
+    private final EntityPresenter entityPresenter;
+
     public CallStateMachine(
-            DatabaseGateway database, CallStateManager callStateManager, CallResponsePresenter responsePresenter) {
+            DatabaseGateway database,
+            CallStateManager callStateManager,
+            CallResponsePresenter responsePresenter,
+            EntityPresenter entityPresenter) {
         this.database = database;
         this.errorPresenter = responsePresenter;
         this.callStateManager = callStateManager;
-        this.dfa = PolicyConstants.STATE_DFA.clone();
+        this.dfa = PolicyConstants.STATE_NFA.clone();
         this.responsePresenter = responsePresenter;
+        this.entityPresenter = entityPresenter;
     }
 
     @Override
@@ -46,16 +54,36 @@ public final class CallStateMachine implements CallResponseManager {
 
         if (caller == null || callee == null) {
             if (caller != null) {
-                database.update(
+                Entity entity = new Entity(
                         callerId,
-                        new Entity(callerId, new Entity.State(0, caller.state().missCallCount())));
+                        new Entity.State(
+                                0,
+                                caller.getState().getMissCallCount(),
+                                caller.getState().getEntityType()));
+                database.update(callerId, entity);
                 errorPresenter.error(new Error(calleeId, callerId, "error.player.not.found"));
+                entityPresenter.present(new PresentableEntity(
+                        callerId,
+                        new PresentableEntity.State(
+                                entity.getState().getStateId(),
+                                entity.getState().getMissCallCount(),
+                                entity.getState().getEntityType())));
             }
             if (callee != null) {
-                database.update(
+                Entity entity = new Entity(
                         calleeId,
-                        new Entity(calleeId, new Entity.State(0, callee.state().missCallCount())));
+                        new Entity.State(
+                                0,
+                                callee.getState().getMissCallCount(),
+                                callee.getState().getEntityType()));
+                database.update(calleeId, entity);
                 errorPresenter.error(new Error(calleeId, callerId, "error.player.not.found"));
+                entityPresenter.present(new PresentableEntity(
+                        calleeId,
+                        new PresentableEntity.State(
+                                entity.getState().getStateId(),
+                                entity.getState().getMissCallCount(),
+                                entity.getState().getEntityType())));
             }
             return;
         }
@@ -63,8 +91,8 @@ public final class CallStateMachine implements CallResponseManager {
         Optional<Integer> newCallerState;
         Optional<Integer> newCalleeState;
         if (type == ResponseType.ACCEPT) {
-            newCallerState = dfa.consume(caller.state().stateId(), PlayerInput.ACCEPT_CALL);
-            newCalleeState = dfa.consume(callee.state().stateId(), PlayerInput.ACCEPT_CALL);
+            newCallerState = dfa.consume(caller.getState().getStateId(), PlayerInput.ACCEPT_CALL);
+            newCalleeState = dfa.consume(callee.getState().getStateId(), PlayerInput.ACCEPT_CALL);
 
             if (!newCallerState.isPresent() || !newCalleeState.isPresent()) {
                 resetState(callee);
@@ -74,7 +102,7 @@ public final class CallStateMachine implements CallResponseManager {
             }
 
             Call con = callStateManager.openCall(callerId, calleeId);
-            if (con == null || con.state() != ConnectionState.ALIVE) {
+            if (con == null || con.getState() != ConnectionState.ALIVE) {
                 resetState(callee);
                 resetState(callee);
                 errorPresenter.error(new Error(calleeId, callerId, "error.connection.unavailable"));
@@ -83,8 +111,8 @@ public final class CallStateMachine implements CallResponseManager {
 
             responsePresenter.present(new CallResponse(callerId, calleeId, CallResponse.ResponseType.ACCEPT));
         } else {
-            newCallerState = dfa.consume(caller.state().stateId(), PlayerInput.CLOSE_CALL);
-            newCalleeState = dfa.consume(callee.state().stateId(), PlayerInput.REJECT_CALL);
+            newCallerState = dfa.consume(caller.getState().getStateId(), PlayerInput.CLOSE_CALL);
+            newCalleeState = dfa.consume(callee.getState().getStateId(), PlayerInput.REJECT_CALL);
 
             if (!newCallerState.isPresent() || !newCalleeState.isPresent()) {
                 resetState(callee);
@@ -97,16 +125,48 @@ public final class CallStateMachine implements CallResponseManager {
         }
 
         caller = new Entity(
-                callerId, new Entity.State(newCallerState.get(), caller.state().missCallCount()));
+                callerId,
+                new Entity.State(
+                        newCallerState.get(),
+                        caller.getState().getMissCallCount(),
+                        caller.getState().getEntityType()));
         callee = new Entity(
-                calleeId, new Entity.State(newCalleeState.get(), callee.state().missCallCount()));
+                calleeId,
+                new Entity.State(
+                        newCalleeState.get(),
+                        callee.getState().getMissCallCount(),
+                        callee.getState().getEntityType()));
         database.update(callerId, caller);
         database.update(calleeId, callee);
+
+        entityPresenter.present(new PresentableEntity(
+                caller.getId(),
+                new PresentableEntity.State(
+                        caller.getState().getStateId(),
+                        caller.getState().getMissCallCount(),
+                        caller.getState().getEntityType())));
+        entityPresenter.present(new PresentableEntity(
+                callee.getId(),
+                new PresentableEntity.State(
+                        callee.getState().getStateId(),
+                        callee.getState().getMissCallCount(),
+                        callee.getState().getEntityType())));
     }
 
     private void resetState(Entity entity) {
-        database.update(
-                entity.id(),
-                new Entity(entity.id(), new Entity.State(0, entity.state().missCallCount())));
+        Entity newEntity = new Entity(
+                entity.getId(),
+                new Entity.State(
+                        0,
+                        entity.getState().getMissCallCount(),
+                        entity.getState().getEntityType()));
+        database.update(entity.getId(), newEntity);
+
+        entityPresenter.present(new PresentableEntity(
+                newEntity.getId(),
+                new PresentableEntity.State(
+                        newEntity.getState().getStateId(),
+                        newEntity.getState().getMissCallCount(),
+                        newEntity.getState().getEntityType())));
     }
 }

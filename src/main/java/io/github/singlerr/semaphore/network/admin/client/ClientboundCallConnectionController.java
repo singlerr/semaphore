@@ -18,16 +18,16 @@ public final class ClientboundCallConnectionController implements CallConnection
 
     @Override
     public void openConnection(CallConnectionQuery.OpenConnection query) {
-        this.networkManager.sendToServer(new PacketOpenConnection(query.callerId(), query.calleeId()));
+        this.networkManager.sendToServer(new PacketOpenConnection(query.getCallerId(), query.getCalleeId()));
     }
 
     @Override
     public void closeConnection(CallConnectionQuery.CloseConnection closeConnection) {
-        this.networkManager.sendToServer(new PacketCloseConnection(closeConnection.id()));
+        this.networkManager.sendToServer(new PacketCloseConnection(closeConnection.getId()));
     }
 
     @Override
     public void getConnection(CallConnectionQuery.GetConnection getConnection) {
-        this.networkManager.sendToServer(new PacketGetConnection(getConnection.id()));
+        this.networkManager.sendToServer(new PacketGetConnection(getConnection.getId()));
     }
 }

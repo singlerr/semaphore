@@ -130,6 +130,7 @@ public final class ClientProxy extends CommonProxy {
         networkManager.registerClientboundPacket(PacketGetEntity.class);
         networkManager.registerClientboundPacket(PacketGetAllEntities.class);
         networkManager.registerClientboundPacket(PacketUpdateEntity.class);
+        networkManager.registerClientboundPacket(PacketCreateEntityWithState.class);
 
         networkManager.registerClientboundPacket(
                 PacketPresentableEntity.class, new EntityHandlers.PresentableEntityHandler(clientEntityPresenter));
@@ -159,6 +160,8 @@ public final class ClientProxy extends CommonProxy {
         ClientWorldAwareInverseCallPresenter tileEntityNotifier = new ClientWorldAwareInverseCallPresenter();
         ClientResources.setInstance(ClientWorldAwareInverseCallPresenter.class, tileEntityNotifier);
 
+        entityPresenter.add(
+                new EntityPresenterAdapter.PredicatePresenter((ctx) -> true, (ctx) -> true, tileEntityNotifier));
         responsePresenters.add(new CallPresenterAdapter.PredicatePresenter(guiPhone::shouldPresent, guiPhone));
         errorPresenters.add(new ErrorHandlerAdapter.PredicatePresenter(guiPhone::shouldPresent, guiPhone));
         requestPresenters.add(new CallRequestPresenterAdapter.PredicatePresenter(guiPhone::shouldPresent, guiPhone));

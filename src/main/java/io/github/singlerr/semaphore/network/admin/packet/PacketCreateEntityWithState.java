@@ -1,7 +1,7 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.network.admin.packet;
 
-import io.github.singlerr.semaphore.interactors.admin.presenter.data.EntityType;
+import io.github.singlerr.semaphore.interactors.admin.controller.data.EntityType;
 import io.github.singlerr.semaphore.network.utils.SerializationUtils;
 import io.netty.buffer.ByteBuf;
 import java.util.AbstractMap;
@@ -12,10 +12,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
-public final class PacketPresentableEntity implements IMessage {
+public final class PacketCreateEntityWithState implements IMessage {
 
     private UUID id;
     private int stateId;
@@ -26,10 +26,10 @@ public final class PacketPresentableEntity implements IMessage {
     public void fromBytes(ByteBuf byteBuf) {
         this.id = SerializationUtils.readUUID(byteBuf);
         this.stateId = byteBuf.readInt();
-        this.missCallCount = SerializationUtils.readMap(byteBuf, buf -> {
-            UUID key = SerializationUtils.readUUID(buf);
-            int val = buf.readInt();
-            return new AbstractMap.SimpleImmutableEntry<>(key, val);
+        this.missCallCount = SerializationUtils.readMap(byteBuf, (buf) -> {
+            UUID id = SerializationUtils.readUUID(buf);
+            int count = buf.readInt();
+            return new AbstractMap.SimpleImmutableEntry<>(id, count);
         });
         this.entityType = SerializationUtils.readEnum(EntityType.class, byteBuf);
     }

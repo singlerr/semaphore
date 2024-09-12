@@ -4,27 +4,18 @@ package io.github.singlerr.semaphore.network.admin.packet;
 import io.github.singlerr.semaphore.network.utils.SerializationUtils;
 import io.netty.buffer.ByteBuf;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
 public final class PacketOpenCall implements IMessage {
 
     private UUID callerId;
     private UUID calleeId;
-
-    public PacketOpenCall() {}
-
-    public PacketOpenCall(UUID callerId, UUID calleeId) {
-        this.callerId = callerId;
-        this.calleeId = calleeId;
-    }
-
-    public UUID getCallerId() {
-        return callerId;
-    }
-
-    public UUID getCalleeId() {
-        return calleeId;
-    }
 
     @Override
     public void fromBytes(ByteBuf byteBuf) {

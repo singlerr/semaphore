@@ -9,6 +9,7 @@
   ],
   "client": [
     "sound.PositionedSoundAccessor",
+    "sound.SoundManagerMixin",
     "voicechat.client.AudioChannelMixin"
   ],
   "server": [

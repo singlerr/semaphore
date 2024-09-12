@@ -34,7 +34,7 @@ public final class NFA implements Cloneable {
         return Optional.of(newState);
     }
 
-    public PlayerState encode(int state) {
+    public PlayerState decode(int state) {
         if (!encoder.containsKey(state)) return null;
         return encoder.get(state);
     }

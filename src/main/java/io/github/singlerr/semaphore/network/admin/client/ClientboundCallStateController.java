@@ -18,16 +18,16 @@ public final class ClientboundCallStateController implements CallStateController
 
     @Override
     public void openCall(CallStateQuery.OpenCall query) {
-        this.networkManager.sendToServer(new PacketOpenCall(query.callerId(), query.calleeId()));
+        this.networkManager.sendToServer(new PacketOpenCall(query.getCallerId(), query.getCalleeId()));
     }
 
     @Override
     public void closeCall(CallStateQuery.CloseCall query) {
-        this.networkManager.sendToServer(new PacketCloseCall(query.callerId(), query.calleeId()));
+        this.networkManager.sendToServer(new PacketCloseCall(query.getCallerId(), query.getCalleeId()));
     }
 
     @Override
     public void closeCall(CallStateQuery.CloseCallById query) {
-        this.networkManager.sendToServer(new PacketCloseCallById(query.id()));
+        this.networkManager.sendToServer(new PacketCloseCallById(query.getId()));
     }
 }

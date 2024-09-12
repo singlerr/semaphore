@@ -17,8 +17,8 @@ public final class RemoteCallResponseController implements CallResponseControlle
     @Override
     public void reply(CallResponse response) {
         this.responseManager.reply(
-                response.callerId(),
-                response.calleeId(),
-                response.response() == CallResponse.Response.ACCEPT ? ResponseType.ACCEPT : ResponseType.REJECT);
+                response.getCallerId(),
+                response.getCalleeId(),
+                response.getResponse() == CallResponse.Response.ACCEPT ? ResponseType.ACCEPT : ResponseType.REJECT);
     }
 }

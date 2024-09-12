@@ -15,8 +15,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
 import org.jetbrains.annotations.Nullable;
 
 public class BlockPhoneBox extends Block implements ITileEntityProvider {
@@ -55,11 +53,6 @@ public class BlockPhoneBox extends Block implements ITileEntityProvider {
 
     @Override
     public @Nullable TileEntity createNewTileEntity(World worldIn, int meta) {
-        TileEntityPhoneBox tileEntity = new TileEntityPhoneBox();
-        if (FMLCommonHandler.instance().getSide() == Side.CLIENT && tracker != null) {
-            tileEntity.setTracker(tracker);
-            tracker.addTrackedTileEntity(tileEntity);
-        }
-        return tileEntity;
+        return new TileEntityPhoneBox();
     }
 }

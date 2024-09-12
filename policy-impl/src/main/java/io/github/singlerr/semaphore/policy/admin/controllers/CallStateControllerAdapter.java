@@ -20,7 +20,7 @@ public final class CallStateControllerAdapter implements CallStateController {
 
     @Override
     public void openCall(CallStateQuery.OpenCall query) {
-        Call call = this.callStateManager.openCall(query.callerId(), query.calleeId());
+        Call call = this.callStateManager.openCall(query.getCallerId(), query.getCalleeId());
         if (call == null) {
             entityPresenter.presentError(new ErrorEntity("error.open.call"));
             return;
@@ -29,11 +29,11 @@ public final class CallStateControllerAdapter implements CallStateController {
 
     @Override
     public void closeCall(CallStateQuery.CloseCall query) {
-        this.callStateManager.closeCall(query.callerId(), query.calleeId());
+        this.callStateManager.closeCall(query.getCallerId(), query.getCalleeId());
     }
 
     @Override
     public void closeCall(CallStateQuery.CloseCallById query) {
-        this.callStateManager.closeCall(query.id());
+        this.callStateManager.closeCall(query.getId());
     }
 }

@@ -87,7 +87,31 @@ public final class EntityHandlers {
         @Override
         public PacketUpdateEntity handleServer(PacketUpdateEntity packet, ServerboundPacketContext context) {
             this.entityController.updateEntity(new EntityQuery.UpdateEntity(
-                    packet.getId(), new EntityQuery.State(packet.getStateId(), packet.getMissCallCount())));
+                    packet.getId(),
+                    new EntityQuery.State(packet.getStateId(), packet.getMissCallCount(), packet.getEntityType())));
+            return null;
+        }
+    }
+
+    public static class CreateEntityWithStateHandler
+            extends ServerboundPacketHandler<PacketCreateEntityWithState, PacketCreateEntityWithState> {
+
+        private ServerboundEntityController entityController;
+
+        public CreateEntityWithStateHandler() {
+            throw new IllegalStateException();
+        }
+
+        public CreateEntityWithStateHandler(ServerboundEntityController entityController) {
+            this.entityController = entityController;
+        }
+
+        @Override
+        public PacketCreateEntityWithState handleServer(
+                PacketCreateEntityWithState packet, ServerboundPacketContext context) {
+            this.entityController.createEntity(new EntityQuery.CreateEntityWithState(
+                    packet.getId(),
+                    new EntityQuery.State(packet.getStateId(), packet.getMissCallCount(), packet.getEntityType())));
             return null;
         }
     }

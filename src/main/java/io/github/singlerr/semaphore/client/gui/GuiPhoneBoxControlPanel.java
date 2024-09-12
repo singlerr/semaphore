@@ -3,6 +3,7 @@ package io.github.singlerr.semaphore.client.gui;
 
 import io.github.singlerr.semaphore.client.gui.widget.GuiEntityEntry;
 import io.github.singlerr.semaphore.client.gui.widget.GuiEntityList;
+import io.github.singlerr.semaphore.interactors.access.database.EntityType;
 import io.github.singlerr.semaphore.interactors.admin.controller.CallConnectionController;
 import io.github.singlerr.semaphore.interactors.admin.controller.CallStateController;
 import io.github.singlerr.semaphore.interactors.admin.controller.EntityController;
@@ -16,6 +17,8 @@ import io.github.singlerr.semaphore.policy.admin.presenters.CallConnectionPresen
 import io.github.singlerr.semaphore.policy.admin.presenters.EntityPresenterAdapter;
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,7 +26,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
@@ -46,6 +48,9 @@ public final class GuiPhoneBoxControlPanel extends GuiScreen implements EntityPr
     private int xOffset;
     private int yOffset;
 
+    // EntityPresenter would work unless entityList is not initialized, so we pull out entry list from gui list and give
+    // this to gui list later
+    private List<GuiEntityEntry> entries;
     private GuiEntityList entityList;
 
     public GuiPhoneBoxControlPanel(
@@ -61,6 +66,7 @@ public final class GuiPhoneBoxControlPanel extends GuiScreen implements EntityPr
         this.callStateController = stateController;
         this.requestController = requestController;
         this.mc = Minecraft.getMinecraft();
+        this.entries = Collections.synchronizedList(new ArrayList<>());
     }
 
     @Override
@@ -76,7 +82,8 @@ public final class GuiPhoneBoxControlPanel extends GuiScreen implements EntityPr
         this.yOffset = (resolution.getScaledHeight() - this.height) / 2;
 
         int listHeight = this.height - 40;
-        this.entityList = new GuiEntityList(width - 30, listHeight, yOffset + 30, yOffset + 30 + listHeight, 60);
+        this.entityList =
+                new GuiEntityList(width - 30, listHeight, yOffset + 30, yOffset + 30 + listHeight, 60, entries);
         this.entityList.setSlotXBoundsFromLeft(this.xOffset + 15);
     }
 
@@ -121,31 +128,26 @@ public final class GuiPhoneBoxControlPanel extends GuiScreen implements EntityPr
 
     @Override
     public void present(PresentableEntity entity) {
-        NetworkPlayerInfo info = mc.getConnection().getPlayerInfo(entity.id());
-        if (info != null) return;
-        Optional<GuiEntityEntry> entry = this.entityList.getEntries().stream()
-                .filter(e -> e.getEntity().id().equals(entity.id()))
+        if (entity.getState().getEntityType() != EntityType.PHONE_BOX) return;
+        Optional<GuiEntityEntry> entry = this.entries.stream()
+                .filter(e -> e.getEntity().getId().equals(entity.getId()))
                 .findAny();
         if (entry.isPresent()) {
             entry.get().setEntity(entity);
         } else {
-            this.entityList.addEntry(new GuiEntityEntry(
+            this.entries.add(new GuiEntityEntry(
                     entityController, callConnectionController, callStateController, requestController, entity));
         }
     }
 
     @Override
     public void present(List<PresentableEntity> entities) {
-        if (this.entityList == null) return;
-
-        this.entityList.getEntries().clear();
-        this.entityList
-                .getEntries()
-                .addAll(entities.stream()
-                        .filter(e -> mc.getConnection().getPlayerInfo(e.id()) == null)
-                        .map(e -> new GuiEntityEntry(
-                                entityController, callConnectionController, callStateController, requestController, e))
-                        .collect(Collectors.toList()));
+        this.entries.clear();
+        this.entries.addAll(entities.stream()
+                .filter(e -> e.getState().getEntityType() == EntityType.PHONE_BOX)
+                .map(e -> new GuiEntityEntry(
+                        entityController, callConnectionController, callStateController, requestController, e))
+                .collect(Collectors.toList()));
     }
 
     @Override
@@ -153,9 +155,9 @@ public final class GuiPhoneBoxControlPanel extends GuiScreen implements EntityPr
 
     @Override
     public void present(PresentableCallConnection entity) {
-        this.entityList.getEntries().stream()
-                .filter(e -> e.getEntity().id().equals(entity.calleeId())
-                        || e.getEntity().id().equals(entity.callerId()))
+        this.entries.stream()
+                .filter(e -> e.getEntity().getId().equals(entity.getCalleeId())
+                        || e.getEntity().getId().equals(entity.getCallerId()))
                 .findAny()
                 .ifPresent(e -> e.setCurrentConnection(entity));
     }

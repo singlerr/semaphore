@@ -16,6 +16,6 @@ public final class RemoteCallRequestController implements CallRequestController 
     @Override
     public void request(CallRequest request) {
         this.requestManager.request(new io.github.singlerr.semaphore.interactors.caller.manager.data.CallRequest(
-                request.callerId(), request.calleeId()));
+                request.getCallerId(), request.getCalleeId()));
     }
 }

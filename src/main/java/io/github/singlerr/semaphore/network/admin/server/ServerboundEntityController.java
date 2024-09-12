@@ -23,6 +23,11 @@ public final class ServerboundEntityController implements EntityController {
     }
 
     @Override
+    public void createEntity(EntityQuery.CreateEntityWithState query) {
+        this.source.createEntity(query);
+    }
+
+    @Override
     public void deleteEntity(EntityQuery.DeleteEntity query) {
         this.source.deleteEntity(query);
     }

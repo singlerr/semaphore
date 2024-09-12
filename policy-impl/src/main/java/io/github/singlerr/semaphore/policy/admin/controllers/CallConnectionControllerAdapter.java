@@ -23,26 +23,26 @@ public final class CallConnectionControllerAdapter implements CallConnectionCont
 
     @Override
     public void openConnection(CallConnectionQuery.OpenConnection query) {
-        this.callConnectionManager.open(query.callerId(), query.calleeId());
+        this.callConnectionManager.open(query.getCallerId(), query.getCalleeId());
     }
 
     @Override
     public void closeConnection(CallConnectionQuery.CloseConnection query) {
-        this.callConnectionManager.close(query.id());
+        this.callConnectionManager.close(query.getId());
     }
 
     @Override
     public void getConnection(CallConnectionQuery.GetConnection query) {
-        CallConnectionEntity connection = this.callConnectionManager.getById(query.id());
+        CallConnectionEntity connection = this.callConnectionManager.getById(query.getId());
         if (connection == null) {
             this.callConnectionPresenter.presentError(new ErrorEntity("call.connection.not.found"));
             return;
         }
 
         this.callConnectionPresenter.present(new PresentableCallConnection(
-                connection.id(),
-                connection.callerId(),
-                connection.calleeId(),
-                connection.state() == ConnectionState.ALIVE));
+                connection.getId(),
+                connection.getCallerId(),
+                connection.getCalleeId(),
+                connection.getState() == ConnectionState.ALIVE));
     }
 }

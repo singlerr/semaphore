@@ -8,8 +8,12 @@ import io.github.singlerr.semaphore.interactors.admin.manager.CallStateManager;
 import io.github.singlerr.semaphore.interactors.admin.manager.data.Call;
 import io.github.singlerr.semaphore.interactors.admin.manager.data.CallConnectionEntity;
 import io.github.singlerr.semaphore.interactors.admin.manager.data.ConnectionState;
+import io.github.singlerr.semaphore.interactors.admin.presenter.CallConnectionPresenter;
+import io.github.singlerr.semaphore.interactors.admin.presenter.EntityPresenter;
 import io.github.singlerr.semaphore.interactors.admin.presenter.ErrorPresenter;
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.ErrorEntity;
+import io.github.singlerr.semaphore.interactors.admin.presenter.data.PresentableCallConnection;
+import io.github.singlerr.semaphore.interactors.admin.presenter.data.PresentableEntity;
 import io.github.singlerr.semaphore.policy.PolicyConstants;
 import io.github.singlerr.semaphore.policy.dfa.NFA;
 import io.github.singlerr.semaphore.policy.dfa.PlayerInput;
@@ -28,14 +32,22 @@ public final class PrivilegedCallStateManager implements CallStateManager {
     private final Map<UUID, Peer> connections;
 
     private final NFA nfa;
+    private final CallConnectionPresenter callConnectionPresenter;
+    private final EntityPresenter entityPresenter;
 
     public PrivilegedCallStateManager(
-            DatabaseGateway database, CallConnectionManager callConnectionManager, ErrorPresenter errorPresenter) {
+            DatabaseGateway database,
+            CallConnectionManager callConnectionManager,
+            CallConnectionPresenter callConnectionPresenter,
+            EntityPresenter entityPresenter,
+            ErrorPresenter errorPresenter) {
         this.database = database;
         this.callConnectionManager = callConnectionManager;
         this.errorPresenter = errorPresenter;
         this.connections = new ConcurrentHashMap<>();
-        this.nfa = PolicyConstants.STATE_DFA.clone();
+        this.nfa = PolicyConstants.STATE_NFA.clone();
+        this.callConnectionPresenter = callConnectionPresenter;
+        this.entityPresenter = entityPresenter;
     }
 
     @Override
@@ -54,8 +66,10 @@ public final class PrivilegedCallStateManager implements CallStateManager {
 
         CallConnectionEntity con = this.callConnectionManager.open(callerId, calleeId);
 
-        this.connections.put(con.id(), new Peer(callerId, calleeId));
-        return new Call(con.id(), con.callerId(), con.calleeId(), con.state());
+        this.connections.put(con.getId(), new Peer(callerId, calleeId));
+        callConnectionPresenter.present(
+                new PresentableCallConnection(con.getId(), con.getCallerId(), con.getCalleeId(), true));
+        return new Call(con.getId(), con.getCallerId(), con.getCalleeId(), con.getState());
     }
 
     @Override
@@ -72,22 +86,47 @@ public final class PrivilegedCallStateManager implements CallStateManager {
         Entity callee = this.database.getById(p.getCalleeId());
 
         if (caller != null) {
-            Optional<Integer> newState = this.nfa.consume(caller.state().stateId(), PlayerInput.CLOSE_CALL);
-            newState.ifPresent(s -> this.database.update(
-                    caller.id(),
-                    new Entity(caller.id(), new Entity.State(s, caller.state().missCallCount()))));
+            Optional<Integer> newState = this.nfa.consume(caller.getState().getStateId(), PlayerInput.CLOSE_CALL);
+            newState.ifPresent(s -> {
+                Entity entity = new Entity(
+                        caller.getId(),
+                        new Entity.State(
+                                s,
+                                caller.getState().getMissCallCount(),
+                                caller.getState().getEntityType()));
+                this.database.update(caller.getId(), entity);
+                this.entityPresenter.present(new PresentableEntity(
+                        entity.getId(),
+                        new PresentableEntity.State(
+                                entity.getState().getStateId(),
+                                entity.getState().getMissCallCount(),
+                                entity.getState().getEntityType())));
+            });
         }
 
         if (callee != null) {
-            Optional<Integer> newState = this.nfa.consume(callee.state().stateId(), PlayerInput.CLOSE_CALL);
-            newState.ifPresent(s -> this.database.update(
-                    callee.id(),
-                    new Entity(callee.id(), new Entity.State(s, callee.state().missCallCount()))));
+            Optional<Integer> newState = this.nfa.consume(callee.getState().getStateId(), PlayerInput.CLOSE_CALL);
+            newState.ifPresent(s -> {
+                Entity entity = new Entity(
+                        callee.getId(),
+                        new Entity.State(
+                                s,
+                                callee.getState().getMissCallCount(),
+                                callee.getState().getEntityType()));
+                this.database.update(callee.getId(), entity);
+                this.entityPresenter.present(new PresentableEntity(
+                        entity.getId(),
+                        new PresentableEntity.State(
+                                entity.getState().getStateId(),
+                                entity.getState().getMissCallCount(),
+                                entity.getState().getEntityType())));
+            });
         }
 
         errorPresenter.presentError(new ErrorEntity("error.call.closed" + p.getCallerId() + "|" + p.getCalleeId()));
-
-        return new Call(con.id(), con.callerId(), con.calleeId(), ConnectionState.DEAD);
+        callConnectionPresenter.present(
+                new PresentableCallConnection(con.getId(), con.getCallerId(), con.getCalleeId(), false));
+        return new Call(con.getId(), con.getCallerId(), con.getCalleeId(), ConnectionState.DEAD);
     }
 
     @Override
@@ -97,31 +136,56 @@ public final class PrivilegedCallStateManager implements CallStateManager {
                         && entry.getValue().getCalleeId().equals(calleeId))
                 .findAny();
         if (!con.isPresent()) return null;
-
-        this.callConnectionManager.close(con.get().getKey());
+        UUID conId = con.get().getKey();
+        this.callConnectionManager.close(conId);
         this.connections.remove(con.get().getKey());
 
         Peer p = con.get().getValue();
+
         Entity caller = this.database.getById(p.getCallerId());
         Entity callee = this.database.getById(p.getCalleeId());
         if (caller != null) {
-            Optional<Integer> newState = this.nfa.consume(caller.state().stateId(), PlayerInput.CLOSE_CALL);
-            newState.ifPresent(s -> this.database.update(
-                    caller.id(),
-                    new Entity(caller.id(), new Entity.State(s, caller.state().missCallCount()))));
+            Optional<Integer> newState = this.nfa.consume(caller.getState().getStateId(), PlayerInput.CLOSE_CALL);
+            newState.ifPresent(s -> {
+                Entity entity = new Entity(
+                        caller.getId(),
+                        new Entity.State(
+                                s,
+                                caller.getState().getMissCallCount(),
+                                caller.getState().getEntityType()));
+                this.database.update(caller.getId(), entity);
+                this.entityPresenter.present(new PresentableEntity(
+                        entity.getId(),
+                        new PresentableEntity.State(
+                                entity.getState().getStateId(),
+                                entity.getState().getMissCallCount(),
+                                entity.getState().getEntityType())));
+            });
         }
 
         if (callee != null) {
-            Optional<Integer> newState = this.nfa.consume(callee.state().stateId(), PlayerInput.CLOSE_CALL);
-            newState.ifPresent(s -> this.database.update(
-                    callee.id(),
-                    new Entity(callee.id(), new Entity.State(s, callee.state().missCallCount()))));
+            Optional<Integer> newState = this.nfa.consume(callee.getState().getStateId(), PlayerInput.CLOSE_CALL);
+            newState.ifPresent(s -> {
+                Entity entity = new Entity(
+                        callee.getId(),
+                        new Entity.State(
+                                s,
+                                callee.getState().getMissCallCount(),
+                                callee.getState().getEntityType()));
+                this.database.update(callee.getId(), entity);
+                this.entityPresenter.present(new PresentableEntity(
+                        entity.getId(),
+                        new PresentableEntity.State(
+                                entity.getState().getStateId(),
+                                entity.getState().getMissCallCount(),
+                                entity.getState().getEntityType())));
+            });
         }
 
         ErrorEntity error = new ErrorEntity("error.call.closed" + p.getCallerId() + "|" + p.getCalleeId());
         error.setContext(new AbstractMap.SimpleImmutableEntry<>(p.getCallerId(), p.getCalleeId()));
         errorPresenter.presentError(error);
-
+        callConnectionPresenter.present(new PresentableCallConnection(conId, p.getCallerId(), p.getCalleeId(), false));
         return new Call(con.get().getKey(), p.getCallerId(), p.getCalleeId(), ConnectionState.DEAD);
     }
 

@@ -8,9 +8,13 @@ import io.github.singlerr.semaphore.interactors.access.call.CallConnectionHandle
 import io.github.singlerr.semaphore.interactors.access.call.CallState;
 import io.github.singlerr.semaphore.interactors.access.database.DatabaseGateway;
 import io.github.singlerr.semaphore.interactors.access.database.Entity;
+import io.github.singlerr.semaphore.interactors.access.database.EntityType;
 import io.github.singlerr.semaphore.interactors.admin.manager.CallStateManager;
 import io.github.singlerr.semaphore.interactors.admin.manager.data.Call;
 import io.github.singlerr.semaphore.interactors.admin.manager.data.ConnectionState;
+import io.github.singlerr.semaphore.interactors.admin.presenter.EntityPresenter;
+import io.github.singlerr.semaphore.interactors.admin.presenter.data.ErrorEntity;
+import io.github.singlerr.semaphore.interactors.admin.presenter.data.PresentableEntity;
 import io.github.singlerr.semaphore.interactors.callee.CalleeInteractor;
 import io.github.singlerr.semaphore.interactors.callee.manager.data.ResponseType;
 import io.github.singlerr.semaphore.interactors.callee.presenter.CallResponsePresenter;
@@ -20,6 +24,7 @@ import io.github.singlerr.semaphore.interactors.callee.presenter.data.Error;
 import io.github.singlerr.semaphore.policy.callee.SimpleCalleeInteractor;
 import io.github.singlerr.semaphore.policy.database.PlayerDatabase;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
@@ -29,55 +34,82 @@ class CallStateMachineTest {
     void testAcceptCall() {
         DatabaseGateway stubDatabase = new PlayerDatabase();
         CallConnectionHandler stubCallConnectionHandler = new StubCallConnectionHandler();
+        EntityPresenter stubEntityPresenter = new StubEntityPresenter();
         CalleeInteractor stubInteractor = new SimpleCalleeInteractor(
-                stubDatabase, new StubCallStateManager(), new StubErrorHandler(), new StubResponsePresenter());
+                stubDatabase,
+                new StubCallStateManager(),
+                new StubErrorHandler(),
+                new StubResponsePresenter(),
+                stubEntityPresenter);
 
-        Entity stubCaller = new Entity(UUID.randomUUID(), new Entity.State(1, new HashMap<>()));
-        Entity stubCallee = new Entity(UUID.randomUUID(), new Entity.State(2, new HashMap<>()));
+        Entity stubCaller = new Entity(UUID.randomUUID(), new Entity.State(1, new HashMap<>(), EntityType.PLAYER));
+        Entity stubCallee = new Entity(UUID.randomUUID(), new Entity.State(2, new HashMap<>(), EntityType.PLAYER));
 
-        stubDatabase.create(stubCaller.id(), stubCaller);
-        stubDatabase.create(stubCallee.id(), stubCallee);
+        stubDatabase.create(stubCaller.getId(), stubCaller);
+        stubDatabase.create(stubCallee.getId(), stubCallee);
 
-        stubInteractor.getResponseManager().reply(stubCaller.id(), stubCallee.id(), ResponseType.ACCEPT);
+        stubInteractor.getResponseManager().reply(stubCaller.getId(), stubCallee.getId(), ResponseType.ACCEPT);
 
-        assertEquals(3, stubDatabase.getById(stubCaller.id()).state().stateId());
-        assertEquals(3, stubDatabase.getById(stubCallee.id()).state().stateId());
+        assertEquals(3, stubDatabase.getById(stubCaller.getId()).getState().getStateId());
+        assertEquals(3, stubDatabase.getById(stubCallee.getId()).getState().getStateId());
     }
 
     @Test
     void testRejectCall() {
         DatabaseGateway stubDatabase = new PlayerDatabase();
         CallConnectionHandler stubCallConnectionHandler = new StubCallConnectionHandler();
+        EntityPresenter stubEntityPresenter = new StubEntityPresenter();
         CalleeInteractor stubInteractor = new SimpleCalleeInteractor(
-                stubDatabase, new StubCallStateManager(), new StubErrorHandler(), new StubResponsePresenter());
+                stubDatabase,
+                new StubCallStateManager(),
+                new StubErrorHandler(),
+                new StubResponsePresenter(),
+                stubEntityPresenter);
 
-        Entity stubCaller = new Entity(UUID.randomUUID(), new Entity.State(1, new HashMap<>()));
-        Entity stubCallee = new Entity(UUID.randomUUID(), new Entity.State(2, new HashMap<>()));
+        Entity stubCaller = new Entity(UUID.randomUUID(), new Entity.State(1, new HashMap<>(), EntityType.PLAYER));
+        Entity stubCallee = new Entity(UUID.randomUUID(), new Entity.State(2, new HashMap<>(), EntityType.PLAYER));
 
-        stubDatabase.create(stubCaller.id(), stubCaller);
-        stubDatabase.create(stubCallee.id(), stubCallee);
+        stubDatabase.create(stubCaller.getId(), stubCaller);
+        stubDatabase.create(stubCallee.getId(), stubCallee);
 
-        stubInteractor.getResponseManager().reply(stubCaller.id(), stubCallee.id(), ResponseType.REJECT);
+        stubInteractor.getResponseManager().reply(stubCaller.getId(), stubCallee.getId(), ResponseType.REJECT);
 
-        assertEquals(0, stubDatabase.getById(stubCaller.id()).state().stateId());
-        assertEquals(0, stubDatabase.getById(stubCallee.id()).state().stateId());
+        assertEquals(0, stubDatabase.getById(stubCaller.getId()).getState().getStateId());
+        assertEquals(0, stubDatabase.getById(stubCallee.getId()).getState().getStateId());
     }
 
     @Test
     void testWhenPlayerNotAvailable() {
         DatabaseGateway stubDatabase = new PlayerDatabase();
         CallConnectionHandler stubCallConnectionHandler = new StubCallConnectionHandler();
+        EntityPresenter stubEntityPresenter = new StubEntityPresenter();
         CalleeInteractor stubInteractor = new SimpleCalleeInteractor(
-                stubDatabase, new StubCallStateManager(), new StubErrorHandler(), new StubResponsePresenter());
+                stubDatabase,
+                new StubCallStateManager(),
+                new StubErrorHandler(),
+                new StubResponsePresenter(),
+                stubEntityPresenter);
 
-        Entity stubCaller = new Entity(UUID.randomUUID(), new Entity.State(1, new HashMap<>()));
-        Entity stubCallee = new Entity(UUID.randomUUID(), new Entity.State(2, new HashMap<>()));
+        Entity stubCaller = new Entity(UUID.randomUUID(), new Entity.State(1, new HashMap<>(), EntityType.PLAYER));
+        Entity stubCallee = new Entity(UUID.randomUUID(), new Entity.State(2, new HashMap<>(), EntityType.PLAYER));
 
-        stubDatabase.create(stubCaller.id(), stubCaller);
+        stubDatabase.create(stubCaller.getId(), stubCaller);
 
-        stubInteractor.getResponseManager().reply(stubCaller.id(), stubCallee.id(), ResponseType.REJECT);
+        stubInteractor.getResponseManager().reply(stubCaller.getId(), stubCallee.getId(), ResponseType.REJECT);
 
-        assertEquals(0, stubDatabase.getById(stubCaller.id()).state().stateId());
+        assertEquals(0, stubDatabase.getById(stubCaller.getId()).getState().getStateId());
+    }
+
+    private static class StubEntityPresenter implements EntityPresenter {
+
+        @Override
+        public void present(PresentableEntity entity) {}
+
+        @Override
+        public void present(List<PresentableEntity> entities) {}
+
+        @Override
+        public void presentError(ErrorEntity error) {}
     }
 
     private static class StubCallStateManager implements CallStateManager {
@@ -135,7 +167,7 @@ class CallStateMachineTest {
 
         @Override
         public CallConnection close(UUID connectionId) {
-            return new CallConnection(connectionId, cache.calleeId(), cache.callerId(), CallState.DEAD);
+            return new CallConnection(connectionId, cache.getCalleeId(), cache.getCallerId(), CallState.DEAD);
         }
 
         @Override

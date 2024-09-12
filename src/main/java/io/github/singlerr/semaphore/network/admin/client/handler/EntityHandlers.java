@@ -1,6 +1,7 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.network.admin.client.handler;
 
+import io.github.singlerr.semaphore.interactors.access.database.EntityType;
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.ErrorEntity;
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.PresentableEntity;
 import io.github.singlerr.semaphore.network.ClientboundPacketHandler;
@@ -64,7 +65,11 @@ public final class EntityHandlers {
         @Override
         public PacketPresentableEntity handleClient(PacketPresentableEntity packet, ClientboundPacketContext context) {
             this.entityController.present(new PresentableEntity(
-                    packet.getId(), new PresentableEntity.State(packet.getStateId(), packet.getMissCallCount())));
+                    packet.getId(),
+                    new PresentableEntity.State(
+                            packet.getStateId(),
+                            packet.getMissCallCount(),
+                            EntityType.valueOf(packet.getEntityType().name()))));
             return null;
         }
     }

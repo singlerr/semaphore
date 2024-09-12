@@ -19,11 +19,11 @@ public class ServerboundErrorPresenter implements ErrorPresenter {
     @Override
     public void present(Error error) {
         EntityPlayerMP caller =
-                FMLServerHandler.instance().getServer().getPlayerList().getPlayerByUUID(error.callerId());
+                FMLServerHandler.instance().getServer().getPlayerList().getPlayerByUUID(error.getCallerId());
         EntityPlayerMP callee =
-                FMLServerHandler.instance().getServer().getPlayerList().getPlayerByUUID(error.calleeId());
+                FMLServerHandler.instance().getServer().getPlayerList().getPlayerByUUID(error.getCalleeId());
 
-        PacketError packet = new PacketError(error.callerId(), error.calleeId(), error.reason());
+        PacketError packet = new PacketError(error.getCallerId(), error.getCalleeId(), error.getReason());
 
         if (caller != null) {
             this.networkManager.sendTo(packet, caller);

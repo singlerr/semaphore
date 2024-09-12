@@ -3,6 +3,8 @@ package io.github.singlerr.semaphore.policy.caller.interactors;
 
 import io.github.singlerr.semaphore.interactors.access.database.DatabaseGateway;
 import io.github.singlerr.semaphore.interactors.access.database.Entity;
+import io.github.singlerr.semaphore.interactors.admin.presenter.EntityPresenter;
+import io.github.singlerr.semaphore.interactors.admin.presenter.data.PresentableEntity;
 import io.github.singlerr.semaphore.interactors.caller.manager.CallRequestManager;
 import io.github.singlerr.semaphore.interactors.caller.manager.data.CallRequest;
 import io.github.singlerr.semaphore.interactors.caller.presenter.CallRequestPresenter;
@@ -22,39 +24,66 @@ public final class CallStateMachine implements CallRequestManager {
     private final DatabaseGateway database;
     private final ErrorPresenter errorPresenter;
     private final CallRequestPresenter requestPresenter;
+    private final EntityPresenter entityPresenter;
 
     public CallStateMachine(
-            DatabaseGateway database, ErrorPresenter errorPresenter, CallRequestPresenter requestPresenter) {
+            DatabaseGateway database,
+            ErrorPresenter errorPresenter,
+            CallRequestPresenter requestPresenter,
+            EntityPresenter entityPresenter) {
         this.database = database;
-        this.dfa = PolicyConstants.STATE_DFA.clone();
+        this.dfa = PolicyConstants.STATE_NFA.clone();
         this.errorPresenter = errorPresenter;
         this.requestPresenter = requestPresenter;
+        this.entityPresenter = entityPresenter;
     }
 
     @Override
     public void request(CallRequest request) {
-        UUID callerId = request.callerId();
-        UUID calleeId = request.calleeId();
+        UUID callerId = request.getCallerId();
+        UUID calleeId = request.getCalleeId();
 
         Entity caller = database.getById(callerId);
         Entity callee = database.getById(calleeId);
 
         if (caller == null || callee == null) {
+
             if (caller != null) {
-                database.update(
+                Entity entity = new Entity(
                         callerId,
-                        new Entity(callerId, new Entity.State(0, caller.state().missCallCount())));
+                        new Entity.State(
+                                0,
+                                caller.getState().getMissCallCount(),
+                                caller.getState().getEntityType()));
+                database.update(callerId, entity);
+                entityPresenter.present(new PresentableEntity(
+                        entity.getId(),
+                        new PresentableEntity.State(
+                                entity.getState().getStateId(),
+                                entity.getState().getMissCallCount(),
+                                entity.getState().getEntityType())));
+                return;
             }
             if (callee != null) {
-                database.update(
+                Entity entity = new Entity(
                         calleeId,
-                        new Entity(calleeId, new Entity.State(0, callee.state().missCallCount())));
+                        new Entity.State(
+                                0,
+                                callee.getState().getMissCallCount(),
+                                callee.getState().getEntityType()));
+                database.update(calleeId, entity);
+                entityPresenter.present(new PresentableEntity(
+                        entity.getId(),
+                        new PresentableEntity.State(
+                                entity.getState().getStateId(),
+                                entity.getState().getMissCallCount(),
+                                entity.getState().getEntityType())));
+                return;
             }
-            return;
         }
 
-        Optional<Integer> newCallerState = dfa.consume(caller.state().stateId(), PlayerInput.REQUEST_CALL);
-        Optional<Integer> newCalleeState = dfa.consume(callee.state().stateId(), PlayerInput.RECEIVE_CALL);
+        Optional<Integer> newCallerState = dfa.consume(caller.getState().getStateId(), PlayerInput.REQUEST_CALL);
+        Optional<Integer> newCalleeState = dfa.consume(callee.getState().getStateId(), PlayerInput.RECEIVE_CALL);
 
         if (!newCallerState.isPresent()) {
             resetState(callee);
@@ -77,18 +106,34 @@ public final class CallStateMachine implements CallRequestManager {
             callTimeout(callerId, calleeId);
         });
 
-        database.update(
+        caller = new Entity(
                 callerId,
-                new Entity(
-                        callerId,
-                        new Entity.State(newCallerState.get(), caller.state().missCallCount())));
-        database.update(
+                new Entity.State(
+                        newCallerState.get(),
+                        caller.getState().getMissCallCount(),
+                        caller.getState().getEntityType()));
+        callee = new Entity(
                 calleeId,
-                new Entity(
-                        calleeId,
-                        new Entity.State(newCalleeState.get(), callee.state().missCallCount())));
+                new Entity.State(
+                        newCalleeState.get(),
+                        callee.getState().getMissCallCount(),
+                        callee.getState().getEntityType()));
+        database.update(callerId, caller);
+        database.update(calleeId, callee);
 
         requestPresenter.present(new InverseCallRequest(callerId, calleeId));
+        entityPresenter.present(new PresentableEntity(
+                caller.getId(),
+                new PresentableEntity.State(
+                        caller.getState().getStateId(),
+                        caller.getState().getMissCallCount(),
+                        caller.getState().getEntityType())));
+        entityPresenter.present(new PresentableEntity(
+                callee.getId(),
+                new PresentableEntity.State(
+                        callee.getState().getStateId(),
+                        callee.getState().getMissCallCount(),
+                        callee.getState().getEntityType())));
     }
 
     private void callTimeout(UUID callerId, UUID calleeId) {
@@ -98,23 +143,44 @@ public final class CallStateMachine implements CallRequestManager {
         if (caller != null) {
             database.update(
                     callerId,
-                    new Entity(callerId, new Entity.State(0, caller.state().missCallCount())));
+                    new Entity(
+                            callerId,
+                            new Entity.State(
+                                    0,
+                                    caller.getState().getMissCallCount(),
+                                    caller.getState().getEntityType())));
             errorPresenter.present(new Error(calleeId, callerId, "error.call.timeout"));
         }
 
         if (callee != null) {
-            callee.state()
-                    .missCallCount()
-                    .put(callerId, callee.state().missCallCount().getOrDefault(callerId, 0) + 1);
+            callee.getState()
+                    .getMissCallCount()
+                    .put(callerId, callee.getState().getMissCallCount().getOrDefault(callerId, 0) + 1);
             database.update(
                     callerId,
-                    new Entity(callerId, new Entity.State(0, callee.state().missCallCount())));
+                    new Entity(
+                            callerId,
+                            new Entity.State(
+                                    0,
+                                    callee.getState().getMissCallCount(),
+                                    callee.getState().getEntityType())));
+            errorPresenter.present(new Error(calleeId, callerId, "error.call.timeout"));
         }
     }
 
     private void resetState(Entity entity) {
-        database.update(
-                entity.id(),
-                new Entity(entity.id(), new Entity.State(0, entity.state().missCallCount())));
+        Entity newEntity = new Entity(
+                entity.getId(),
+                new Entity.State(
+                        0,
+                        entity.getState().getMissCallCount(),
+                        entity.getState().getEntityType()));
+        database.update(entity.getId(), newEntity);
+        entityPresenter.present(new PresentableEntity(
+                newEntity.getId(),
+                new PresentableEntity.State(
+                        newEntity.getState().getStateId(),
+                        newEntity.getState().getMissCallCount(),
+                        newEntity.getState().getEntityType())));
     }
 }

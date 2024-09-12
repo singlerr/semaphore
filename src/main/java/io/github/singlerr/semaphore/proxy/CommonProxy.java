@@ -99,14 +99,15 @@ public abstract class CommonProxy {
         // Lazy init
         callRequestPresenter = new CallRequestPresenterAdapter(CallRequestPresenterAdapter.PresenterContext::new);
         errorPresenter = new ErrorPresenterAdapter(ErrorPresenterAdapter.ErrorContext::new);
-        CallerInteractor callerInteractor = new SimpleCallerInteractor(database, errorPresenter, callRequestPresenter);
+        CallerInteractor callerInteractor =
+                new SimpleCallerInteractor(database, errorPresenter, callRequestPresenter, entityPresenter);
 
         // Lazy init
         errorHandler = new ErrorHandlerAdapter(ErrorHandlerAdapter.ErrorContext::new);
         responsePresenter = new CallPresenterAdapter(CallPresenterAdapter.PresenterContext::new);
 
         CalleeInteractor calleeInteractor = new SimpleCalleeInteractor(
-                database, adminInteractor.getStateManager(), errorHandler, responsePresenter);
+                database, adminInteractor.getStateManager(), errorHandler, responsePresenter, entityPresenter);
 
         // Make Accessor store
         DatabaseAccess.setInstance(database);

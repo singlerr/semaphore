@@ -22,7 +22,7 @@ public final class ServerboundCallConnectionPresenter implements CallConnectionP
         if (entity.getContext() instanceof EntityPlayerMP) {
             this.networkManager.sendTo(
                     new PacketPresentableCallConnection(
-                            entity.id(), entity.callerId(), entity.calleeId(), entity.alive()),
+                            entity.getId(), entity.getCallerId(), entity.getCalleeId(), entity.isAlive()),
                     (EntityPlayerMP) entity.getContext());
         }
     }
@@ -30,7 +30,7 @@ public final class ServerboundCallConnectionPresenter implements CallConnectionP
     @Override
     public void presentError(ErrorEntity error) {
         if (error.getContext() instanceof EntityPlayerMP) {
-            this.networkManager.sendTo(new PacketErrorEntity(error.message()), (EntityPlayerMP) error.getContext());
+            this.networkManager.sendTo(new PacketErrorEntity(error.getMessage()), (EntityPlayerMP) error.getContext());
         }
     }
 }

@@ -2,6 +2,7 @@
 package io.github.singlerr.semaphore.client.gui.widget;
 
 import de.maxhenkel.voicechat.gui.GameProfileUtils;
+import io.github.singlerr.semaphore.interactors.access.database.EntityType;
 import io.github.singlerr.semaphore.interactors.admin.controller.CallConnectionController;
 import io.github.singlerr.semaphore.interactors.admin.controller.CallStateController;
 import io.github.singlerr.semaphore.interactors.admin.controller.EntityController;
@@ -86,14 +87,14 @@ public final class GuiMutableEntityEntry implements GuiListExtended.IGuiListEntr
             float partialTicks) {
         this.selected = isSelected;
 
-        NetworkPlayerInfo info = mc.getConnection().getPlayerInfo(entity.id());
+        NetworkPlayerInfo info = mc.getConnection().getPlayerInfo(entity.getId());
 
         FontRenderer fontRenderer = mc.fontRenderer;
         Gui.drawRect(x, y, x + listWidth, y + slotHeight, Color.GRAY.getRGB());
 
-        this.drawHead(entity.id(), x + 5, y + 3, slotHeight - 5, slotHeight - 5, partialTicks);
+        this.drawHead(entity.getId(), x + 5, y + 3, slotHeight - 5, slotHeight - 5, partialTicks);
 
-        PlayerState state = PolicyConstants.STATE_DFA.encode(entity.state().stateId());
+        PlayerState state = PolicyConstants.STATE_NFA.decode(entity.getState().getStateId());
 
         String displayName = info.getDisplayName() != null
                 ? info.getDisplayName().getFormattedText()
@@ -130,6 +131,7 @@ public final class GuiMutableEntityEntry implements GuiListExtended.IGuiListEntr
 
     @Override
     public boolean mousePressed(int slotIndex, int mouseX, int mouseY, int mouseEvent, int relativeX, int relativeY) {
+        txtState.mouseClicked(mouseX, mouseY, mouseEvent);
         if (btnDeleteEntity.mousePressed(mc, mouseX, mouseY)) {
             deleteEntity();
             return false;
@@ -143,15 +145,21 @@ public final class GuiMutableEntityEntry implements GuiListExtended.IGuiListEntr
     }
 
     private void deleteEntity() {
-        entityController.deleteEntity(new EntityQuery.DeleteEntity(entity.id()));
+        entityController.deleteEntity(new EntityQuery.DeleteEntity(entity.getId()));
     }
 
     private void resetEntityState() {
         entityController.updateEntity(new EntityQuery.UpdateEntity(
-                entity.id(),
-                new EntityQuery.State(entity.state().stateId(), entity.state().missCallCount())));
+                entity.getId(),
+                new EntityQuery.State(
+                        entity.getState().getStateId(),
+                        entity.getState().getMissCallCount(),
+                        entity.getState().getEntityType() == EntityType.PLAYER
+                                ? io.github.singlerr.semaphore.interactors.admin.controller.data.EntityType.PLAYER
+                                : io.github.singlerr.semaphore.interactors.admin.controller.data.EntityType
+                                        .PHONE_BOX)));
         if (currentConnection != null)
-            stateController.closeCall(new CallStateQuery.CloseCallById(currentConnection.id()));
+            stateController.closeCall(new CallStateQuery.CloseCallById(currentConnection.getId()));
     }
 
     public boolean isSelected() {

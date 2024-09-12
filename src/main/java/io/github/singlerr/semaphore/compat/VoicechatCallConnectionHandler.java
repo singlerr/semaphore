@@ -55,14 +55,15 @@ public final class VoicechatCallConnectionHandler extends BaseCallConnectionHand
 
         if (connection == null) return null;
 
-        VoicechatConnection caller = voicechatServerApi.getConnectionOf(connection.callerId());
-        VoicechatConnection callee = voicechatServerApi.getConnectionOf(connection.calleeId());
+        VoicechatConnection caller = voicechatServerApi.getConnectionOf(connection.getCallerId());
+        VoicechatConnection callee = voicechatServerApi.getConnectionOf(connection.getCalleeId());
         if (caller == null || callee == null) return null;
 
         caller.setGroup(null);
         callee.setGroup(null);
 
-        return new CallConnection(connection.id(), connection.calleeId(), connection.callerId(), CallState.DEAD);
+        return new CallConnection(
+                connection.getId(), connection.getCalleeId(), connection.getCallerId(), CallState.DEAD);
     }
 
     @Override

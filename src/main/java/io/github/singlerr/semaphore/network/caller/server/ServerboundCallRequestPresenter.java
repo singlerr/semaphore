@@ -19,9 +19,12 @@ public final class ServerboundCallRequestPresenter implements CallRequestPresent
     @Override
     public void present(InverseCallRequest request) {
         EntityPlayerMP player =
-                FMLServerHandler.instance().getServer().getPlayerList().getPlayerByUUID(request.calleeId());
+                FMLServerHandler.instance().getServer().getPlayerList().getPlayerByUUID(request.getCalleeId());
+        PacketInverseCallRequest packet = new PacketInverseCallRequest(request.getCallerId(), request.getCalleeId());
         if (player != null) {
-            this.networkManager.sendTo(new PacketInverseCallRequest(request.callerId(), request.calleeId()), player);
+            this.networkManager.sendTo(packet, player);
+        } else {
+            this.networkManager.sendToAll(packet);
         }
     }
 }

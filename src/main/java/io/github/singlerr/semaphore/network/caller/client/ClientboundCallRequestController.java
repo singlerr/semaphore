@@ -16,6 +16,6 @@ public final class ClientboundCallRequestController implements CallRequestContro
 
     @Override
     public void request(CallRequest request) {
-        this.networkManager.sendToServer(new PacketCallRequest(request.callerId(), request.calleeId()));
+        this.networkManager.sendToServer(new PacketCallRequest(request.getCallerId(), request.getCalleeId()));
     }
 }

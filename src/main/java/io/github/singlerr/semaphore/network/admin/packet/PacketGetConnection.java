@@ -4,17 +4,17 @@ package io.github.singlerr.semaphore.network.admin.packet;
 import io.github.singlerr.semaphore.network.utils.SerializationUtils;
 import io.netty.buffer.ByteBuf;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
 public final class PacketGetConnection implements IMessage {
 
     private UUID id;
-
-    public PacketGetConnection() {}
-
-    public PacketGetConnection(UUID id) {
-        this.id = id;
-    }
 
     @Override
     public void fromBytes(ByteBuf byteBuf) {

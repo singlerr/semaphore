@@ -1,38 +1,26 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.network.admin.packet;
 
+import io.github.singlerr.semaphore.interactors.admin.controller.data.EntityType;
 import io.github.singlerr.semaphore.network.utils.SerializationUtils;
 import io.netty.buffer.ByteBuf;
 import java.util.AbstractMap;
 import java.util.Map;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
 public final class PacketUpdateEntity implements IMessage {
 
     private UUID id;
     private int stateId;
     private Map<UUID, Integer> missCallCount;
-
-    public PacketUpdateEntity() {}
-
-    public PacketUpdateEntity(UUID id, int stateId, Map<UUID, Integer> missCallCount) {
-        this.id = id;
-        this.stateId = stateId;
-        this.missCallCount = missCallCount;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public int getStateId() {
-        return stateId;
-    }
-
-    public Map<UUID, Integer> getMissCallCount() {
-        return missCallCount;
-    }
+    private EntityType entityType;
 
     @Override
     public void fromBytes(ByteBuf byteBuf) {
@@ -43,6 +31,7 @@ public final class PacketUpdateEntity implements IMessage {
             int count = buf.readInt();
             return new AbstractMap.SimpleImmutableEntry<>(id, count);
         });
+        this.entityType = SerializationUtils.readEnum(EntityType.class, byteBuf);
     }
 
     @Override
@@ -53,5 +42,6 @@ public final class PacketUpdateEntity implements IMessage {
             SerializationUtils.writeUUID(buf, entry.getKey());
             buf.writeInt(entry.getValue());
         });
+        SerializationUtils.writeEnum(this.entityType, byteBuf);
     }
 }

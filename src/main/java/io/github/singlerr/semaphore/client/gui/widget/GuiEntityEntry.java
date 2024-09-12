@@ -2,6 +2,7 @@
 package io.github.singlerr.semaphore.client.gui.widget;
 
 import de.maxhenkel.voicechat.gui.GameProfileUtils;
+import io.github.singlerr.semaphore.interactors.access.database.EntityType;
 import io.github.singlerr.semaphore.interactors.admin.controller.CallConnectionController;
 import io.github.singlerr.semaphore.interactors.admin.controller.CallStateController;
 import io.github.singlerr.semaphore.interactors.admin.controller.EntityController;
@@ -16,6 +17,8 @@ import io.github.singlerr.semaphore.policy.dfa.PlayerState;
 import io.github.singlerr.semaphore.utils.Utils;
 import java.awt.*;
 import java.util.UUID;
+import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -23,7 +26,6 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiListExtended;
 import net.minecraft.client.model.ModelHumanoidHead;
 import net.minecraft.client.model.ModelSkeletonHead;
-import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.math.BlockPos;
 
@@ -35,7 +37,11 @@ public final class GuiEntityEntry implements GuiListExtended.IGuiListEntry {
     private final CallRequestController requestController;
     private final CallStateController stateController;
 
+    @Setter
+    @Getter
     private PresentableEntity entity;
+
+    @Setter
     private PresentableCallConnection currentConnection;
 
     private boolean selected;
@@ -63,18 +69,6 @@ public final class GuiEntityEntry implements GuiListExtended.IGuiListEntry {
         this.mc = Minecraft.getMinecraft();
     }
 
-    public PresentableEntity getEntity() {
-        return entity;
-    }
-
-    public void setCurrentConnection(PresentableCallConnection currentConnection) {
-        this.currentConnection = currentConnection;
-    }
-
-    public void setEntity(PresentableEntity entity) {
-        this.entity = entity;
-    }
-
     @Override
     public void updatePosition(int slotIndex, int x, int y, float partialTicks) {}
 
@@ -90,25 +84,17 @@ public final class GuiEntityEntry implements GuiListExtended.IGuiListEntry {
             boolean isSelected,
             float partialTicks) {
         this.selected = isSelected;
-
-        NetworkPlayerInfo info = mc.getConnection().getPlayerInfo(entity.id());
+        boolean isPhoneBox = entity.getState().getEntityType() == EntityType.PHONE_BOX;
 
         FontRenderer fontRenderer = mc.fontRenderer;
         Gui.drawRect(x, y, x + listWidth, y + slotHeight, Color.GRAY.getRGB());
 
-        boolean isPhoneBox = info == null;
+        if (!isPhoneBox) this.drawHead(entity.getId(), x + 5, y + 3, slotHeight - 5, slotHeight - 5, partialTicks);
 
-        if (!isPhoneBox) this.drawHead(entity.id(), x + 5, y + 3, slotHeight - 5, slotHeight - 5, partialTicks);
+        PlayerState state = PolicyConstants.STATE_NFA.decode(entity.getState().getStateId());
 
-        PlayerState state = PolicyConstants.STATE_DFA.encode(entity.state().stateId());
-
-        String text;
-        if (isPhoneBox) {
-            BlockPos pos = Utils.fromUUID(entity.id());
-            text = String.format("PhoneBox(x=%d,y=%d,z=%d)", pos.getX(), pos.getY(), pos.getZ());
-        } else {
-            text = info.getDisplayName().getFormattedText();
-        }
+        BlockPos pos = Utils.fromUUID(entity.getId());
+        String text = String.format("PhoneBox(x=%d,y=%d,z=%d)", pos.getX(), pos.getY(), pos.getZ());
 
         fontRenderer.drawStringWithShadow(text, x + slotHeight + 5, y + 5, Color.WHITE.getRGB());
         fontRenderer.drawStringWithShadow(
@@ -135,32 +121,39 @@ public final class GuiEntityEntry implements GuiListExtended.IGuiListEntry {
 
     @Override
     public boolean mousePressed(int slotIndex, int mouseX, int mouseY, int mouseEvent, int relativeX, int relativeY) {
-
+        btnCallEntity.playPressSound(Minecraft.getMinecraft().getSoundHandler());
         if (btnDeleteEntity.mousePressed(mc, mouseX, mouseY)) {
             deleteEntity();
-            btnCallEntity.playPressSound(Minecraft.getMinecraft().getSoundHandler());
             return false;
         }
 
         if (btnCallEntity.mousePressed(mc, mouseX, mouseY)) {
+            PlayerState state =
+                    PolicyConstants.STATE_NFA.decode(entity.getState().getStateId());
+            if (state != PlayerState.DEFAULT) {
+                closeCall();
+                return false;
+            }
             callEntity();
-            btnCallEntity.playPressSound(Minecraft.getMinecraft().getSoundHandler());
         }
 
         return false;
     }
 
     private void deleteEntity() {
-        entityController.deleteEntity(new EntityQuery.DeleteEntity(entity.id()));
+        entityController.deleteEntity(new EntityQuery.DeleteEntity(entity.getId()));
     }
 
     private void callEntity() {
-        requestController.request(new CallRequest(mc.player.getUniqueID(), entity.id()));
+        requestController.request(new CallRequest(mc.player.getUniqueID(), entity.getId()));
     }
 
     private void closeCall() {
         if (currentConnection != null) {
-            stateController.closeCall(new CallStateQuery.CloseCallById(currentConnection.id()));
+            stateController.closeCall(new CallStateQuery.CloseCallById(currentConnection.getId()));
+        } else {
+            // Call twice to stop call
+            callEntity();
         }
     }
 

@@ -63,6 +63,10 @@ public final class NetworkManager {
         this.internalChannel.sendTo(message, player);
     }
 
+    public void sendToAll(IMessage message) {
+        this.internalChannel.sendToAll(message);
+    }
+
     @Log4j2
     private static class DummyClientboundPacketHandler<REQ extends IMessage, REPLY extends IMessage>
             extends ClientboundPacketHandler<REQ, REPLY> {

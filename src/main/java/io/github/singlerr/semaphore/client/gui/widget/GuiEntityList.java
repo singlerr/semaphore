@@ -20,6 +20,11 @@ public class GuiEntityList extends GuiListExtended {
         this.entries = Collections.synchronizedList(new ArrayList<>());
     }
 
+    public GuiEntityList(int width, int height, int top, int bottom, int size, List<GuiEntityEntry> entryList) {
+        super(Minecraft.getMinecraft(), width, height, top, bottom, size);
+        this.entries = entryList;
+    }
+
     @Override
     public int getListWidth() {
         return this.width - 15;

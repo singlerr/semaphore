@@ -22,7 +22,7 @@ public final class CallStateHandlers {
 
         @Override
         public PacketCloseCall handleServer(PacketCloseCall packet, ServerboundPacketContext context) {
-            CallStateQuery.CloseCall query = new CallStateQuery.CloseCall(packet.callerId(), packet.calleeId());
+            CallStateQuery.CloseCall query = new CallStateQuery.CloseCall(packet.getCallerId(), packet.getCalleeId());
             query.setContext(context.getServerHandler().player);
             this.callStateController.closeCall(query);
             return null;

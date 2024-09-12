@@ -17,6 +17,6 @@ public final class ClientboundCallResponseController implements CallResponseCont
     @Override
     public void reply(CallResponse response) {
         this.networkManager.sendToServer(
-                new PacketCallResponse(response.callerId(), response.calleeId(), response.response()));
+                new PacketCallResponse(response.getCallerId(), response.getCalleeId(), response.getResponse()));
     }
 }

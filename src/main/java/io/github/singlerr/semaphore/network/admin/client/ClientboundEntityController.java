@@ -16,23 +16,35 @@ public final class ClientboundEntityController implements EntityController {
 
     @Override
     public void getEntity(EntityQuery.GetEntity query) {
-        this.networkManager.sendToServer(new PacketGetEntity(query.id()));
+        this.networkManager.sendToServer(new PacketGetEntity(query.getId()));
     }
 
     @Override
     public void createEntity(EntityQuery.CreateEntity query) {
-        this.networkManager.sendToServer(new PacketCreateEntity(query.id()));
+        this.networkManager.sendToServer(new PacketCreateEntity(query.getId()));
+    }
+
+    @Override
+    public void createEntity(EntityQuery.CreateEntityWithState query) {
+        this.networkManager.sendToServer(new PacketCreateEntityWithState(
+                query.getId(),
+                query.getState().getStateId(),
+                query.getState().getMissCallCount(),
+                query.getState().getEntityType()));
     }
 
     @Override
     public void deleteEntity(EntityQuery.DeleteEntity query) {
-        this.networkManager.sendToServer(new PacketDeleteEntity(query.id()));
+        this.networkManager.sendToServer(new PacketDeleteEntity(query.getId()));
     }
 
     @Override
     public void updateEntity(EntityQuery.UpdateEntity query) {
         this.networkManager.sendToServer(new PacketUpdateEntity(
-                query.id(), query.state().stateId(), query.state().missCallCount()));
+                query.getId(),
+                query.getState().getStateId(),
+                query.getState().getMissCallCount(),
+                query.getState().getEntityType()));
     }
 
     @Override

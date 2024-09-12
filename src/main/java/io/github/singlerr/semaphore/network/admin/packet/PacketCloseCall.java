@@ -4,27 +4,18 @@ package io.github.singlerr.semaphore.network.admin.packet;
 import io.github.singlerr.semaphore.network.utils.SerializationUtils;
 import io.netty.buffer.ByteBuf;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
 public final class PacketCloseCall implements IMessage {
 
     private UUID callerId;
     private UUID calleeId;
-
-    public PacketCloseCall() {}
-
-    public PacketCloseCall(UUID callerId, UUID calleeId) {
-        this.callerId = callerId;
-        this.calleeId = calleeId;
-    }
-
-    public UUID callerId() {
-        return callerId;
-    }
-
-    public UUID calleeId() {
-        return calleeId;
-    }
 
     @Override
     public void fromBytes(ByteBuf byteBuf) {

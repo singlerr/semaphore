@@ -3,6 +3,7 @@ package io.github.singlerr.semaphore.policy.database;
 
 import io.github.singlerr.semaphore.interactors.access.database.DatabaseGateway;
 import io.github.singlerr.semaphore.interactors.access.database.Entity;
+import io.github.singlerr.semaphore.interactors.access.database.EntityType;
 import java.util.*;
 
 public final class PlayerDatabase implements DatabaseGateway {
@@ -25,7 +26,7 @@ public final class PlayerDatabase implements DatabaseGateway {
 
     @Override
     public Entity create(UUID id) {
-        Entity entity = new Entity(id, new Entity.State(0, new HashMap<>()));
+        Entity entity = new Entity(id, new Entity.State(0, new HashMap<>(), EntityType.PLAYER));
         entities.put(id, entity);
         return entity;
     }

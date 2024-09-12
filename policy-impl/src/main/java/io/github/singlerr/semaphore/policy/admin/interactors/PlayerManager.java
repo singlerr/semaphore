@@ -2,6 +2,7 @@
 package io.github.singlerr.semaphore.policy.admin.interactors;
 
 import io.github.singlerr.semaphore.interactors.access.database.DatabaseGateway;
+import io.github.singlerr.semaphore.interactors.access.database.EntityType;
 import io.github.singlerr.semaphore.interactors.admin.manager.base.BaseEntityManager;
 import io.github.singlerr.semaphore.interactors.admin.manager.data.CallableEntity;
 import java.util.List;
@@ -16,8 +17,14 @@ public final class PlayerManager extends BaseEntityManager {
     public List<CallableEntity> getAll() {
         return database.getAll().stream()
                 .map(e -> new CallableEntity(
-                        e.id(),
-                        new CallableEntity.State(e.state().stateId(), e.state().missCallCount())))
+                        e.getId(),
+                        new CallableEntity.State(
+                                e.getState().getStateId(),
+                                e.getState().getMissCallCount(),
+                                e.getState().getEntityType() == EntityType.PLAYER
+                                        ? io.github.singlerr.semaphore.interactors.admin.manager.data.EntityType.PLAYER
+                                        : io.github.singlerr.semaphore.interactors.admin.manager.data.EntityType
+                                                .PHONE_BOX)))
                 .collect(Collectors.toList());
     }
 }

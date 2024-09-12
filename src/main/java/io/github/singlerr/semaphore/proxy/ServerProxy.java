@@ -37,6 +37,7 @@ import io.github.singlerr.semaphore.policy.caller.controllers.RemoteCallRequestC
 import io.github.singlerr.semaphore.policy.caller.presenters.CallRequestPresenterAdapter;
 import io.github.singlerr.semaphore.policy.caller.presenters.ErrorPresenterAdapter;
 import io.github.singlerr.semaphore.policy.callhandler.CallConnectionHandlerAdapter;
+import io.github.singlerr.semaphore.server.PlayerJoinListener;
 import net.minecraftforge.common.MinecraftForge;
 
 public final class ServerProxy extends CommonProxy {
@@ -55,6 +56,7 @@ public final class ServerProxy extends CommonProxy {
     public void postInit() {
         super.postInit();
         MinecraftForge.EVENT_BUS.register(new Debug());
+        MinecraftForge.EVENT_BUS.register(new PlayerJoinListener(entityController));
     }
 
     @Override

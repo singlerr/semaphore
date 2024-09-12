@@ -1,6 +1,9 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.client.gui;
 
+import io.github.singlerr.semaphore.interactors.admin.presenter.CallConnectionPresenter;
+import io.github.singlerr.semaphore.interactors.admin.presenter.data.ErrorEntity;
+import io.github.singlerr.semaphore.interactors.admin.presenter.data.PresentableCallConnection;
 import io.github.singlerr.semaphore.interactors.callee.controller.CallResponseController;
 import io.github.singlerr.semaphore.interactors.callee.presenter.CallResponsePresenter;
 import io.github.singlerr.semaphore.interactors.callee.presenter.ErrorHandler;
@@ -15,7 +18,8 @@ import io.github.singlerr.semaphore.policy.caller.presenters.CallRequestPresente
 import io.github.singlerr.semaphore.policy.caller.presenters.ErrorPresenterAdapter;
 import net.minecraft.client.gui.GuiScreen;
 
-public final class GuiPhone extends GuiScreen implements ErrorHandler, CallResponsePresenter, CallRequestPresenter {
+public final class GuiPhone extends GuiScreen
+        implements ErrorHandler, CallResponsePresenter, CallRequestPresenter, CallConnectionPresenter {
 
     private final CallRequestController requestController;
     private final CallResponseController responseController;
@@ -49,4 +53,10 @@ public final class GuiPhone extends GuiScreen implements ErrorHandler, CallRespo
 
     @Override
     public void present(InverseCallRequest request) {}
+
+    @Override
+    public void present(PresentableCallConnection entity) {}
+
+    @Override
+    public void presentError(ErrorEntity error) {}
 }

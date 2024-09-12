@@ -31,10 +31,14 @@ public class TileEntityPhoneBox extends TileEntity implements ITickable, CallReq
     @Setter
     private ClientWorldAwareInverseCallPresenter tracker;
 
+    @Getter
     private UUID id;
 
     @Getter
     private PlayerState state;
+
+    @Getter
+    private UUID callerId;
 
     private SoundKey currentBelling;
 
@@ -44,7 +48,7 @@ public class TileEntityPhoneBox extends TileEntity implements ITickable, CallReq
         if (id == null || state == null) return;
 
         if (state == PlayerState.RECEIVING_CALL) {
-            spawnSpiral(world, EnumParticleTypes.FIREWORKS_SPARK, pos, 0.5f, 2.0f);
+            spawnSpiral(world, EnumParticleTypes.END_ROD, pos, 0.5f, 2.0f);
         }
 
         if (currentBelling != null) {
@@ -57,7 +61,6 @@ public class TileEntityPhoneBox extends TileEntity implements ITickable, CallReq
     // -244 218
     private void spawnSpiral(World world, EnumParticleTypes particle, BlockPos center, float radius, float height) {
         float delta = 0.5f;
-
         for (float x = 0; x < 2 * Math.PI; x += delta) {
             world.spawnParticle(
                     particle,
@@ -90,6 +93,7 @@ public class TileEntityPhoneBox extends TileEntity implements ITickable, CallReq
         if (!world.isRemote) return;
 
         state = PlayerState.RECEIVING_CALL;
+        callerId = request.getCallerId();
         // Receiving call
         if (world != null) {
             currentBelling = SoundPlayerAccess.getInstance().playSound(SoundResource.BELL, 1.0f, 0.0f, true, false);

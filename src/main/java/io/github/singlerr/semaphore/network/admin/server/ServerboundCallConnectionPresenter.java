@@ -19,11 +19,12 @@ public final class ServerboundCallConnectionPresenter implements CallConnectionP
 
     @Override
     public void present(PresentableCallConnection entity) {
+        PacketPresentableCallConnection packet = new PacketPresentableCallConnection(
+                entity.getId(), entity.getCallerId(), entity.getCalleeId(), entity.isAlive());
         if (entity.getContext() instanceof EntityPlayerMP) {
-            this.networkManager.sendTo(
-                    new PacketPresentableCallConnection(
-                            entity.getId(), entity.getCallerId(), entity.getCalleeId(), entity.isAlive()),
-                    (EntityPlayerMP) entity.getContext());
+            this.networkManager.sendTo(packet, (EntityPlayerMP) entity.getContext());
+        } else {
+            this.networkManager.sendToAll(packet);
         }
     }
 

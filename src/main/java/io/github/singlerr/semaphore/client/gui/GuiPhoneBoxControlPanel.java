@@ -1,12 +1,16 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.client.gui;
 
+import io.github.singlerr.semaphore.client.ClientSideEntityCache;
 import io.github.singlerr.semaphore.client.gui.widget.GuiEntityEntry;
 import io.github.singlerr.semaphore.client.gui.widget.GuiEntityList;
+import io.github.singlerr.semaphore.instances.client.ClientResources;
+import io.github.singlerr.semaphore.interactors.access.call.CallConnection;
 import io.github.singlerr.semaphore.interactors.access.database.EntityType;
 import io.github.singlerr.semaphore.interactors.admin.controller.CallConnectionController;
 import io.github.singlerr.semaphore.interactors.admin.controller.CallStateController;
 import io.github.singlerr.semaphore.interactors.admin.controller.EntityController;
+import io.github.singlerr.semaphore.interactors.admin.controller.data.CallStateQuery;
 import io.github.singlerr.semaphore.interactors.admin.presenter.CallConnectionPresenter;
 import io.github.singlerr.semaphore.interactors.admin.presenter.EntityPresenter;
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.ErrorEntity;
@@ -53,6 +57,8 @@ public final class GuiPhoneBoxControlPanel extends GuiScreen implements EntityPr
     private List<GuiEntityEntry> entries;
     private GuiEntityList entityList;
 
+    private GuiButton closeCall;
+
     public GuiPhoneBoxControlPanel(
             GuiControlPanel parent,
             EntityController entityController,
@@ -85,12 +91,16 @@ public final class GuiPhoneBoxControlPanel extends GuiScreen implements EntityPr
         this.entityList =
                 new GuiEntityList(width - 30, listHeight, yOffset + 30, yOffset + 30 + listHeight, 60, entries);
         this.entityList.setSlotXBoundsFromLeft(this.xOffset + 15);
+
+        int buttonX = this.xOffset + 15 + width - 30 - 100 - 10;
+        this.closeCall = new GuiButton(0, buttonX, this.yOffset + 5, 100, 20, "Close Call");
     }
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         drawWindow(mouseX, mouseY, partialTicks);
         this.entityList.drawScreen(mouseX, mouseY, partialTicks);
+        this.closeCall.drawButton(mc, mouseX, mouseY, partialTicks);
     }
 
     private void drawWindow(int mouseX, int mouseY, float partialTicks) {
@@ -112,18 +122,29 @@ public final class GuiPhoneBoxControlPanel extends GuiScreen implements EntityPr
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         this.entityList.mouseClicked(mouseX, mouseY, mouseButton);
+        this.closeCall.mousePressed(mc, mouseX, mouseY);
     }
 
     @Override
     protected void mouseReleased(int mouseX, int mouseY, int state) {
         super.mouseReleased(mouseX, mouseY, state);
         this.entityList.mouseReleased(mouseX, mouseY, state);
+        this.closeCall.mouseReleased(mouseX, mouseY);
     }
 
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
         super.actionPerformed(button);
         this.entityList.actionPerformed(button);
+
+        if (button.id == closeCall.id) {
+            closeCall.playPressSound(mc.getSoundHandler());
+            CallConnection cache =
+                    ClientResources.getInstance(ClientSideEntityCache.class).getCallConnection();
+            if (cache != null) {
+                this.callStateController.closeCall(new CallStateQuery.CloseCallById(cache.getId()));
+            }
+        }
     }
 
     @Override

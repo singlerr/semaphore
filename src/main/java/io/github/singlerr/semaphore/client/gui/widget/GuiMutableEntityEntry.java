@@ -14,6 +14,8 @@ import io.github.singlerr.semaphore.policy.PolicyConstants;
 import io.github.singlerr.semaphore.policy.dfa.PlayerState;
 import java.awt.*;
 import java.util.UUID;
+import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.model.ModelHumanoidHead;
@@ -28,7 +30,11 @@ public final class GuiMutableEntityEntry implements GuiListExtended.IGuiListEntr
     private final CallConnectionController callConnectionController;
     private final CallStateController stateController;
 
+    @Setter
+    @Getter
     private PresentableEntity entity;
+
+    @Setter
     private PresentableCallConnection currentConnection;
 
     private boolean selected;
@@ -57,18 +63,6 @@ public final class GuiMutableEntityEntry implements GuiListExtended.IGuiListEntr
 
         this.txtState = new GuiTextField(2, mc.fontRenderer, 0, 0, 50, 20);
         this.btnSetState = new GuiButton(3, 0, 0, 50, 20, "Set State");
-    }
-
-    public PresentableEntity getEntity() {
-        return entity;
-    }
-
-    public void setEntity(PresentableEntity entity) {
-        this.entity = entity;
-    }
-
-    public void setCurrentConnection(PresentableCallConnection currentConnection) {
-        this.currentConnection = currentConnection;
     }
 
     @Override
@@ -118,6 +112,7 @@ public final class GuiMutableEntityEntry implements GuiListExtended.IGuiListEntr
 
         btnDeleteEntity.drawButton(mc, mouseX, mouseY, partialTicks);
         btnResetState.drawButton(mc, mouseX, mouseY, partialTicks);
+        btnSetState.drawButton(mc, mouseX, mouseY, partialTicks);
         txtState.drawTextBox();
     }
 

@@ -47,6 +47,30 @@ public final class SoundPlayerImpl implements SoundPlayer {
     }
 
     @Override
+    public SoundKey playSound(
+            SoundResource sound, float pitch, float volume, int repeatDelay, boolean repeat, boolean stopPrevious) {
+        if (repeat || stopPrevious) {
+            Optional<Map.Entry<SoundKey, PositionedSound>> opt = getAlreadyPlaying(sound);
+
+            // If there is the repeating sound already, then stop it.
+            opt.ifPresent(e -> {
+                synchronized (e.getValue()) {
+                    ((PositionedSoundAccessor) e.getValue()).setRepeat(false);
+                    playingSounds.remove(e.getKey());
+                }
+            });
+        }
+        PositionedSound s =
+                SoundUtils.getRecord(new ResourceLocation(sound.getName()), 1.0f, 1.0f, repeatDelay, repeat);
+        SoundKey key = new SoundKey(UUID.randomUUID(), sound, (v) -> {
+            ((PositionedSoundAccessor) s).setVolume(v);
+        });
+        playingSounds.put(key, s);
+        soundHandler.playSound(s);
+        return key;
+    }
+
+    @Override
     public void stopSound(SoundKey soundKey) {
         PositionedSound sound = playingSounds.get(soundKey);
         if (sound != null) {

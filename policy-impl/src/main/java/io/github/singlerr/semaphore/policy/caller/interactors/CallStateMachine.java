@@ -85,7 +85,9 @@ public final class CallStateMachine implements CallRequestManager {
         Optional<Integer> newCallerState = dfa.consume(caller.getState().getStateId(), PlayerInput.REQUEST_CALL);
         Optional<Integer> newCalleeState = dfa.consume(callee.getState().getStateId(), PlayerInput.RECEIVE_CALL);
 
-        if (!newCallerState.isPresent()) {
+        if (!newCallerState.isPresent()
+                && dfa.consume(caller.getState().getStateId(), PlayerInput.CANCEL_CALL)
+                        .isPresent()) {
             resetState(callee);
             resetState(caller);
 
@@ -95,10 +97,8 @@ public final class CallStateMachine implements CallRequestManager {
         }
 
         if (!newCalleeState.isPresent()) {
-            resetState(callee);
             resetState(caller);
-
-            errorPresenter.present(new Error(calleeId, callerId, "error.target.already.in.call"));
+            errorPresenter.present(new Error(callerId, callerId, "error.target.already.in.call"));
             return;
         }
 

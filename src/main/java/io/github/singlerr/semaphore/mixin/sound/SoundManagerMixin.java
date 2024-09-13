@@ -34,4 +34,10 @@ public abstract class SoundManagerMixin {
 
         soundSystem.setVolume(id, sound.getVolume());
     }
+    //
+    //    @Redirect(method = "updateAllSounds", at = @At(value = "INVOKE", target =
+    // "Ljava/util/Set;iterator()Ljava/util/Iterator;"))
+    //    private Iterator<Map.Entry<String, ISound>> semaphore$concurrentMap(Set<Map.Entry<String, ISound>> instance){
+    //        return Sets.newConcurrentHashSet(instance).iterator();
+    //    }
 }

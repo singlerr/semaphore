@@ -4,6 +4,15 @@ gui.phonescreen.misscall=Opponent missed call
 gui.notification.accept=Press %1$s
 gui.notification.deny=Press %1$s
 #Gui - SoundSettings
+system.settings.name.sound_call_accept=Call Accepted
+system.settings.name.sound_call_reject=Call Rejected
+system.settings.name.sound_call_close=Call Closed
+system.settings.name.sound_bell=Bell
+system.settings.name.requesting_call=Requesting Call
+system.settings.name.sound_receiving_call=Receiving Call
+system.settings.name.sound_interaction=Touch
+system.settings.name.sound_vibration=Vibration
+system.settings.name.sound_target_unavailable=Call Unavailable
 gui.settings.sound.open=Open Extra Sound Settings
 gui.settings.sound.title=Sound settings
 gui.settings.sound.test=Play test sound

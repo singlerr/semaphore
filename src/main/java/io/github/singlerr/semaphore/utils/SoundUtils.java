@@ -25,4 +25,19 @@ public class SoundUtils {
         return new PositionedSoundRecord(
                 sound, SoundCategory.MASTER, volume, pitch, repeat, 0, ISound.AttenuationType.NONE, 0.0f, 0.0f, 0.0f);
     }
+
+    public PositionedSound getRecord(
+            ResourceLocation sound, float pitch, float volume, int repeatDelay, boolean repeat) {
+        return new PositionedSoundRecord(
+                sound,
+                SoundCategory.MASTER,
+                volume,
+                pitch,
+                repeat,
+                repeatDelay,
+                ISound.AttenuationType.NONE,
+                0.0f,
+                0.0f,
+                0.0f);
+    }
 }

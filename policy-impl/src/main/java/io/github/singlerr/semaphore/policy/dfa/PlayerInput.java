@@ -8,5 +8,7 @@ public enum PlayerInput {
     REQUEST_CALL,
     RECEIVE_CALL,
 
+    CANCEL_CALL,
+
     CLOSE_CALL
 }

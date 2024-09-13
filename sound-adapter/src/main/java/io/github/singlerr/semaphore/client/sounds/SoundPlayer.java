@@ -5,6 +5,9 @@ public interface SoundPlayer {
 
     SoundKey playSound(SoundResource sound, float pitch, float volume, boolean repeat, boolean stopPrevious);
 
+    SoundKey playSound(
+            SoundResource sound, float pitch, float volume, int repeatDelay, boolean repeat, boolean stopPrevious);
+
     void stopSound(SoundKey soundKey);
 
     void stopSound(SoundResource sound);

@@ -21,5 +21,6 @@ public final class PolicyConstants {
             .transit(2, PlayerInput.REJECT_CALL, 0)
             .transit(2, PlayerInput.ACCEPT_CALL, 3)
             .transit(3, PlayerInput.CLOSE_CALL, 0)
+            .transit(1, PlayerInput.CANCEL_CALL, 0)
             .build();
 }

@@ -4,6 +4,15 @@ gui.phonescreen.misscall=상대방이 전화를 받지 않았습니다.
 gui.notification.accept=%1$s키
 gui.notification.deny=%1$s키
 
+system.settings.name.sound_call_accept=통화 수락
+system.settings.name.sound_call_reject=통화 거절
+system.settings.name.sound_call_close=통화 종료
+system.settings.name.sound_bell=수신음
+system.settings.name.requesting_call=발신음
+system.settings.name.sound_receiving_call=매너콜
+system.settings.name.sound_interaction=터치음
+system.settings.name.sound_vibration=진동음
+system.settings.name.sound_target_unavailable=부재중
 gui.settings.sound.test=테스트
 gui.settings.sound.test.hover=클릭하여 소리 볼륨을 확인합니다
 gui.settings.sound.open=휴대폰 소리 설정

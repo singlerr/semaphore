@@ -4,7 +4,6 @@ package io.github.singlerr.semaphore.mixin.voicechat.client;
 import de.maxhenkel.voicechat.api.Group;
 import de.maxhenkel.voicechat.voice.client.AudioChannel;
 import io.github.singlerr.semaphore.Constants;
-import io.github.singlerr.semaphore.ModConfig;
 import io.github.singlerr.semaphore.instances.client.ClientResources;
 import io.github.singlerr.semaphore.utils.RadioFilter;
 import java.util.UUID;
@@ -21,20 +20,21 @@ public abstract class AudioChannelMixin {
     @Final
     private UUID uuid;
 
-    @ModifyArg(
-            method = "writeToSpeaker",
-            at =
-                    @At(
-                            value = "INVOKE",
-                            target =
-                                    "Lde/maxhenkel/voicechat/voice/client/speaker/Speaker;play([SFLjava/lang/String;)V",
-                            ordinal = 0),
-            index = 1,
-            remap = false)
-    private float semaphore$applyVolume(float volume) {
-        // field uuid should not be null
-        return ModConfig.volumes.getOrDefault(uuid.toString(), (double) volume).floatValue();
-    }
+    //    @ModifyArg(
+    //            method = "writeToSpeaker",
+    //            at =
+    //                    @At(
+    //                            value = "INVOKE",
+    //                            target =
+    //
+    // "Lde/maxhenkel/voicechat/voice/client/speaker/Speaker;play([SFLjava/lang/String;)V",
+    //                            ordinal = 0),
+    //            index = 1,
+    //            remap = false)
+    //    private float semaphore$applyVolume(float volume) {
+    //        // field uuid should not be null
+    //        return ModConfig.volumes.getOrDefault(uuid.toString(), (double) volume).floatValue();
+    //    }
 
     @ModifyArg(
             method = "writeToSpeaker",

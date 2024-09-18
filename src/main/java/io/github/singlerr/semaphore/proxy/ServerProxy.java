@@ -3,8 +3,10 @@ package io.github.singlerr.semaphore.proxy;
 
 import de.maxhenkel.voicechat.api.events.VoicechatServerStartedEvent;
 import io.github.singlerr.semaphore.Debug;
+import io.github.singlerr.semaphore.client.ServerWorldAwareInverseCallPresenter;
 import io.github.singlerr.semaphore.compat.VoicechatCallConnectionHandler;
 import io.github.singlerr.semaphore.instances.*;
+import io.github.singlerr.semaphore.instances.server.ServerResources;
 import io.github.singlerr.semaphore.interactors.access.call.CallConnectionHandler;
 import io.github.singlerr.semaphore.interactors.admin.AdminInteractor;
 import io.github.singlerr.semaphore.interactors.callee.CalleeInteractor;
@@ -146,6 +148,12 @@ public final class ServerProxy extends CommonProxy {
         errorPresenter.add(new ErrorPresenterAdapter.PredicatePresenter((ctx) -> true, serverboundErrorPresenter));
         callRequestPresenter.initialize(new CallRequestPresenterAdapter.PredicatePresenter(
                 (ctx) -> true, new ServerboundCallRequestPresenter(networkManager)));
+        ServerWorldAwareInverseCallPresenter tileEntityNotifier = new ServerWorldAwareInverseCallPresenter();
+        ServerResources.setInstance(ServerWorldAwareInverseCallPresenter.class, tileEntityNotifier);
+        entityPresenter.add(
+                new EntityPresenterAdapter.PredicatePresenter((ctx) -> true, (ctx) -> true, tileEntityNotifier));
+        callRequestPresenter.initialize(
+                new CallRequestPresenterAdapter.PredicatePresenter((ctx) -> true, tileEntityNotifier));
     }
 
     public void serverStarted(VoicechatServerStartedEvent event) {

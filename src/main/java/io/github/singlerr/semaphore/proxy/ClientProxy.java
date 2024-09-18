@@ -3,7 +3,6 @@ package io.github.singlerr.semaphore.proxy;
 
 import io.github.singlerr.access.semaphore.client.gui.NonVanillaScreen;
 import io.github.singlerr.semaphore.client.ClientSideEntityCache;
-import io.github.singlerr.semaphore.client.ClientWorldAwareInverseCallPresenter;
 import io.github.singlerr.semaphore.client.gui.GuiControlPanel;
 import io.github.singlerr.semaphore.client.gui.GuiPhone;
 import io.github.singlerr.semaphore.client.listener.BlockEventListener;
@@ -92,6 +91,8 @@ public final class ClientProxy extends CommonProxy {
         ClientSideEntityCache entityCache = new ClientSideEntityCache();
         ClientResources.setInstance(ClientSideEntityCache.class, entityCache);
         entityPresenter.add(new EntityPresenterAdapter.PredicatePresenter((ctx) -> true, (ctx) -> true, entityCache));
+        callConnectionPresenter.add(
+                new CallConnectionPresenterAdapter.PredicatePresenter((ctx) -> true, (ctx) -> true, entityCache));
     }
 
     private void initAdmin(
@@ -163,16 +164,10 @@ public final class ClientProxy extends CommonProxy {
         GuiPhone guiPhone = new GuiPhone(requestController, callResponseController);
         ClientResources.setInstance(GuiPhone.class, guiPhone);
 
-        ClientWorldAwareInverseCallPresenter tileEntityNotifier = new ClientWorldAwareInverseCallPresenter();
-        ClientResources.setInstance(ClientWorldAwareInverseCallPresenter.class, tileEntityNotifier);
-
-        entityPresenter.add(
-                new EntityPresenterAdapter.PredicatePresenter((ctx) -> true, (ctx) -> true, tileEntityNotifier));
         responsePresenters.add(new CallPresenterAdapter.PredicatePresenter(guiPhone::shouldPresent, guiPhone));
         errorPresenters.add(new ErrorHandlerAdapter.PredicatePresenter(guiPhone::shouldPresent, guiPhone));
 
         requestPresenters.add(new CallRequestPresenterAdapter.PredicatePresenter(guiPhone::shouldPresent, guiPhone));
-        requestPresenters.add(new CallRequestPresenterAdapter.PredicatePresenter((ctx) -> true, tileEntityNotifier));
         requestPresenters.add(new CallRequestPresenterAdapter.PredicatePresenter((ctx) -> true, soundHandler));
         // User is both callee and caller, there's no need to split callee and caller
         // Must keep packet register order same with client and server

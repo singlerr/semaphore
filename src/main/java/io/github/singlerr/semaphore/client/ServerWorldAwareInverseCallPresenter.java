@@ -13,15 +13,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import net.minecraft.client.Minecraft;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
 
-public class ClientWorldAwareInverseCallPresenter implements CallRequestPresenter, EntityPresenter {
+public class ServerWorldAwareInverseCallPresenter implements CallRequestPresenter, EntityPresenter {
 
     private final Map<UUID, TileEntityPhoneBox> trackedEntities;
 
-    public ClientWorldAwareInverseCallPresenter() {
+    public ServerWorldAwareInverseCallPresenter() {
         this.trackedEntities = new ConcurrentHashMap<>();
     }
 
@@ -47,15 +44,6 @@ public class ClientWorldAwareInverseCallPresenter implements CallRequestPresente
         if (entity.getState().getEntityType() != EntityType.PHONE_BOX) return;
 
         TileEntityPhoneBox tileEntity = this.trackedEntities.get(entity.getId());
-        if (tileEntity == null) {
-            BlockPos pos = Utils.fromUUID(entity.getId());
-            TileEntity e = Minecraft.getMinecraft().player.world.getTileEntity(pos);
-            if (e instanceof TileEntityPhoneBox) {
-                tileEntity = (TileEntityPhoneBox) e;
-                tileEntity.setPos(pos);
-            }
-        }
-
         if (tileEntity != null) tileEntity.present(entity);
     }
 

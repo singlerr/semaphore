@@ -39,6 +39,14 @@ public final class NFA implements Cloneable {
         return encoder.get(state);
     }
 
+    public int encode(PlayerState state) {
+        return encoder.entrySet().stream()
+                .filter(e -> e.getValue() == state)
+                .findAny()
+                .map(Map.Entry::getKey)
+                .get();
+    }
+
     private static int packInput(int state, PlayerInput type) {
         return (state & 0xFF) << 8 | type.ordinal() & 0xFF;
     }

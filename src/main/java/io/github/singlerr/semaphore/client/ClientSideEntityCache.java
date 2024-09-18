@@ -4,6 +4,7 @@ package io.github.singlerr.semaphore.client;
 import io.github.singlerr.semaphore.interactors.access.call.CallConnection;
 import io.github.singlerr.semaphore.interactors.access.call.CallState;
 import io.github.singlerr.semaphore.interactors.access.database.Entity;
+import io.github.singlerr.semaphore.interactors.access.database.EntityType;
 import io.github.singlerr.semaphore.interactors.admin.presenter.CallConnectionPresenter;
 import io.github.singlerr.semaphore.interactors.admin.presenter.EntityPresenter;
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.ErrorEntity;
@@ -40,7 +41,8 @@ public final class ClientSideEntityCache implements EntityPresenter, CallConnect
     @Override
     public void present(List<PresentableEntity> entities) {
         entities.stream()
-                .filter(e -> e.getId().equals(Minecraft.getMinecraft().player.getUniqueID()))
+                .filter(e -> e.getState().getEntityType() != EntityType.PHONE_BOX
+                        && e.getId().equals(Minecraft.getMinecraft().player.getUniqueID()))
                 .findAny()
                 .ifPresent(entity -> {
                     this.entity = new ClientSideEntity(new Entity(

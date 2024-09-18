@@ -5,11 +5,11 @@ import io.github.singlerr.semaphore.ModConfig;
 import io.github.singlerr.semaphore.Semaphore;
 import io.github.singlerr.semaphore.block.BlockPhoneBox;
 import io.github.singlerr.semaphore.block.entity.TileEntityPhoneBox;
-import io.github.singlerr.semaphore.client.ClientWorldAwareInverseCallPresenter;
+import io.github.singlerr.semaphore.client.ServerWorldAwareInverseCallPresenter;
 import io.github.singlerr.semaphore.config.ConfigurationManager;
 import io.github.singlerr.semaphore.instances.*;
-import io.github.singlerr.semaphore.instances.client.ClientResources;
 import io.github.singlerr.semaphore.instances.common.CommonResources;
+import io.github.singlerr.semaphore.instances.server.ServerResources;
 import io.github.singlerr.semaphore.interactors.access.call.CallConnectionHandler;
 import io.github.singlerr.semaphore.interactors.access.database.DatabaseGateway;
 import io.github.singlerr.semaphore.interactors.admin.AdminInteractor;
@@ -128,8 +128,8 @@ public abstract class CommonProxy {
                     TileEntityPhoneBox.class, new ResourceLocation(Semaphore.MOD_ID, "phone_box"));
             CommonResources.setInstance(BlockPhoneBox.class, phoneBox);
 
-            ClientWorldAwareInverseCallPresenter clientTileEntityNotifier =
-                    ClientResources.getInstance(ClientWorldAwareInverseCallPresenter.class);
+            ServerWorldAwareInverseCallPresenter clientTileEntityNotifier =
+                    ServerResources.getInstance(ServerWorldAwareInverseCallPresenter.class);
             if (clientTileEntityNotifier != null) phoneBox.setTracker(clientTileEntityNotifier);
         }
     }

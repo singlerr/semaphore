@@ -3,7 +3,7 @@ package io.github.singlerr.semaphore.block;
 
 import io.github.singlerr.semaphore.Semaphore;
 import io.github.singlerr.semaphore.block.entity.TileEntityPhoneBox;
-import io.github.singlerr.semaphore.client.ClientWorldAwareInverseCallPresenter;
+import io.github.singlerr.semaphore.client.ServerWorldAwareInverseCallPresenter;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class BlockPhoneBox extends Block implements ITileEntityProvider {
 
-    private ClientWorldAwareInverseCallPresenter tracker;
+    private ServerWorldAwareInverseCallPresenter tracker;
 
     public BlockPhoneBox() {
         super(Material.ROCK);
@@ -27,7 +27,7 @@ public class BlockPhoneBox extends Block implements ITileEntityProvider {
         setTranslationKey(Semaphore.MOD_ID + ".block_phone_box");
     }
 
-    public void setTracker(ClientWorldAwareInverseCallPresenter tracker) {
+    public void setTracker(ServerWorldAwareInverseCallPresenter tracker) {
         this.tracker = tracker;
     }
 

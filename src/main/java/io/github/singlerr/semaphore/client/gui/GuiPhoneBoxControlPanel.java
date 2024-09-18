@@ -94,6 +94,8 @@ public final class GuiPhoneBoxControlPanel extends GuiScreen implements EntityPr
 
         int buttonX = this.xOffset + 15 + width - 30 - 100 - 10;
         this.closeCall = new GuiButton(0, buttonX, this.yOffset + 5, 100, 20, "Close Call");
+
+        this.buttonList.add(closeCall);
     }
 
     @Override
@@ -122,14 +124,12 @@ public final class GuiPhoneBoxControlPanel extends GuiScreen implements EntityPr
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         this.entityList.mouseClicked(mouseX, mouseY, mouseButton);
-        this.closeCall.mousePressed(mc, mouseX, mouseY);
     }
 
     @Override
     protected void mouseReleased(int mouseX, int mouseY, int state) {
         super.mouseReleased(mouseX, mouseY, state);
         this.entityList.mouseReleased(mouseX, mouseY, state);
-        this.closeCall.mouseReleased(mouseX, mouseY);
     }
 
     @Override

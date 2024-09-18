@@ -3,9 +3,6 @@ package io.github.singlerr.semaphore.item;
 
 import io.github.singlerr.semaphore.Semaphore;
 import io.github.singlerr.semaphore.block.BlockPhoneBox;
-import io.github.singlerr.semaphore.block.entity.TileEntityPhoneBox;
-import io.github.singlerr.semaphore.client.ClientWorldAwareInverseCallPresenter;
-import io.github.singlerr.semaphore.instances.client.ClientResources;
 import io.github.singlerr.semaphore.instances.common.CommonResources;
 import io.github.singlerr.semaphore.interactors.admin.controller.EntityController;
 import io.github.singlerr.semaphore.interactors.admin.controller.data.EntityQuery;
@@ -23,8 +20,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
 
 public class ItemBoxSelector extends Item {
 
@@ -60,16 +55,6 @@ public class ItemBoxSelector extends Item {
             worldIn.setBlockState(pos, block.getDefaultState());
             entityController.createEntity(new EntityQuery.CreateEntityWithState(
                     id, new EntityQuery.State(0, new HashMap<>(), EntityType.PHONE_BOX)));
-
-            // Client side TileEntity#getPos returns null, so we have to assign manually
-            if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
-                TileEntityPhoneBox entity = (TileEntityPhoneBox) worldIn.getTileEntity(pos);
-                entity.setPos(pos);
-
-                ClientWorldAwareInverseCallPresenter presenter =
-                        ClientResources.getInstance(ClientWorldAwareInverseCallPresenter.class);
-                presenter.addTrackedTileEntity(entity);
-            }
         }
         return EnumActionResult.SUCCESS;
     }

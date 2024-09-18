@@ -1,6 +1,7 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.compat;
 
+import com.google.common.collect.Lists;
 import de.maxhenkel.voicechat.api.Group;
 import de.maxhenkel.voicechat.api.VoicechatConnection;
 import de.maxhenkel.voicechat.api.VoicechatServerApi;
@@ -10,6 +11,7 @@ import io.github.singlerr.semaphore.interactors.access.call.CallConnection;
 import io.github.singlerr.semaphore.interactors.access.call.CallState;
 import io.github.singlerr.semaphore.interactors.access.database.DatabaseGateway;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -69,5 +71,10 @@ public final class VoicechatCallConnectionHandler extends BaseCallConnectionHand
     @Override
     public CallConnection getById(UUID connectionId) {
         return connections.get(connectionId);
+    }
+
+    @Override
+    public List<CallConnection> getAll() {
+        return Lists.newArrayList(connections.values());
     }
 }

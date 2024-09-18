@@ -23,6 +23,7 @@ import io.github.singlerr.semaphore.interactors.callee.presenter.data.CallRespon
 import io.github.singlerr.semaphore.interactors.callee.presenter.data.Error;
 import io.github.singlerr.semaphore.policy.callee.SimpleCalleeInteractor;
 import io.github.singlerr.semaphore.policy.database.PlayerDatabase;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -173,6 +174,11 @@ class CallStateMachineTest {
         @Override
         public CallConnection getById(UUID connectionId) {
             return cache;
+        }
+
+        @Override
+        public List<CallConnection> getAll() {
+            return Collections.emptyList();
         }
     }
 }

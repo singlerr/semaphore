@@ -15,6 +15,7 @@ import io.github.singlerr.semaphore.policy.CallTimeoutHandler;
 import io.github.singlerr.semaphore.policy.PolicyConstants;
 import io.github.singlerr.semaphore.policy.dfa.NFA;
 import io.github.singlerr.semaphore.policy.dfa.PlayerInput;
+import io.github.singlerr.semaphore.policy.utils.LazyUtils;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -88,9 +89,17 @@ public final class CallStateMachine implements CallRequestManager {
         if (!newCallerState.isPresent()
                 && dfa.consume(caller.getState().getStateId(), PlayerInput.CANCEL_CALL)
                         .isPresent()) {
-            resetState(callee);
             resetState(caller);
 
+            callee = new Entity(
+                    calleeId,
+                    new Entity.State(
+                            0,
+                            LazyUtils.compute(
+                                    callee.getState().getMissCallCount(),
+                                    m -> m.put(callerId, m.getOrDefault(callerId, 0) + 1)),
+                            callee.getState().getEntityType()));
+            updateState(callee);
             errorPresenter.present(new Error(calleeId, callerId, "error.call.closed.from.caller"));
             CallTimeoutHandler.getInstance().cancelTimeout(new CallTimeoutHandler.Key(callerId, calleeId));
             return;
@@ -98,6 +107,15 @@ public final class CallStateMachine implements CallRequestManager {
 
         if (!newCalleeState.isPresent()) {
             resetState(caller);
+            callee = new Entity(
+                    calleeId,
+                    new Entity.State(
+                            callee.getState().getStateId(),
+                            LazyUtils.compute(
+                                    callee.getState().getMissCallCount(),
+                                    m -> m.put(callerId, m.getOrDefault(callerId, 0) + 1)),
+                            callee.getState().getEntityType()));
+            updateState(callee);
             errorPresenter.present(new Error(callerId, callerId, "error.target.already.in.call"));
             return;
         }
@@ -182,5 +200,15 @@ public final class CallStateMachine implements CallRequestManager {
                         newEntity.getState().getStateId(),
                         newEntity.getState().getMissCallCount(),
                         newEntity.getState().getEntityType())));
+    }
+
+    private void updateState(Entity entity) {
+        database.update(entity.getId(), entity);
+        entityPresenter.present(new PresentableEntity(
+                entity.getId(),
+                new PresentableEntity.State(
+                        entity.getState().getStateId(),
+                        entity.getState().getMissCallCount(),
+                        entity.getState().getEntityType())));
     }
 }

@@ -22,7 +22,7 @@ public class BlockPhoneBox extends Block implements ITileEntityProvider {
     private ServerWorldAwareInverseCallPresenter tracker;
 
     public BlockPhoneBox() {
-        super(Material.ROCK);
+        super(Material.AIR);
         setRegistryName(new ResourceLocation(Semaphore.MOD_ID, "block_phone_box"));
         setTranslationKey(Semaphore.MOD_ID + ".block_phone_box");
     }
@@ -32,13 +32,18 @@ public class BlockPhoneBox extends Block implements ITileEntityProvider {
     }
 
     @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        return new AxisAlignedBB(new BlockPos(0, 0, 0));
+    public @Nullable AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
+        return NULL_AABB;
     }
 
     @Override
-    public @Nullable AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
-        return null;
+    public boolean canCollideCheck(IBlockState state, boolean hitIfLiquid) {
+        return true;
+    }
+
+    @Override
+    public boolean isCollidable() {
+        return true;
     }
 
     @Override

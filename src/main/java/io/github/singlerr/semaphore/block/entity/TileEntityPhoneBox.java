@@ -60,7 +60,7 @@ public class TileEntityPhoneBox extends TileEntity implements ITickable, CallReq
         if (id == null || state == null) return;
 
         if (state == PlayerState.RECEIVING_CALL) {
-            spawnSpiral(world, EnumParticleTypes.END_ROD, pos, 0.5f, 2.0f);
+            spawnSpiral(world, EnumParticleTypes.END_ROD, pos, 0.5f, 3.0f);
         }
 
         if (currentBelling != null) {
@@ -76,9 +76,9 @@ public class TileEntityPhoneBox extends TileEntity implements ITickable, CallReq
         for (float x = 0; x < 2 * Math.PI; x += delta) {
             world.spawnParticle(
                     particle,
-                    center.getX() + radius * Math.cos(x),
+                    center.getX() + radius * Math.sin(x) + 0.5f,
                     center.getY() + height * (x / (2 * Math.PI)),
-                    center.getZ() + radius * Math.sin(x),
+                    center.getZ() + radius * Math.cos(x) + 0.5f,
                     0,
                     0,
                     0);
@@ -111,6 +111,7 @@ public class TileEntityPhoneBox extends TileEntity implements ITickable, CallReq
         super.onDataPacket(net, pkt);
         NBTTagCompound tag = pkt.getNbtCompound().getCompoundTag("phoneBoxData");
         deserialize(tag);
+        handleBell();
     }
 
     @Override
@@ -149,6 +150,12 @@ public class TileEntityPhoneBox extends TileEntity implements ITickable, CallReq
         handleUpdate(new PresentableEntity.State(tag.getInteger("state"), new HashMap<>(), EntityType.PHONE_BOX));
     }
 
+    private void handleBell() {
+        if (currentBelling == null && state == PlayerState.RECEIVING_CALL) {
+            currentBelling = SoundPlayerAccess.getInstance().playSound(SoundResource.BELL, 1.0f, 0.0f, true, false);
+        }
+    }
+
     private void handleUpdate(PresentableEntity.State state) {
         PlayerState playerState = PolicyConstants.STATE_NFA.decode(state.getStateId());
         this.state = playerState;
@@ -167,7 +174,7 @@ public class TileEntityPhoneBox extends TileEntity implements ITickable, CallReq
             if (!world.isRemote) {
                 return;
             }
-            if (world != null && currentBelling == null) {
+            if (currentBelling == null) {
                 currentBelling = SoundPlayerAccess.getInstance().playSound(SoundResource.BELL, 1.0f, 0.0f, true, false);
             }
         }
@@ -192,7 +199,7 @@ public class TileEntityPhoneBox extends TileEntity implements ITickable, CallReq
             tracker = ServerResources.getInstance(ServerWorldAwareInverseCallPresenter.class);
         }
 
-        if (!world.isRemote) {
+        if (!world.isRemote && tracker != null) {
             tracker.addTrackedTileEntity(this);
             DatabaseAccess.getInstance()
                     .create(
@@ -213,6 +220,8 @@ public class TileEntityPhoneBox extends TileEntity implements ITickable, CallReq
         if (tracker != null) {
             tracker.removeTrackedTileEntity(this);
         }
+
+        if (currentBelling != null) SoundPlayerAccess.getInstance().stopSound(currentBelling);
     }
 
     @Override

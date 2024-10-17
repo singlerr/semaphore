@@ -40,13 +40,15 @@ public class GuiEntityList extends GuiListExtended {
 
     @Override
     public void drawScreen(int mouseXIn, int mouseYIn, float partialTicks) {
-        ScaledResolution scaledResolution = new ScaledResolution(this.mc);
-        double scale = scaledResolution.getScaleFactor();
-        int scaledHeight = scaledResolution.getScaledHeight();
-        enableScissor(0, (int) ((double) (scaledHeight - this.bottom) * scale), 1073741823, (int)
-                ((double) this.height * scale));
-        super.drawScreen(mouseXIn, mouseYIn, partialTicks);
-        disableScissor();
+        synchronized (entries) {
+            ScaledResolution scaledResolution = new ScaledResolution(this.mc);
+            double scale = scaledResolution.getScaleFactor();
+            int scaledHeight = scaledResolution.getScaledHeight();
+            enableScissor(0, (int) ((double) (scaledHeight - this.bottom) * scale), 1073741823, (int)
+                    ((double) this.height * scale));
+            super.drawScreen(mouseXIn, mouseYIn, partialTicks);
+            disableScissor();
+        }
     }
 
     public static void enableScissor(int x1, int y1, int x2, int y2) {

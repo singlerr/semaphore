@@ -33,7 +33,7 @@ public final class RadioFilter {
 
             doubleData[i] = HIGHPASS.filter(doubleData[i]);
             // doubleData[i] = BANDPASS.filter(doubleData[i]);
-            doubleData[i] = volume(doubleData[i], 10d);
+            doubleData[i] = volume(doubleData[i], 1d);
         }
 
         for (int i = 0; i < doubleData.length; i++) {

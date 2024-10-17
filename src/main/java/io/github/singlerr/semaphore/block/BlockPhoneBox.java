@@ -13,7 +13,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,11 +31,6 @@ public class BlockPhoneBox extends Block implements ITileEntityProvider {
     }
 
     @Override
-    public @Nullable AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
-        return NULL_AABB;
-    }
-
-    @Override
     public boolean canCollideCheck(IBlockState state, boolean hitIfLiquid) {
         return true;
     }
@@ -44,6 +38,11 @@ public class BlockPhoneBox extends Block implements ITileEntityProvider {
     @Override
     public boolean isCollidable() {
         return true;
+    }
+
+    @Override
+    public AxisAlignedBB getSelectedBoundingBox(IBlockState state, World worldIn, BlockPos pos) {
+        return new AxisAlignedBB(0, 0, 0, 1, 1, 1);
     }
 
     @Override

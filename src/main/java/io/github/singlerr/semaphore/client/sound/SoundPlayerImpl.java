@@ -33,6 +33,7 @@ public final class SoundPlayerImpl implements SoundPlayer {
             opt.ifPresent(e -> {
                 synchronized (e.getValue()) {
                     ((PositionedSoundAccessor) e.getValue()).setRepeat(false);
+                    soundHandler.stopSound(e.getValue());
                     playingSounds.remove(e.getKey());
                 }
             });

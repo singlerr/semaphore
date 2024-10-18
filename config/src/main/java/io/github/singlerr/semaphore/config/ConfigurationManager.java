@@ -1,10 +1,11 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.config;
 
+import lombok.Data;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import lombok.Data;
 
 public final class ConfigurationManager {
 
@@ -14,15 +15,15 @@ public final class ConfigurationManager {
     private final Registry registry;
     private final List<Consumer<Registry>> registryConsumers;
 
-    public static ConfigurationManager getInstance() {
-        if (instance == null) return (instance = new ConfigurationManager());
-        return instance;
-    }
-
     private ConfigurationManager() {
         this.config = new Configuration();
         this.registryConsumers = new ArrayList<>();
         this.registry = new Registry(config);
+    }
+
+    public static ConfigurationManager getInstance() {
+        if (instance == null) return (instance = new ConfigurationManager());
+        return instance;
     }
 
     public void register(Consumer<Registry> registry, boolean deferred) {

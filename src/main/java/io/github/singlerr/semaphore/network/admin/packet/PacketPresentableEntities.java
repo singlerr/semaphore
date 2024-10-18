@@ -5,11 +5,12 @@ import io.github.singlerr.semaphore.interactors.admin.presenter.data.EntityType;
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.PresentableEntity;
 import io.github.singlerr.semaphore.network.utils.SerializationUtils;
 import io.netty.buffer.ByteBuf;
-import java.util.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
+import java.util.*;
 
 @NoArgsConstructor
 @AllArgsConstructor

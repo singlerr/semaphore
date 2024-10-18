@@ -7,8 +7,6 @@ import io.github.singlerr.semaphore.policy.dfa.PlayerState;
 
 public final class PolicyConstants {
 
-    private PolicyConstants() {}
-
     public static final NFA STATE_NFA = new NFA.Builder()
             .encode(0, PlayerState.DEFAULT)
             .encode(1, PlayerState.REQUESTING_CALL)
@@ -23,4 +21,7 @@ public final class PolicyConstants {
             .transit(3, PlayerInput.CLOSE_CALL, 0)
             .transit(1, PlayerInput.CANCEL_CALL, 0)
             .build();
+
+    private PolicyConstants() {
+    }
 }

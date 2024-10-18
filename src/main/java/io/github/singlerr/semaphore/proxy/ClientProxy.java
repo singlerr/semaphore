@@ -38,18 +38,18 @@ import io.github.singlerr.semaphore.policy.callee.presenters.CallPresenterAdapte
 import io.github.singlerr.semaphore.policy.callee.presenters.ErrorHandlerAdapter;
 import io.github.singlerr.semaphore.policy.caller.presenters.CallRequestPresenterAdapter;
 import io.github.singlerr.semaphore.policy.caller.presenters.ErrorPresenterAdapter;
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public final class ClientProxy extends CommonProxy {
 
+    private final InteractionSoundHandler soundHandler = new InteractionSoundHandler();
     private ClientboundCallRequestController requestController;
     private CallConnectionController connectionController;
     private CallStateController stateController;
-
-    private final InteractionSoundHandler soundHandler = new InteractionSoundHandler();
 
     @Override
     public void preInit() {

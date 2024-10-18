@@ -1,11 +1,12 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.utils;
 
-import java.util.Collection;
 import lombok.experimental.UtilityClass;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import java.util.Collection;
 
 @UtilityClass
 public class WorldUtils {

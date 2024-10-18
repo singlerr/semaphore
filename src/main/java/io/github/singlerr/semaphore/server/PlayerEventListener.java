@@ -6,16 +6,17 @@ import io.github.singlerr.semaphore.interactors.admin.controller.data.EntityQuer
 import io.github.singlerr.semaphore.interactors.admin.manager.CallConnectionManager;
 import io.github.singlerr.semaphore.interactors.admin.manager.CallStateManager;
 import io.github.singlerr.semaphore.interactors.admin.manager.data.CallConnectionEntity;
-import java.util.Optional;
-import java.util.UUID;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
+
+import java.util.Optional;
+import java.util.UUID;
 
 public final class PlayerEventListener {
 
     private final EntityController entityController;
     private final CallConnectionManager callConnectionManager;
-    private CallStateManager callStateManager;
+    private final CallStateManager callStateManager;
 
     public PlayerEventListener(
             EntityController entityController,

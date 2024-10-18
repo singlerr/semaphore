@@ -10,14 +10,16 @@ import io.github.singlerr.semaphore.network.admin.packet.PacketPresentableCallCo
 
 public final class CallConnectionHandlers {
 
-    private CallConnectionHandlers() {}
+    private CallConnectionHandlers() {
+    }
 
     public static class PresentableCallConnectionHandler
             extends ClientboundPacketHandler<PacketPresentableCallConnection, PacketPresentableCallConnection> {
 
         private ClientboundCallConnectionPresenter connectionPresenter;
 
-        public PresentableCallConnectionHandler() {}
+        public PresentableCallConnectionHandler() {
+        }
 
         public PresentableCallConnectionHandler(ClientboundCallConnectionPresenter presenter) {
             this.connectionPresenter = presenter;
@@ -36,7 +38,8 @@ public final class CallConnectionHandlers {
 
         private ClientboundCallConnectionPresenter connectionPresenter;
 
-        public ErrorEntityHandler() {}
+        public ErrorEntityHandler() {
+        }
 
         public ErrorEntityHandler(ClientboundCallConnectionPresenter presenter) {
             this.connectionPresenter = presenter;

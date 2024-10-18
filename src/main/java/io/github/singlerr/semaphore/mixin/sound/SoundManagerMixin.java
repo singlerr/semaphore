@@ -1,8 +1,6 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.mixin.sound;
 
-import java.util.Iterator;
-import java.util.Map;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.SoundManager;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
@@ -13,6 +11,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import paulscode.sound.SoundSystem;
+
+import java.util.Iterator;
+import java.util.Map;
 
 @Mixin(SoundManager.class)
 public abstract class SoundManagerMixin {

@@ -15,13 +15,6 @@ import io.github.singlerr.semaphore.interactors.admin.presenter.data.Presentable
 import io.github.singlerr.semaphore.interactors.caller.controller.CallRequestController;
 import io.github.singlerr.semaphore.policy.admin.presenters.CallConnectionPresenterAdapter;
 import io.github.singlerr.semaphore.policy.admin.presenters.EntityPresenterAdapter;
-import java.awt.*;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -29,6 +22,14 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
+
+import java.awt.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public final class GuiUserControlPanel extends GuiScreen implements EntityPresenter, CallConnectionPresenter {
     private static final ResourceLocation TEXTURE_WINDOW = new ResourceLocation("textures/gui/advancements/window.png");
@@ -53,7 +54,7 @@ public final class GuiUserControlPanel extends GuiScreen implements EntityPresen
 
     // EntityPresenter would work unless entityList is not initialized, so we pull out entry list from gui list and give
     // this to gui list later
-    private List<GuiMutableEntityEntry> entries;
+    private final List<GuiMutableEntityEntry> entries;
     private GuiMutableEntityList entityList;
 
     public GuiUserControlPanel(
@@ -170,7 +171,8 @@ public final class GuiUserControlPanel extends GuiScreen implements EntityPresen
     }
 
     @Override
-    public void presentError(ErrorEntity error) {}
+    public void presentError(ErrorEntity error) {
+    }
 
     @Override
     public void present(PresentableCallConnection entity) {

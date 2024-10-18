@@ -8,14 +8,16 @@ import io.github.singlerr.semaphore.network.caller.packet.PacketInverseCallReque
 
 public final class CallRequestHandlers {
 
-    private CallRequestHandlers() {}
+    private CallRequestHandlers() {
+    }
 
     public static class InverseCallRequestHandler
             extends ClientboundPacketHandler<PacketInverseCallRequest, PacketInverseCallRequest> {
 
         private CallRequestPresenter presenter;
 
-        public InverseCallRequestHandler() {}
+        public InverseCallRequestHandler() {
+        }
 
         public InverseCallRequestHandler(CallRequestPresenter presenter) {
             this.presenter = presenter;

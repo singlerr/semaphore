@@ -2,6 +2,7 @@
 package io.github.singlerr.semaphore.network.utils;
 
 import io.netty.buffer.ByteBuf;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -11,7 +12,8 @@ import java.util.function.Function;
 
 public final class SerializationUtils {
 
-    private SerializationUtils() {}
+    private SerializationUtils() {
+    }
 
     public static void writeUUID(ByteBuf buf, UUID uuid) {
         buf.writeLong(uuid.getMostSignificantBits());

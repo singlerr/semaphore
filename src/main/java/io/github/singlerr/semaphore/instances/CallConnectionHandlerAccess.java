@@ -5,9 +5,10 @@ import io.github.singlerr.semaphore.interactors.access.call.CallConnectionHandle
 
 public final class CallConnectionHandlerAccess {
 
-    private CallConnectionHandlerAccess() {}
-
     private static CallConnectionHandler instance;
+
+    private CallConnectionHandlerAccess() {
+    }
 
     public static CallConnectionHandler getInstance() {
         return instance;

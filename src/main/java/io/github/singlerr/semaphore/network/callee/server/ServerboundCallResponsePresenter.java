@@ -28,13 +28,14 @@ public final class ServerboundCallResponsePresenter implements CallResponsePrese
                             entity.calleeId(),
                             entity.responseType() == CallResponse.ResponseType.ACCEPT
                                     ? io.github.singlerr.semaphore.interactors.callee.controller.data.CallResponse
-                                            .Response.ACCEPT
+                                    .Response.ACCEPT
                                     : io.github.singlerr.semaphore.interactors.callee.controller.data.CallResponse
-                                            .Response.REJECT),
+                                    .Response.REJECT),
                     player);
         }
     }
 
     @Override
-    public void error(Error entity) {}
+    public void error(Error entity) {
+    }
 }

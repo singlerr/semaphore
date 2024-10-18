@@ -15,8 +15,6 @@ import io.github.singlerr.semaphore.interactors.caller.controller.data.CallReque
 import io.github.singlerr.semaphore.policy.PolicyConstants;
 import io.github.singlerr.semaphore.policy.dfa.PlayerState;
 import io.github.singlerr.semaphore.utils.Utils;
-import java.awt.*;
-import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
@@ -29,6 +27,9 @@ import net.minecraft.client.model.ModelSkeletonHead;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.math.BlockPos;
 
+import java.awt.*;
+import java.util.UUID;
+
 public final class GuiEntityEntry implements GuiListExtended.IGuiListEntry {
     private final ModelSkeletonHead humanoidHead = new ModelHumanoidHead();
 
@@ -36,20 +37,15 @@ public final class GuiEntityEntry implements GuiListExtended.IGuiListEntry {
     private final CallConnectionController callConnectionController;
     private final CallRequestController requestController;
     private final CallStateController stateController;
-
+    private final GuiButton btnDeleteEntity;
+    private final GuiButton btnCallEntity;
     @Setter
     @Getter
     private PresentableEntity entity;
-
     @Setter
     private PresentableCallConnection currentConnection;
-
     private boolean selected;
-
-    private final GuiButton btnDeleteEntity;
-    private final GuiButton btnCallEntity;
-
-    private Minecraft mc;
+    private final Minecraft mc;
 
     public GuiEntityEntry(
             EntityController entityController,
@@ -70,7 +66,8 @@ public final class GuiEntityEntry implements GuiListExtended.IGuiListEntry {
     }
 
     @Override
-    public void updatePosition(int slotIndex, int x, int y, float partialTicks) {}
+    public void updatePosition(int slotIndex, int x, int y, float partialTicks) {
+    }
 
     @Override
     public void drawEntry(
@@ -158,5 +155,6 @@ public final class GuiEntityEntry implements GuiListExtended.IGuiListEntry {
     }
 
     @Override
-    public void mouseReleased(int slotIndex, int x, int y, int mouseEvent, int relativeX, int relativeY) {}
+    public void mouseReleased(int slotIndex, int x, int y, int mouseEvent, int relativeX, int relativeY) {
+    }
 }

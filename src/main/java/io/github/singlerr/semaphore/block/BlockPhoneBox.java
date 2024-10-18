@@ -13,6 +13,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,28 +22,23 @@ public class BlockPhoneBox extends Block implements ITileEntityProvider {
     private ServerWorldAwareInverseCallPresenter tracker;
 
     public BlockPhoneBox() {
-        super(Material.AIR);
+        super(Material.ROCK);
         setRegistryName(new ResourceLocation(Semaphore.MOD_ID, "block_phone_box"));
         setTranslationKey(Semaphore.MOD_ID + ".block_phone_box");
     }
 
+    @Override
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+        return new AxisAlignedBB(0, -1, 0, 1, 1.5, 1);
+    }
+
+    @Override
+    public @Nullable AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
+        return new AxisAlignedBB(0, -1, 0, 1, 1.5, 1);
+    }
+
     public void setTracker(ServerWorldAwareInverseCallPresenter tracker) {
         this.tracker = tracker;
-    }
-
-    @Override
-    public boolean canCollideCheck(IBlockState state, boolean hitIfLiquid) {
-        return true;
-    }
-
-    @Override
-    public boolean isCollidable() {
-        return true;
-    }
-
-    @Override
-    public AxisAlignedBB getSelectedBoundingBox(IBlockState state, World worldIn, BlockPos pos) {
-        return new AxisAlignedBB(0, 0, 0, 1, 1, 1);
     }
 
     @Override

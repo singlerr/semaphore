@@ -6,13 +6,14 @@ import io.github.singlerr.semaphore.client.sounds.SoundPlayer;
 import io.github.singlerr.semaphore.client.sounds.SoundResource;
 import io.github.singlerr.semaphore.mixin.sound.PositionedSoundAccessor;
 import io.github.singlerr.semaphore.utils.SoundUtils;
+import net.minecraft.client.audio.PositionedSound;
+import net.minecraft.client.audio.SoundHandler;
+import net.minecraft.util.ResourceLocation;
+
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import net.minecraft.client.audio.PositionedSound;
-import net.minecraft.client.audio.SoundHandler;
-import net.minecraft.util.ResourceLocation;
 
 public final class SoundPlayerImpl implements SoundPlayer {
 
@@ -57,6 +58,7 @@ public final class SoundPlayerImpl implements SoundPlayer {
             opt.ifPresent(e -> {
                 synchronized (e.getValue()) {
                     ((PositionedSoundAccessor) e.getValue()).setRepeat(false);
+                    soundHandler.stopSound(e.getValue());
                     playingSounds.remove(e.getKey());
                 }
             });

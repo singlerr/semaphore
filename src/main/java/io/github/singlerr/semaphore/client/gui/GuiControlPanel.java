@@ -12,9 +12,6 @@ import io.github.singlerr.semaphore.interactors.admin.presenter.data.Presentable
 import io.github.singlerr.semaphore.interactors.caller.controller.CallRequestController;
 import io.github.singlerr.semaphore.policy.admin.presenters.CallConnectionPresenterAdapter;
 import io.github.singlerr.semaphore.policy.admin.presenters.EntityPresenterAdapter;
-import java.awt.*;
-import java.io.IOException;
-import java.util.List;
 import lombok.extern.log4j.Log4j2;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -22,6 +19,10 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
+
+import java.awt.*;
+import java.io.IOException;
+import java.util.List;
 
 @Log4j2
 public final class GuiControlPanel extends GuiScreen implements CallConnectionPresenter, EntityPresenter {
@@ -34,23 +35,17 @@ public final class GuiControlPanel extends GuiScreen implements CallConnectionPr
 
     private final int textureWidth = 252;
     private final int textureHeight = 140;
-
-    private int width;
-    private int height;
-
     private final int xPadding = 130;
     private final int yPadding = 50;
-
     private final int btnXPadding = 10;
-
-    private int xOffset;
-    private int yOffset;
-
-    private GuiButton btnOpenPhoneBoxControlPanel;
-    private GuiButton btnOpenUserControlPanel;
-
     private final GuiPhoneBoxControlPanel phoneBoxControlPanel;
     private final GuiUserControlPanel userControlPanel;
+    private int width;
+    private int height;
+    private int xOffset;
+    private int yOffset;
+    private GuiButton btnOpenPhoneBoxControlPanel;
+    private GuiButton btnOpenUserControlPanel;
 
     public GuiControlPanel(
             EntityController entityController,
@@ -154,7 +149,6 @@ public final class GuiControlPanel extends GuiScreen implements CallConnectionPr
 
         if (button.id == this.btnOpenUserControlPanel.id) {
             Minecraft.getMinecraft().displayGuiScreen(this.userControlPanel);
-            return;
         }
     }
 }

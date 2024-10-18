@@ -4,6 +4,7 @@ package io.github.singlerr.semaphore.policy.database;
 import io.github.singlerr.semaphore.interactors.access.database.DatabaseGateway;
 import io.github.singlerr.semaphore.interactors.access.database.Entity;
 import io.github.singlerr.semaphore.interactors.access.database.EntityType;
+
 import java.util.*;
 
 public final class PlayerDatabase implements DatabaseGateway {

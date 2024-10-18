@@ -9,6 +9,7 @@ import io.github.singlerr.semaphore.interactors.admin.controller.data.EntityQuer
 import io.github.singlerr.semaphore.interactors.admin.presenter.EntityPresenter;
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.ErrorEntity;
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.PresentableEntity;
+
 import java.util.stream.Collectors;
 
 public final class EntityControllerAdapter implements EntityController {

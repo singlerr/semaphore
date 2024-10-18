@@ -8,8 +8,6 @@ import io.github.singlerr.semaphore.interactors.admin.controller.EntityControlle
 import io.github.singlerr.semaphore.interactors.admin.controller.data.EntityQuery;
 import io.github.singlerr.semaphore.interactors.admin.controller.data.EntityType;
 import io.github.singlerr.semaphore.utils.Utils;
-import java.util.HashMap;
-import java.util.UUID;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -20,6 +18,9 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import java.util.HashMap;
+import java.util.UUID;
 
 public class ItemBoxSelector extends Item {
 

@@ -3,9 +3,10 @@ package io.github.singlerr.semaphore.network.caller.packet;
 
 import io.github.singlerr.semaphore.network.utils.SerializationUtils;
 import io.netty.buffer.ByteBuf;
-import java.util.UUID;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
+import java.util.UUID;
 
 public final class PacketError implements IMessage {
 
@@ -13,7 +14,8 @@ public final class PacketError implements IMessage {
     private UUID calleeId;
     private String message;
 
-    public PacketError() {}
+    public PacketError() {
+    }
 
     public PacketError(UUID callerId, UUID calleeId, String message) {
         this.callerId = callerId;

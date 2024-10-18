@@ -1,9 +1,10 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.utils;
 
-import java.util.UUID;
 import lombok.experimental.UtilityClass;
 import net.minecraft.util.math.BlockPos;
+
+import java.util.UUID;
 
 @UtilityClass
 public class Utils {

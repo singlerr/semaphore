@@ -2,9 +2,10 @@
 package io.github.singlerr.semaphore.config;
 
 import io.github.singlerr.semaphore.config.entry.ObservableConfigEntry;
+import lombok.Getter;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import lombok.Getter;
 
 @Getter
 public final class Configuration {

@@ -8,7 +8,8 @@ public final class CommonResources {
 
     private static final Map<Class<?>, Object> beans = new HashMap<>();
 
-    private CommonResources() {}
+    private CommonResources() {
+    }
 
     public static <T> void setInstance(Class<T> beanCls, T bean) {
         if (beans.containsKey(beanCls))

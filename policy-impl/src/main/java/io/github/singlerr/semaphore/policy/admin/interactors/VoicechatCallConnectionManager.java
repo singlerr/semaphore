@@ -8,6 +8,7 @@ import io.github.singlerr.semaphore.interactors.admin.manager.base.BaseCallConne
 import io.github.singlerr.semaphore.interactors.admin.manager.data.CallConnectionEntity;
 import io.github.singlerr.semaphore.interactors.admin.manager.data.ConnectionState;
 import io.github.singlerr.semaphore.interactors.admin.presenter.CallConnectionPresenter;
+
 import java.util.List;
 import java.util.stream.Collectors;
 

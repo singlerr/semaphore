@@ -9,25 +9,32 @@ import io.github.singlerr.semaphore.interactors.callee.presenter.data.CallRespon
 import io.github.singlerr.semaphore.interactors.callee.presenter.data.Error;
 import io.github.singlerr.semaphore.interactors.caller.presenter.CallRequestPresenter;
 import io.github.singlerr.semaphore.interactors.caller.presenter.data.InverseCallRequest;
+
 import java.util.List;
 
 public final class InteractionSoundHandler implements EntityPresenter, CallResponsePresenter, CallRequestPresenter {
 
     @Override
-    public void present(InverseCallRequest request) {}
+    public void present(InverseCallRequest request) {
+    }
 
     @Override
-    public void present(CallResponse entity) {}
+    public void present(CallResponse entity) {
+    }
 
     @Override
-    public void error(Error entity) {}
+    public void error(Error entity) {
+    }
 
     @Override
-    public void present(PresentableEntity entity) {}
+    public void present(PresentableEntity entity) {
+    }
 
     @Override
-    public void present(List<PresentableEntity> entities) {}
+    public void present(List<PresentableEntity> entities) {
+    }
 
     @Override
-    public void presentError(ErrorEntity error) {}
+    public void presentError(ErrorEntity error) {
+    }
 }

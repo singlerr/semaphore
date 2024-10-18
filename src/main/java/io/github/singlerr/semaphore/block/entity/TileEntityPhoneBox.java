@@ -16,13 +16,12 @@ import io.github.singlerr.semaphore.interactors.admin.presenter.EntityPresenter;
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.ErrorEntity;
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.PresentableEntity;
 import io.github.singlerr.semaphore.interactors.caller.presenter.CallRequestPresenter;
+import io.github.singlerr.semaphore.interactors.caller.presenter.ErrorPresenter;
+import io.github.singlerr.semaphore.interactors.caller.presenter.data.Error;
 import io.github.singlerr.semaphore.interactors.caller.presenter.data.InverseCallRequest;
 import io.github.singlerr.semaphore.policy.PolicyConstants;
 import io.github.singlerr.semaphore.policy.dfa.PlayerState;
 import io.github.singlerr.semaphore.utils.Utils;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.block.state.IBlockState;
@@ -38,7 +37,12 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class TileEntityPhoneBox extends TileEntity implements ITickable, CallRequestPresenter, EntityPresenter {
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
+
+public class TileEntityPhoneBox extends TileEntity
+        implements ITickable, CallRequestPresenter, EntityPresenter, ErrorPresenter {
 
     @Setter
     private ServerWorldAwareInverseCallPresenter tracker;
@@ -151,6 +155,10 @@ public class TileEntityPhoneBox extends TileEntity implements ITickable, CallReq
     }
 
     private void handleBell() {
+        if (state != PlayerState.RECEIVING_CALL) {
+            SoundPlayerAccess.getInstance()
+                    .stopSound(currentBelling == null ? SoundResource.BELL : currentBelling.getSound());
+        }
         if (currentBelling == null && state == PlayerState.RECEIVING_CALL) {
             currentBelling = SoundPlayerAccess.getInstance().playSound(SoundResource.BELL, 1.0f, 0.0f, true, false);
         }
@@ -163,17 +171,16 @@ public class TileEntityPhoneBox extends TileEntity implements ITickable, CallReq
         if (!world.isRemote) {
             BlockPhoneBox block = CommonResources.getInstance(BlockPhoneBox.class);
             world.notifyBlockUpdate(pos, block.getDefaultState(), block.getDefaultState(), 1);
+            return;
         }
 
         if (playerState != PlayerState.RECEIVING_CALL) {
+            SoundPlayerAccess.getInstance().stopSound(SoundResource.BELL);
             if (currentBelling != null) {
                 SoundPlayerAccess.getInstance().stopSound(currentBelling);
                 currentBelling = null;
             }
         } else {
-            if (!world.isRemote) {
-                return;
-            }
             if (currentBelling == null) {
                 currentBelling = SoundPlayerAccess.getInstance().playSound(SoundResource.BELL, 1.0f, 0.0f, true, false);
             }
@@ -232,8 +239,19 @@ public class TileEntityPhoneBox extends TileEntity implements ITickable, CallReq
     }
 
     @Override
-    public void present(List<PresentableEntity> entities) {}
+    public void present(List<PresentableEntity> entities) {
+    }
 
     @Override
-    public void presentError(ErrorEntity error) {}
+    public void presentError(ErrorEntity error) {
+    }
+
+    @Override
+    public void present(Error error) {
+        state = PlayerState.DEFAULT;
+        if (!world.isRemote) {
+            BlockPhoneBox block = CommonResources.getInstance(BlockPhoneBox.class);
+            world.notifyBlockUpdate(pos, block.getDefaultState(), block.getDefaultState(), 1);
+        }
+    }
 }

@@ -12,7 +12,8 @@ import io.github.singlerr.semaphore.network.admin.packet.PacketPresentableEntity
 
 public final class EntityHandlers {
 
-    private EntityHandlers() {}
+    private EntityHandlers() {
+    }
 
     public static final class PresentableEntitiesHandler
             extends ClientboundPacketHandler<PacketPresentableEntities, PacketPresentableEntities> {
@@ -23,7 +24,8 @@ public final class EntityHandlers {
             this.entityController = entityController;
         }
 
-        public PresentableEntitiesHandler() {}
+        public PresentableEntitiesHandler() {
+        }
 
         @Override
         public PacketPresentableEntities handleClient(
@@ -38,7 +40,8 @@ public final class EntityHandlers {
 
         private ClientboundEntityPresenter entityPresenter;
 
-        public ErrorEntityHandler() {}
+        public ErrorEntityHandler() {
+        }
 
         public ErrorEntityHandler(ClientboundEntityPresenter entityPresenter) {
             this.entityPresenter = entityPresenter;
@@ -60,7 +63,8 @@ public final class EntityHandlers {
             this.entityController = entityController;
         }
 
-        public PresentableEntityHandler() {}
+        public PresentableEntityHandler() {
+        }
 
         @Override
         public PacketPresentableEntity handleClient(PacketPresentableEntity packet, ClientboundPacketContext context) {

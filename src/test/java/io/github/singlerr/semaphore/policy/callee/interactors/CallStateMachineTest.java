@@ -1,8 +1,6 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.policy.callee.interactors;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import io.github.singlerr.semaphore.interactors.access.call.CallConnection;
 import io.github.singlerr.semaphore.interactors.access.call.CallConnectionHandler;
 import io.github.singlerr.semaphore.interactors.access.call.CallState;
@@ -23,11 +21,14 @@ import io.github.singlerr.semaphore.interactors.callee.presenter.data.CallRespon
 import io.github.singlerr.semaphore.interactors.callee.presenter.data.Error;
 import io.github.singlerr.semaphore.policy.callee.SimpleCalleeInteractor;
 import io.github.singlerr.semaphore.policy.database.PlayerDatabase;
+import org.junit.jupiter.api.Test;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CallStateMachineTest {
 
@@ -104,13 +105,16 @@ class CallStateMachineTest {
     private static class StubEntityPresenter implements EntityPresenter {
 
         @Override
-        public void present(PresentableEntity entity) {}
+        public void present(PresentableEntity entity) {
+        }
 
         @Override
-        public void present(List<PresentableEntity> entities) {}
+        public void present(List<PresentableEntity> entities) {
+        }
 
         @Override
-        public void presentError(ErrorEntity error) {}
+        public void presentError(ErrorEntity error) {
+        }
     }
 
     private static class StubCallStateManager implements CallStateManager {

@@ -8,13 +8,15 @@ import io.github.singlerr.semaphore.network.caller.packet.PacketError;
 
 public final class ErrorHandlers {
 
-    private ErrorHandlers() {}
+    private ErrorHandlers() {
+    }
 
     public static class ErrorHandler extends ClientboundPacketHandler<PacketError, PacketError> {
 
         public ErrorPresenter source;
 
-        public ErrorHandler() {}
+        public ErrorHandler() {
+        }
 
         public ErrorHandler(ErrorPresenter source) {
             this.source = source;

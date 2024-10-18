@@ -3,15 +3,17 @@ package io.github.singlerr.semaphore.network.caller.packet;
 
 import io.github.singlerr.semaphore.network.utils.SerializationUtils;
 import io.netty.buffer.ByteBuf;
-import java.util.UUID;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
+import java.util.UUID;
 
 public final class PacketInverseCallRequest implements IMessage {
 
     private UUID callerId;
     private UUID calleeId;
 
-    public PacketInverseCallRequest() {}
+    public PacketInverseCallRequest() {
+    }
 
     public PacketInverseCallRequest(UUID callerId, UUID calleeId) {
         this.callerId = callerId;

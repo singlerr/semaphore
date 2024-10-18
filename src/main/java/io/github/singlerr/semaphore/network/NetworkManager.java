@@ -1,13 +1,14 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.network;
 
-import java.util.concurrent.atomic.AtomicInteger;
 import lombok.extern.log4j.Log4j2;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 public final class NetworkManager {
 

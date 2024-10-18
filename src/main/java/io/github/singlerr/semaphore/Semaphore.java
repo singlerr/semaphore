@@ -24,6 +24,16 @@ public class Semaphore {
             modId = MOD_ID)
     private static CommonProxy proxy;
 
+    public static void serverStarted(VoicechatServerStartedEvent event) {
+        if (proxy instanceof ServerProxy) {
+            ((ServerProxy) proxy).serverStarted(event);
+        }
+    }
+
+    public static CommonProxy getProxy() {
+        return proxy;
+    }
+
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         proxy.preInit();
@@ -40,15 +50,6 @@ public class Semaphore {
     }
 
     @Mod.EventHandler
-    public void serverStarting(FMLServerStartingEvent event) {}
-
-    public static void serverStarted(VoicechatServerStartedEvent event) {
-        if (proxy instanceof ServerProxy) {
-            ((ServerProxy) proxy).serverStarted(event);
-        }
-    }
-
-    public static CommonProxy getProxy() {
-        return proxy;
+    public void serverStarting(FMLServerStartingEvent event) {
     }
 }

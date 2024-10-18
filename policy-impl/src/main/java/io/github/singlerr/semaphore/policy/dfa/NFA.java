@@ -23,6 +23,10 @@ public final class NFA implements Cloneable {
         this.encoder = encoder;
     }
 
+    private static int packInput(int state, PlayerInput type) {
+        return (state & 0xFF) << 8 | type.ordinal() & 0xFF;
+    }
+
     public Optional<Integer> consume(int currentState, PlayerInput input) {
         int packedInput = packInput(currentState, input);
 
@@ -47,8 +51,9 @@ public final class NFA implements Cloneable {
                 .get();
     }
 
-    private static int packInput(int state, PlayerInput type) {
-        return (state & 0xFF) << 8 | type.ordinal() & 0xFF;
+    @Override
+    public NFA clone() {
+        return new NFA(new HashMap<>(encodedStateFunction), new HashMap<>(encoder));
     }
 
     public static class Builder {
@@ -81,10 +86,5 @@ public final class NFA implements Cloneable {
         public NFA build() {
             return new NFA(encodedStateFunction, encoder);
         }
-    }
-
-    @Override
-    public NFA clone() {
-        return new NFA(new HashMap<>(encodedStateFunction), new HashMap<>(encoder));
     }
 }

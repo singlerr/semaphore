@@ -3,12 +3,13 @@ package io.github.singlerr.semaphore.policy.caller.presenters;
 
 import io.github.singlerr.semaphore.interactors.caller.presenter.CallRequestPresenter;
 import io.github.singlerr.semaphore.interactors.caller.presenter.data.InverseCallRequest;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import org.jetbrains.annotations.NotNull;
 
 public final class CallRequestPresenterAdapter implements CallRequestPresenter {
 
@@ -52,7 +53,8 @@ public final class CallRequestPresenterAdapter implements CallRequestPresenter {
         invoke(context, request);
     }
 
-    public static class PresenterContext {}
+    public static class PresenterContext {
+    }
 
     public static class PredicatePresenter {
 

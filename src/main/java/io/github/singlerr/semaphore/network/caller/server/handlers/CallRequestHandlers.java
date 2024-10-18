@@ -8,7 +8,8 @@ import io.github.singlerr.semaphore.network.caller.server.ServerboundCallRequest
 
 public final class CallRequestHandlers {
 
-    private CallRequestHandlers() {}
+    private CallRequestHandlers() {
+    }
 
     public static class CallRequestHandler extends ServerboundPacketHandler<PacketCallRequest, PacketCallRequest> {
 

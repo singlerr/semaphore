@@ -12,6 +12,7 @@ import io.github.singlerr.semaphore.interactors.callee.presenter.CallResponsePre
 import io.github.singlerr.semaphore.interactors.caller.controller.CallRequestController;
 import io.github.singlerr.semaphore.interactors.caller.presenter.CallRequestPresenter;
 import io.github.singlerr.semaphore.interactors.caller.presenter.ErrorPresenter;
+
 import java.util.function.Consumer;
 
 public interface NonVanillaScreen {

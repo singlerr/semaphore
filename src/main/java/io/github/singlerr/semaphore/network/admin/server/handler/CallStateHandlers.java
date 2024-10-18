@@ -3,18 +3,22 @@ package io.github.singlerr.semaphore.network.admin.server.handler;
 
 import io.github.singlerr.semaphore.interactors.admin.controller.data.CallStateQuery;
 import io.github.singlerr.semaphore.network.ServerboundPacketHandler;
-import io.github.singlerr.semaphore.network.admin.packet.*;
+import io.github.singlerr.semaphore.network.admin.packet.PacketCloseCall;
+import io.github.singlerr.semaphore.network.admin.packet.PacketCloseCallById;
+import io.github.singlerr.semaphore.network.admin.packet.PacketOpenCall;
 import io.github.singlerr.semaphore.network.admin.server.ServerboundCallStateController;
 
 public final class CallStateHandlers {
 
-    private CallStateHandlers() {}
+    private CallStateHandlers() {
+    }
 
     public static class CloseCallHandler extends ServerboundPacketHandler<PacketCloseCall, PacketCloseCall> {
 
         private ServerboundCallStateController callStateController;
 
-        public CloseCallHandler() {}
+        public CloseCallHandler() {
+        }
 
         public CloseCallHandler(ServerboundCallStateController callStateController) {
             this.callStateController = callStateController;
@@ -34,7 +38,8 @@ public final class CallStateHandlers {
 
         private ServerboundCallStateController callStateController;
 
-        public CloseCallByIdHandler() {}
+        public CloseCallByIdHandler() {
+        }
 
         public CloseCallByIdHandler(ServerboundCallStateController callStateController) {
             this.callStateController = callStateController;
@@ -53,7 +58,8 @@ public final class CallStateHandlers {
 
         private ServerboundCallStateController callStateController;
 
-        public OpenCallHandler() {}
+        public OpenCallHandler() {
+        }
 
         public OpenCallHandler(ServerboundCallStateController callStateController) {
             this.callStateController = callStateController;

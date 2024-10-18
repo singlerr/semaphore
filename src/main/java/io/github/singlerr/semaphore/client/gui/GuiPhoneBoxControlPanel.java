@@ -19,6 +19,13 @@ import io.github.singlerr.semaphore.interactors.admin.presenter.data.Presentable
 import io.github.singlerr.semaphore.interactors.caller.controller.CallRequestController;
 import io.github.singlerr.semaphore.policy.admin.presenters.CallConnectionPresenterAdapter;
 import io.github.singlerr.semaphore.policy.admin.presenters.EntityPresenterAdapter;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.ResourceLocation;
+
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,12 +33,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.ResourceLocation;
 
 public final class GuiPhoneBoxControlPanel extends GuiScreen implements EntityPresenter, CallConnectionPresenter {
     private static final ResourceLocation TEXTURE_WINDOW = new ResourceLocation("textures/gui/advancements/window.png");
@@ -54,7 +55,7 @@ public final class GuiPhoneBoxControlPanel extends GuiScreen implements EntityPr
 
     // EntityPresenter would work unless entityList is not initialized, so we pull out entry list from gui list and give
     // this to gui list later
-    private List<GuiEntityEntry> entries;
+    private final List<GuiEntityEntry> entries;
     private GuiEntityList entityList;
 
     private GuiButton closeCall;
@@ -172,7 +173,8 @@ public final class GuiPhoneBoxControlPanel extends GuiScreen implements EntityPr
     }
 
     @Override
-    public void presentError(ErrorEntity error) {}
+    public void presentError(ErrorEntity error) {
+    }
 
     @Override
     public void present(PresentableCallConnection entity) {

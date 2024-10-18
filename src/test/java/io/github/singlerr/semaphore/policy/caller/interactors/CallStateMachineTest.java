@@ -1,8 +1,6 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.policy.caller.interactors;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import io.github.singlerr.semaphore.interactors.access.database.DatabaseGateway;
 import io.github.singlerr.semaphore.interactors.access.database.Entity;
 import io.github.singlerr.semaphore.interactors.access.database.EntityType;
@@ -17,10 +15,13 @@ import io.github.singlerr.semaphore.interactors.caller.presenter.data.Error;
 import io.github.singlerr.semaphore.interactors.caller.presenter.data.InverseCallRequest;
 import io.github.singlerr.semaphore.policy.caller.SimpleCallerInteractor;
 import io.github.singlerr.semaphore.policy.database.PlayerDatabase;
+import org.junit.jupiter.api.Test;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CallStateMachineTest {
     @Test
@@ -86,12 +87,15 @@ class CallStateMachineTest {
     private static class StubEntityPresenter implements EntityPresenter {
 
         @Override
-        public void present(PresentableEntity entity) {}
+        public void present(PresentableEntity entity) {
+        }
 
         @Override
-        public void present(List<PresentableEntity> entities) {}
+        public void present(List<PresentableEntity> entities) {
+        }
 
         @Override
-        public void presentError(ErrorEntity error) {}
+        public void presentError(ErrorEntity error) {
+        }
     }
 }

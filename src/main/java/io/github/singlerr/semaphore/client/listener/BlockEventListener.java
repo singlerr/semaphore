@@ -12,13 +12,14 @@ import io.github.singlerr.semaphore.interactors.admin.controller.data.EntityQuer
 import io.github.singlerr.semaphore.interactors.callee.controller.CallResponseController;
 import io.github.singlerr.semaphore.interactors.callee.controller.data.CallResponse;
 import io.github.singlerr.semaphore.policy.dfa.PlayerState;
-import java.util.HashMap;
-import java.util.UUID;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.HashMap;
+import java.util.UUID;
 
 @SideOnly(Side.CLIENT)
 public final class BlockEventListener {

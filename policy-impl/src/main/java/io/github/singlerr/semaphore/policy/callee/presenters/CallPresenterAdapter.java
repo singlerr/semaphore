@@ -4,12 +4,13 @@ package io.github.singlerr.semaphore.policy.callee.presenters;
 import io.github.singlerr.semaphore.interactors.callee.presenter.CallResponsePresenter;
 import io.github.singlerr.semaphore.interactors.callee.presenter.data.CallResponse;
 import io.github.singlerr.semaphore.interactors.callee.presenter.data.Error;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import org.jetbrains.annotations.NotNull;
 
 public final class CallPresenterAdapter implements CallResponsePresenter {
 
@@ -69,7 +70,8 @@ public final class CallPresenterAdapter implements CallResponsePresenter {
         invoke(context, entity);
     }
 
-    public static class PresenterContext {}
+    public static class PresenterContext {
+    }
 
     public static class PredicatePresenter {
 

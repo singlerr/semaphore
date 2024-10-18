@@ -157,6 +157,7 @@ public final class ServerProxy extends CommonProxy {
                 new EntityPresenterAdapter.PredicatePresenter((ctx) -> true, (ctx) -> true, tileEntityNotifier));
         callRequestPresenter.initialize(
                 new CallRequestPresenterAdapter.PredicatePresenter((ctx) -> true, tileEntityNotifier));
+        errorPresenter.add(new ErrorPresenterAdapter.PredicatePresenter((ctx) -> true, tileEntityNotifier));
     }
 
     public void serverStarted(VoicechatServerStartedEvent event) {

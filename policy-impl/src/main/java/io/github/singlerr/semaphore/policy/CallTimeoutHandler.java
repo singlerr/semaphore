@@ -9,24 +9,20 @@ import java.util.concurrent.*;
 public final class CallTimeoutHandler {
 
     private static CallTimeoutHandler instance;
+    private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(10);
+    private final Map<Key, ScheduledFuture<?>> pendingTimeouts;
+    private final long timeout;
+    private final TimeUnit timeUnit;
+    private CallTimeoutHandler(long timeout, TimeUnit timeUnit) {
+        this.timeout = timeout;
+        this.timeUnit = timeUnit;
+        this.pendingTimeouts = new ConcurrentHashMap<>();
+    }
 
     public static CallTimeoutHandler getInstance() {
         if (instance == null) return (instance = new CallTimeoutHandler(60, TimeUnit.SECONDS));
 
         return instance;
-    }
-
-    private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(10);
-
-    private final Map<Key, ScheduledFuture<?>> pendingTimeouts;
-
-    private final long timeout;
-    private final TimeUnit timeUnit;
-
-    private CallTimeoutHandler(long timeout, TimeUnit timeUnit) {
-        this.timeout = timeout;
-        this.timeUnit = timeUnit;
-        this.pendingTimeouts = new ConcurrentHashMap<>();
     }
 
     public void startTimeout(Key key, Runnable callback) {

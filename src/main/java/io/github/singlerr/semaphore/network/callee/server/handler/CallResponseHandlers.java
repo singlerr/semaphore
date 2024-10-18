@@ -8,13 +8,15 @@ import io.github.singlerr.semaphore.network.callee.server.ServerboundCallRespons
 
 public final class CallResponseHandlers {
 
-    private CallResponseHandlers() {}
+    private CallResponseHandlers() {
+    }
 
     public static class CallResponseHandler extends ServerboundPacketHandler<PacketCallResponse, PacketCallResponse> {
 
         private ServerboundCallResponseController callResponseController;
 
-        public CallResponseHandler() {}
+        public CallResponseHandler() {
+        }
 
         public CallResponseHandler(ServerboundCallResponseController callResponseController) {
             this.callResponseController = callResponseController;

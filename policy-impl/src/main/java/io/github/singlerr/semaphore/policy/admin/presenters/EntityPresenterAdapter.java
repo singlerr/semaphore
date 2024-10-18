@@ -4,13 +4,14 @@ package io.github.singlerr.semaphore.policy.admin.presenters;
 import io.github.singlerr.semaphore.interactors.admin.presenter.EntityPresenter;
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.ErrorEntity;
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.PresentableEntity;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import org.jetbrains.annotations.NotNull;
 
 public final class EntityPresenterAdapter implements EntityPresenter {
 
@@ -77,7 +78,8 @@ public final class EntityPresenterAdapter implements EntityPresenter {
         invoke(context, error);
     }
 
-    public static class PresenterContext {}
+    public static class PresenterContext {
+    }
 
     public static class PredicatePresenter {
 

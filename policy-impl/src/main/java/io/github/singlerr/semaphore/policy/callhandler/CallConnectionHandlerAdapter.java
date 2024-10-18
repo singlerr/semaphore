@@ -3,6 +3,7 @@ package io.github.singlerr.semaphore.policy.callhandler;
 
 import io.github.singlerr.semaphore.interactors.access.call.CallConnection;
 import io.github.singlerr.semaphore.interactors.access.call.CallConnectionHandler;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -10,7 +11,8 @@ public final class CallConnectionHandlerAdapter implements CallConnectionHandler
 
     private CallConnectionHandler adapter;
 
-    public CallConnectionHandlerAdapter() {}
+    public CallConnectionHandlerAdapter() {
+    }
 
     public CallConnectionHandlerAdapter(CallConnectionHandler adapter) {
         this.adapter = adapter;

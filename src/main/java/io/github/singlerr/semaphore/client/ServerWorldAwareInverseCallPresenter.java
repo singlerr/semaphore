@@ -7,14 +7,17 @@ import io.github.singlerr.semaphore.interactors.admin.presenter.EntityPresenter;
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.ErrorEntity;
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.PresentableEntity;
 import io.github.singlerr.semaphore.interactors.caller.presenter.CallRequestPresenter;
+import io.github.singlerr.semaphore.interactors.caller.presenter.ErrorPresenter;
+import io.github.singlerr.semaphore.interactors.caller.presenter.data.Error;
 import io.github.singlerr.semaphore.interactors.caller.presenter.data.InverseCallRequest;
 import io.github.singlerr.semaphore.utils.Utils;
+
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ServerWorldAwareInverseCallPresenter implements CallRequestPresenter, EntityPresenter {
+public class ServerWorldAwareInverseCallPresenter implements CallRequestPresenter, EntityPresenter, ErrorPresenter {
 
     private final Map<UUID, TileEntityPhoneBox> trackedEntities;
 
@@ -53,5 +56,13 @@ public class ServerWorldAwareInverseCallPresenter implements CallRequestPresente
     }
 
     @Override
-    public void presentError(ErrorEntity error) {}
+    public void presentError(ErrorEntity error) {
+    }
+
+    @Override
+    public void present(Error error) {
+        TileEntityPhoneBox tileEntity = this.trackedEntities.get(error.getCalleeId());
+        if (tileEntity == null) return;
+        tileEntity.present(error);
+    }
 }

@@ -9,20 +9,18 @@ import uk.me.berndporr.iirj.Butterworth;
  */
 public final class RadioFilter {
     private static final int SAMPLE_RATE = 48000;
-
+    private static RadioFilter instance;
     private final Butterworth HIGHPASS = new Butterworth();
     private final Butterworth BANDPASS = new Butterworth();
-
-    private static RadioFilter instance;
-
-    public static RadioFilter getInstance() {
-        if (instance == null) return ((instance = new RadioFilter()));
-        return instance;
-    }
 
     private RadioFilter() {
         HIGHPASS.highPass(4, SAMPLE_RATE, 2000);
         BANDPASS.bandPass(4, SAMPLE_RATE, 50, 2600);
+    }
+
+    public static RadioFilter getInstance() {
+        if (instance == null) return ((instance = new RadioFilter()));
+        return instance;
     }
 
     public short[] apply(short[] rawData) {
@@ -31,9 +29,9 @@ public final class RadioFilter {
         for (int i = 0; i < audioData.length; i++) {
             doubleData[i] = audioData[i];
 
-            doubleData[i] = HIGHPASS.filter(doubleData[i]);
-            // doubleData[i] = BANDPASS.filter(doubleData[i]);
-            doubleData[i] = volume(doubleData[i], 1d);
+            //            doubleData[i] = HIGHPASS.filter(doubleData[i]);
+            doubleData[i] = BANDPASS.filter(doubleData[i]);
+            doubleData[i] = volume(doubleData[i], 10d);
         }
 
         for (int i = 0; i < doubleData.length; i++) {

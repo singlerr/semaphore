@@ -11,8 +11,10 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 public final class PacketGetAllEntities implements IMessage {
 
     @Override
-    public void fromBytes(ByteBuf byteBuf) {}
+    public void fromBytes(ByteBuf byteBuf) {
+    }
 
     @Override
-    public void toBytes(ByteBuf byteBuf) {}
+    public void toBytes(ByteBuf byteBuf) {
+    }
 }

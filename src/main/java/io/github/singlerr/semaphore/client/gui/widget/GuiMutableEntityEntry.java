@@ -12,8 +12,6 @@ import io.github.singlerr.semaphore.interactors.admin.presenter.data.Presentable
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.PresentableEntity;
 import io.github.singlerr.semaphore.policy.PolicyConstants;
 import io.github.singlerr.semaphore.policy.dfa.PlayerState;
-import java.awt.*;
-import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
@@ -23,29 +21,26 @@ import net.minecraft.client.model.ModelSkeletonHead;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.GlStateManager;
 
+import java.awt.*;
+import java.util.UUID;
+
 public final class GuiMutableEntityEntry implements GuiListExtended.IGuiListEntry {
     private final ModelSkeletonHead humanoidHead = new ModelHumanoidHead();
 
     private final EntityController entityController;
     private final CallConnectionController callConnectionController;
     private final CallStateController stateController;
-
+    private final GuiButton btnDeleteEntity;
+    private final GuiButton btnResetState;
+    private final GuiTextField txtState;
+    private final GuiButton btnSetState;
     @Setter
     @Getter
     private PresentableEntity entity;
-
     @Setter
     private PresentableCallConnection currentConnection;
-
     private boolean selected;
-
-    private final GuiButton btnDeleteEntity;
-    private final GuiButton btnResetState;
-
-    private final GuiTextField txtState;
-    private final GuiButton btnSetState;
-
-    private Minecraft mc;
+    private final Minecraft mc;
 
     public GuiMutableEntityEntry(
             EntityController entityController,
@@ -66,7 +61,8 @@ public final class GuiMutableEntityEntry implements GuiListExtended.IGuiListEntr
     }
 
     @Override
-    public void updatePosition(int slotIndex, int x, int y, float partialTicks) {}
+    public void updatePosition(int slotIndex, int x, int y, float partialTicks) {
+    }
 
     @Override
     public void drawEntry(
@@ -152,7 +148,7 @@ public final class GuiMutableEntityEntry implements GuiListExtended.IGuiListEntr
                         entity.getState().getEntityType() == EntityType.PLAYER
                                 ? io.github.singlerr.semaphore.interactors.admin.controller.data.EntityType.PLAYER
                                 : io.github.singlerr.semaphore.interactors.admin.controller.data.EntityType
-                                        .PHONE_BOX)));
+                                .PHONE_BOX)));
         if (currentConnection != null)
             stateController.closeCall(new CallStateQuery.CloseCallById(currentConnection.getId()));
     }
@@ -166,5 +162,6 @@ public final class GuiMutableEntityEntry implements GuiListExtended.IGuiListEntr
     }
 
     @Override
-    public void mouseReleased(int slotIndex, int x, int y, int mouseEvent, int relativeX, int relativeY) {}
+    public void mouseReleased(int slotIndex, int x, int y, int mouseEvent, int relativeX, int relativeY) {
+    }
 }

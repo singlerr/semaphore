@@ -8,13 +8,15 @@ import io.github.singlerr.semaphore.network.caller.client.ClientboundCallRespons
 
 public final class CallResponseHandlers {
 
-    private CallResponseHandlers() {}
+    private CallResponseHandlers() {
+    }
 
     public static class CallResponseHandler extends ClientboundPacketHandler<PacketCallResponse, PacketCallResponse> {
 
         private ClientboundCallResponsePresenter callResponsePresenter;
 
-        public CallResponseHandler() {}
+        public CallResponseHandler() {
+        }
 
         public CallResponseHandler(ClientboundCallResponsePresenter callResponsePresenter) {
             this.callResponsePresenter = callResponsePresenter;
@@ -26,8 +28,8 @@ public final class CallResponseHandlers {
                     packet.getCallerId(),
                     packet.getCalleeId(),
                     packet.getResponse()
-                                    == io.github.singlerr.semaphore.interactors.callee.controller.data.CallResponse
-                                            .Response.ACCEPT
+                            == io.github.singlerr.semaphore.interactors.callee.controller.data.CallResponse
+                            .Response.ACCEPT
                             ? CallResponse.ResponseType.ACCEPT
                             : CallResponse.ResponseType.REJECT));
             return null;

@@ -2,14 +2,16 @@
 package io.github.singlerr.semaphore.instances.server;
 
 import io.github.singlerr.semaphore.utils.SideUtils;
+import net.minecraftforge.fml.relauncher.Side;
+
 import java.util.HashMap;
 import java.util.Map;
-import net.minecraftforge.fml.relauncher.Side;
 
 public final class ServerResources {
     private static final Map<Class<?>, Object> beans = new HashMap<>();
 
-    private ServerResources() {}
+    private ServerResources() {
+    }
 
     public static <T> void setInstance(Class<T> beanCls, T bean) {
         SideUtils.validateSide(beanCls, Side.CLIENT);

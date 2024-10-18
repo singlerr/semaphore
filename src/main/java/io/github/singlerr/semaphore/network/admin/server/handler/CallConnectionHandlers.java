@@ -10,12 +10,13 @@ import io.github.singlerr.semaphore.network.admin.server.ServerboundCallConnecti
 
 public final class CallConnectionHandlers {
 
-    private CallConnectionHandlers() {}
+    private CallConnectionHandlers() {
+    }
 
     public static class CloseConnectionHandler
             extends ServerboundPacketHandler<PacketCloseConnection, PacketCloseConnection> {
 
-        private ServerboundCallConnectionController connectionController;
+        private final ServerboundCallConnectionController connectionController;
 
         public CloseConnectionHandler() {
             throw new IllegalStateException();
@@ -37,7 +38,7 @@ public final class CallConnectionHandlers {
     public static class OpenConnectionHandler
             extends ServerboundPacketHandler<PacketOpenConnection, PacketOpenConnection> {
 
-        private ServerboundCallConnectionController connectionController;
+        private final ServerboundCallConnectionController connectionController;
 
         public OpenConnectionHandler() {
             throw new IllegalStateException();
@@ -60,7 +61,7 @@ public final class CallConnectionHandlers {
     public static class GetConnectionHandler
             extends ServerboundPacketHandler<PacketGetConnection, PacketGetConnection> {
 
-        private ServerboundCallConnectionController connectionController;
+        private final ServerboundCallConnectionController connectionController;
 
         public GetConnectionHandler() {
             throw new IllegalStateException();

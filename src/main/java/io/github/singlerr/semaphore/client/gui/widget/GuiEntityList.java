@@ -1,9 +1,6 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore.client.gui.widget;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiListExtended;
@@ -11,9 +8,13 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.Tessellator;
 import org.lwjgl.opengl.GL11;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class GuiEntityList extends GuiListExtended {
 
-    private List<GuiEntityEntry> entries;
+    private final List<GuiEntityEntry> entries;
 
     public GuiEntityList(int width, int height, int top, int bottom, int size) {
         super(Minecraft.getMinecraft(), width, height, top, bottom, size);
@@ -23,6 +24,15 @@ public class GuiEntityList extends GuiListExtended {
     public GuiEntityList(int width, int height, int top, int bottom, int size, List<GuiEntityEntry> entryList) {
         super(Minecraft.getMinecraft(), width, height, top, bottom, size);
         this.entries = entryList;
+    }
+
+    public static void enableScissor(int x1, int y1, int x2, int y2) {
+        GL11.glEnable(3089);
+        GL11.glScissor(x1, y1, x2, y2);
+    }
+
+    public static void disableScissor() {
+        GL11.glDisable(3089);
     }
 
     @Override
@@ -49,15 +59,6 @@ public class GuiEntityList extends GuiListExtended {
             super.drawScreen(mouseXIn, mouseYIn, partialTicks);
             disableScissor();
         }
-    }
-
-    public static void enableScissor(int x1, int y1, int x2, int y2) {
-        GL11.glEnable(3089);
-        GL11.glScissor(x1, y1, x2, y2);
-    }
-
-    public static void disableScissor() {
-        GL11.glDisable(3089);
     }
 
     @Override

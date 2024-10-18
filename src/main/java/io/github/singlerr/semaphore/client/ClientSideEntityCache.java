@@ -10,12 +10,13 @@ import io.github.singlerr.semaphore.interactors.admin.presenter.EntityPresenter;
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.ErrorEntity;
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.PresentableCallConnection;
 import io.github.singlerr.semaphore.interactors.admin.presenter.data.PresentableEntity;
-import java.util.List;
-import java.util.UUID;
-import javax.annotation.Nullable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.minecraft.client.Minecraft;
+
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.UUID;
 
 @NoArgsConstructor
 @Getter
@@ -55,7 +56,8 @@ public final class ClientSideEntityCache implements EntityPresenter, CallConnect
     }
 
     @Override
-    public void presentError(ErrorEntity error) {}
+    public void presentError(ErrorEntity error) {
+    }
 
     @Override
     public void present(PresentableCallConnection entity) {

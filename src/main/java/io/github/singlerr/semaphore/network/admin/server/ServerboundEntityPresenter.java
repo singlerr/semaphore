@@ -9,11 +9,12 @@ import io.github.singlerr.semaphore.network.NetworkManager;
 import io.github.singlerr.semaphore.network.admin.packet.PacketEntityErrorEntity;
 import io.github.singlerr.semaphore.network.admin.packet.PacketPresentableEntities;
 import io.github.singlerr.semaphore.network.admin.packet.PacketPresentableEntity;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraftforge.fml.server.FMLServerHandler;
+
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraftforge.fml.server.FMLServerHandler;
 
 public final class ServerboundEntityPresenter implements EntityPresenter {
 

@@ -31,7 +31,6 @@ import io.github.singlerr.semaphore.policy.caller.presenters.CallRequestPresente
 import io.github.singlerr.semaphore.policy.caller.presenters.ErrorPresenterAdapter;
 import io.github.singlerr.semaphore.policy.callhandler.CallConnectionHandlerAdapter;
 import io.github.singlerr.semaphore.policy.database.PlayerDatabase;
-import java.util.HashMap;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
@@ -44,6 +43,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+
+import java.util.HashMap;
 
 public abstract class CommonProxy {
 
@@ -79,7 +80,8 @@ public abstract class CommonProxy {
         registry.getConfig().getVolumes().observe((map) -> ModConfig.volumes = new HashMap<>(map));
     }
 
-    protected void initRemotePolicy(NetworkManager networkManager) {}
+    protected void initRemotePolicy(NetworkManager networkManager) {
+    }
 
     private void initPolicy() {
         DatabaseGateway database = new PlayerDatabase();
@@ -119,7 +121,7 @@ public abstract class CommonProxy {
 
     private static class BlockRegistries {
 
-        private BlockPhoneBox phoneBox = new BlockPhoneBox();
+        private final BlockPhoneBox phoneBox = new BlockPhoneBox();
 
         @SubscribeEvent
         public void registerBlock(RegistryEvent.Register<Block> registry) {
@@ -136,9 +138,9 @@ public abstract class CommonProxy {
 
     private static class ItemRegistries {
 
-        private ItemPhone phone = new ItemPhone();
-        private ItemControlPanel controlPanel = new ItemControlPanel();
-        private ItemBoxSelector phoneBoxSelector;
+        private final ItemPhone phone = new ItemPhone();
+        private final ItemControlPanel controlPanel = new ItemControlPanel();
+        private final ItemBoxSelector phoneBoxSelector;
 
         public ItemRegistries(EntityController entityController) {
             this.phoneBoxSelector = new ItemBoxSelector(entityController);

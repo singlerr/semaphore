@@ -8,12 +8,13 @@ import io.github.singlerr.semaphore.network.admin.server.ServerboundEntityContro
 
 public final class EntityHandlers {
 
-    private EntityHandlers() {}
+    private EntityHandlers() {
+    }
 
     public static class GetAllEntitiesHandler
             extends ServerboundPacketHandler<PacketGetAllEntities, PacketGetAllEntities> {
 
-        private ServerboundEntityController entityController;
+        private final ServerboundEntityController entityController;
 
         public GetAllEntitiesHandler() {
             throw new IllegalStateException();
@@ -34,7 +35,7 @@ public final class EntityHandlers {
 
     public static class GetEntityHandler extends ServerboundPacketHandler<PacketGetEntity, PacketGetEntity> {
 
-        private ServerboundEntityController entityController;
+        private final ServerboundEntityController entityController;
 
         public GetEntityHandler() {
             throw new IllegalStateException();
@@ -55,7 +56,7 @@ public final class EntityHandlers {
 
     public static class CreateEntityHandler extends ServerboundPacketHandler<PacketCreateEntity, PacketCreateEntity> {
 
-        private ServerboundEntityController entityController;
+        private final ServerboundEntityController entityController;
 
         public CreateEntityHandler() {
             throw new IllegalStateException();
@@ -74,7 +75,7 @@ public final class EntityHandlers {
 
     public static class UpdateEntityHandler extends ServerboundPacketHandler<PacketUpdateEntity, PacketUpdateEntity> {
 
-        private ServerboundEntityController entityController;
+        private final ServerboundEntityController entityController;
 
         public UpdateEntityHandler() {
             throw new IllegalStateException();
@@ -96,7 +97,7 @@ public final class EntityHandlers {
     public static class CreateEntityWithStateHandler
             extends ServerboundPacketHandler<PacketCreateEntityWithState, PacketCreateEntityWithState> {
 
-        private ServerboundEntityController entityController;
+        private final ServerboundEntityController entityController;
 
         public CreateEntityWithStateHandler() {
             throw new IllegalStateException();
@@ -118,7 +119,7 @@ public final class EntityHandlers {
 
     public static class DeleteEntityHandler extends ServerboundPacketHandler<PacketDeleteEntity, PacketDeleteEntity> {
 
-        private ServerboundEntityController entityController;
+        private final ServerboundEntityController entityController;
 
         public DeleteEntityHandler() {
             throw new IllegalStateException();

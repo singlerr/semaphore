@@ -1,9 +1,10 @@
 /* (C) 2024 singlerr */
 package io.github.singlerr.semaphore;
 
+import net.minecraftforge.common.config.Config;
+
 import java.util.HashMap;
 import java.util.Map;
-import net.minecraftforge.common.config.Config;
 
 @Config(modid = Semaphore.MOD_ID)
 public final class ModConfig {

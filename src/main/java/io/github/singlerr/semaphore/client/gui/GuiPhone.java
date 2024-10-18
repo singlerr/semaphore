@@ -30,10 +30,12 @@ public final class GuiPhone extends GuiScreen
     }
 
     @Override
-    public void error(Error entity) {}
+    public void error(Error entity) {
+    }
 
     @Override
-    public void present(CallResponse entity) {}
+    public void present(CallResponse entity) {
+    }
 
     public boolean shouldPresent(ErrorHandlerAdapter.ErrorContext errorContext) {
         return false;
@@ -52,11 +54,14 @@ public final class GuiPhone extends GuiScreen
     }
 
     @Override
-    public void present(InverseCallRequest request) {}
+    public void present(InverseCallRequest request) {
+    }
 
     @Override
-    public void present(PresentableCallConnection entity) {}
+    public void present(PresentableCallConnection entity) {
+    }
 
     @Override
-    public void presentError(ErrorEntity error) {}
+    public void presentError(ErrorEntity error) {
+    }
 }

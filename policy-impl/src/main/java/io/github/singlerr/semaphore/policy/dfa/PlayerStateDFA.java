@@ -23,6 +23,10 @@ public final class PlayerStateDFA implements Cloneable {
         this.encoder = encoder;
     }
 
+    private static int packInput(int state, PlayerInput type) {
+        return state & 0xFF << 8 | type.ordinal() & 0xFF;
+    }
+
     public Optional<Integer> consume(int currentState, PlayerInput input) {
         int packedInput = packInput(currentState, input);
 
@@ -39,8 +43,9 @@ public final class PlayerStateDFA implements Cloneable {
         return encoder.get(state);
     }
 
-    private static int packInput(int state, PlayerInput type) {
-        return state & 0xFF << 8 | type.ordinal() & 0xFF;
+    @Override
+    public PlayerStateDFA clone() {
+        return new PlayerStateDFA(new HashMap<>(encodedStateFunction), new HashMap<>(encoder));
     }
 
     public static class Builder {
@@ -73,10 +78,5 @@ public final class PlayerStateDFA implements Cloneable {
         public PlayerStateDFA build() {
             return new PlayerStateDFA(encodedStateFunction, encoder);
         }
-    }
-
-    @Override
-    public PlayerStateDFA clone() {
-        return new PlayerStateDFA(new HashMap<>(encodedStateFunction), new HashMap<>(encoder));
     }
 }

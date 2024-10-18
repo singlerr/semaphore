@@ -3,12 +3,13 @@ package io.github.singlerr.semaphore.policy.caller.presenters;
 
 import io.github.singlerr.semaphore.interactors.caller.presenter.ErrorPresenter;
 import io.github.singlerr.semaphore.interactors.caller.presenter.data.Error;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import org.jetbrains.annotations.NotNull;
 
 public final class ErrorPresenterAdapter implements ErrorPresenter {
 
@@ -48,7 +49,8 @@ public final class ErrorPresenterAdapter implements ErrorPresenter {
         invoke(context, entity);
     }
 
-    public static class ErrorContext {}
+    public static class ErrorContext {
+    }
 
     public static class PredicatePresenter {
 

@@ -25,5 +25,6 @@ public abstract class GuiInGameMixin {
             method = "renderHotbarItem",
             at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/item/ItemStack;getAnimationsToGo()I"))
     private void semaphore$applyShakingEffect_post(
-            int x, int y, float partialTicks, EntityPlayer player, ItemStack stack, CallbackInfo ci) {}
+            int x, int y, float partialTicks, EntityPlayer player, ItemStack stack, CallbackInfo ci) {
+    }
 }
